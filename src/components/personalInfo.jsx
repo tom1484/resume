@@ -1,6 +1,6 @@
 export default function PersonalInfo({ data }) {
   return (
-    <div className="flex items-center justify-center h-fit w-11/12 my-2">
+    <div className="flex items-center justify-center h-fit w-11/12 my-4">
       <div className="flex flex-col items-start justify-center w-[20%]">
         <img
           src="asset/image/me.jpeg"
