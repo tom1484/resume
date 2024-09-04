@@ -15,23 +15,30 @@ import { skills } from './data/skills';
 function App() {
   return (
     <div className="h-full flex flex-col items-center">
+      {/* Top margin */}
       <div className="w-11/12 mb-3"></div>
 
+      {/* Personal Information Section */}
       <PersonalInfo data={personalInfo} />
       <SplitLine width="11/12" weight="300" />
 
+      {/* Education Section - Display academic background */}
       <Education data={education} />
       <SplitLine width="11/12" weight="300" />
 
+      {/* Competitions Section - Showcase participation and achievements */}
       <Experiences title="Competitions" data={competitions} />
       <SplitLine width="11/12" weight="300" />
 
+      {/* Projects Section - Highlight personal or professional projects */}
       <Experiences title="Projects" data={projects} />
       <SplitLine width="11/12" weight="300" />
 
+      {/* Academic Experiences Section - Display research, teaching, or other academic activities */}
       <Experiences title="Academics" data={academics} />
       <SplitLine width="11/12" weight="300" />
 
+      {/* Skills Section - List technical and soft skills */}
       <Skills data={skills}/>
     </div>
   );
