@@ -32,7 +32,7 @@ export const academics = [
     highlight: '',
     time: 'Jul 2024 - Now',
     link: [
-      { text: 'presentations', url: '' },
+      { text: 'presentations', url: 'https://docs.google.com/presentation/d/1BW9Sg_MG2R7otxRP0OfcDCt2AEdg2iP72PS-oatu98o/edit?usp=sharing' },
     ],
     description: '3D Vision Learning Research',
     content: [
