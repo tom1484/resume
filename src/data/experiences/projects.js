@@ -7,12 +7,14 @@ export const projects = [
       { text: 'project', url: 'https://github.com/NTUEELightDance/LightDance-Editor' },
       { text: 'video', url: 'https://www.youtube.com/watch?v=ZYaDQQLl05Y' },
     ],
+    description: 'Light Effect Editor for LightDance Show in NTUEE',
     content: [
-      `Being the leader of software team in NTUEE LightDance, a student organization in NTUEE. We integrate 
-      hardware and software to create a light show. I am responsible for developing the whole new editor software 
-      this year, including the Rust backend and Blender addon.`,
+      'Built a Rust backend server handling complex SQL manipulation for LightDance Editor from scratch.',
+      'Developed a Blender addon for light effect editing and 3D previewing from scratch.',
+      'Increased the performance by ~5x overall, compared to the previous JavaScript-based version.',
+      'Lead a team of 10 members to develop the software and integrate it with the hardware.',
     ],
-    tags: ['Rust', 'Python', 'Full-stack']
+    tags: ['Rust', 'Python', 'MySQL', 'GraphQL', 'Async Programming', 'Blender Addon']
   },
   {
     title: 'MusicTracker',
@@ -21,12 +23,13 @@ export const projects = [
     link: [
       { text: 'video', url: 'https://youtu.be/sDXGI1Jq3kc' },
     ],
+    description: 'Automatic Music Sheet Page Turner in 24-hour Hackathon',
     content: [
-      `This is our project for MakeNTU, a 24-hour hackathon. We create a music tracker that can listen to the music 
-      being played by musicians and turn the pages of the music sheet automatically. We use the STM32 board to process 
-      the audio signal with CMSIS library and control the servo motor to turn the pages.`,
+      'Real-time audio recording and processing with STM32 board via DMA for I2S protocol and CMSIS DSP library.',
+      'Implemented dynamic time warping (DTW) algorithm on STM32 to match the music sheet with the music being played.',
+      'Integrated the system with a servo motor to turn the pages of the music sheet automatically.',
     ],
-    tags: ['STM32', 'Audio Processing', 'Hackathon']
+    tags: ['Embedded System', 'Real-Time Audio Processing', 'Music Tracking with DTW']
   },
   {
     title: 'MoneyManager',
@@ -35,12 +38,12 @@ export const projects = [
     link: [
       { text: 'project', url: 'https://github.com/tom1484/money-manager' },
     ],
+    description: 'Android Bookkeeping Application',
     content: [
-      `The final project in the course, "111-1 Web Programming".
-      This is a full-stack mobile application created with the Expo platform. It is a simple Android bookkeeping 
-      application that records transactions and calculates the balance of personal financial accounts.`,
+      'Developed a mobile bookkeeping application tracking the income and outcome of/between personal accounts.',
+      'Full-stack React Native application using MongoDB as the database and Express.js as the backend server.',
     ],
-    tags: ['React Native', 'Android', 'Full-stack']
+    tags: ['React Native', 'Android', 'MongoDB', 'Express.js', 'Restful API']
   },
   {
     title: 'MKS Access System',
@@ -49,11 +52,12 @@ export const projects = [
     link: [
       { text: 'project', url: 'https://drive.google.com/file/d/1EKJGVKytfbCwLHq-11mKcscFEMStKAA6/view?usp=share_link' },
     ],
+    description: 'Entrance Recording System for NTUEE MakerSpace',
     content: [
-      `This project aims to develop an access system for MakerSpace in our department. With an ID card scanner, 
-      LCD screen, and a server, it can record entrances, provide instructions, and have simple backstage management.`,
+      'Developed a physical system in C++, recording the entrance of students for the MakerSpace in the department.',
+      'Integrated an ID card scanner, LCD screen, Raspberry Pi, and a server to provide instructions and backstage management.',
     ],
-    tags: ['Raspberry Pi', 'Maker']
+    tags: ['Raspberry Pi', 'C++ Peripheral Control']
   },
   {
     title: 'Furuta Pendulum',
@@ -62,12 +66,11 @@ export const projects = [
     link: [
       { text: 'report', url: 'https://drive.google.com/file/d/18b7DX8dk0K--bYAh3qZRaT6zejtQcBO7/view?usp=share_link' },
     ],
+    description: 'Digital Controller Design for Furuta Pendulum',
     content: [
-      `This is the final project for the linear system course. We are required to design our own digital controller 
-      to balance a given Furuta pendulum model in MATLAB. The controller is implemented in a real-time system and tested 
-      in the end of the semester.`,
+      'Designed a digital controller for a Furuta pendulum model in MATLAB and tested it in a real-time system.',
     ],
-    tags: ['Simulink', 'Control System', 'Controller Design']
+    tags: ['Control System Design', 'Simulink', 'Digital Controller']
   },
   // {
   //   title: '',

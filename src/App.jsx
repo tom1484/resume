@@ -1,16 +1,13 @@
 import PersonalInfo from './components/personalInfo';
 import Education from './components/education';
 import Experiences from './components/experiences';
-import Skills from './components/skills';
-
-import SplitLine from './components/splitLine';
+import Title from './components/title';
 
 import { personalInfo } from './data/personal_info';
 import { education } from './data/education';
 import { projects } from './data/experiences/projects';
 import { competitions } from './data/experiences/competitions';
 import { academics } from './data/experiences/academics';
-import { skills } from './data/skills';
 
 function App() {
   return (
@@ -20,26 +17,22 @@ function App() {
 
       {/* Personal Information Section */}
       <PersonalInfo data={personalInfo} />
-      <SplitLine width="11/12" weight="300" />
 
       {/* Education Section - Display academic background */}
+      <Title title="Education" />
       <Education data={education} />
-      <SplitLine width="11/12" weight="300" />
-
-      {/* Competitions Section - Showcase participation and achievements */}
-      <Experiences title="Competitions" data={competitions} />
-      <SplitLine width="11/12" weight="300" />
 
       {/* Projects Section - Highlight personal or professional projects */}
+      <Title title="Projects" />
       <Experiences title="Projects" data={projects} />
-      <SplitLine width="11/12" weight="300" />
+
+      {/* Competitions Section - Showcase participation and achievements */}
+      <Title title="Competitions" />
+      <Experiences title="Competitions" data={competitions} />
 
       {/* Academic Experiences Section - Display research, teaching, or other academic activities */}
+      <Title title="Academics" />
       <Experiences title="Academics" data={academics} />
-      <SplitLine width="11/12" weight="300" />
-
-      {/* Skills Section - List technical and soft skills */}
-      <Skills data={skills}/>
     </div>
   );
 }

@@ -1,17 +1,13 @@
 import SplitLine from './splitLine';
 
 export default function Experiences({ title: sectionTitle, data }) {
-  // <div className="flex items-start justify-center h-fit w-full my-2">
   return (
-    <div className="flex flex-col items-end justify-center h-fit w-11/12 my-2">
-      <div className="w-full flex flex-col items-start justify-start">
-        <h2 className="font-sans text-xl text-cyan-700">{sectionTitle}</h2>
-      </div>
+    <div className="flex flex-col items-end justify-center h-fit w-11/12">
 
-      {data.map(({ title, highlight, time, link, content, tags }, idx) => (
+      {data.map(({ title, highlight, time, link, description, content, tags }, idx) => (
         <>
           <div className="flex items-stretch h-fit w-full my-2">
-            <div className="w-[20%] flex flex-col">
+            <div className="w-[22%] flex flex-col">
               <h2 className="font-sans text-lg">{title}</h2>
               {
                 highlight !== '' &&
@@ -41,15 +37,20 @@ export default function Experiences({ title: sectionTitle, data }) {
                 }
               </p>
             </div>
-            <div className="w-[80%] flex flex-col justify-between">
-              <p className="text-left font-sans text-sm text-neutral-800">
-                {content.map((row, idx) => (
-                  <>
+            <div className="w-[78%] flex flex-col justify-between">
+              {
+                description !== '' &&
+                <p className="text-left font-sans text-lg text-neutral-800">
+                  {description}
+                </p>
+              }
+              <ul className="list-disc list-inside mt-1">
+                {content.map((row) => (
+                  <li className="text-left font-sans text-sm text-neutral-800">
                     {row}
-                    {idx < content.length - 1 && <br />}
-                  </>
+                  </li>
                 ))}
-              </p>
+              </ul>
               <p className="text-left font-sans text-sm text-neutral-500 mt-1">
                 {tags.map((tag, idx) => (
                   <>

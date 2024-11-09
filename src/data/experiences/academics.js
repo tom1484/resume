@@ -6,25 +6,40 @@ export const academics = [
     link: [
       { text: 'project', url: 'https://github.com/IIS-summer-2023/meds-simd-highlevel' },
     ],
+    description: 'Accelerating Post-Quantum Cryptography (PQC) Algorithm',
     content: [
-      `Internship at Prof. Ruben Niederhagen's lab. Developed a high-level parallel version of MEDS, a PQC 
-      (Post-Quantum Cryptography) algorithm, using SIMD instructions in C++ on x86-64 architecture. 
-      The project was presented at the end of the internship.`,
+      'Reconstructed an existing PQC algorithm with AVX256 instruction set in C++ on x86-64 architecture.',
+      'Achieved a 5x speedup compared to the original version and ensured constant execution time.',
     ],
     tags: ['C++', 'SIMD', 'Cryptography']
   },
   {
-    title: 'NTU RobotLearning Lab',
+    title: 'NTU Robot Learning Lab',
     highlight: '',
     time: 'Jul 2023 - Now',
     link: [
       { text: 'meetings', url: 'https://docs.google.com/presentation/d/1Xv6ifq5p94_QihFSLVEMl6-prNVrInDqNQFzD4wy_0s/edit?usp=sharing' },
     ],
+    description: 'Reinforcement Learning Research for Robotics',
     content: [
-      `Undergraduate member of the Prof. Shao-Hua Sun's NTU RobotLearning Lab. Currently working on model-based 
-      reinforcement learning for robotics. My personal project is still in the early stage.`,
+      'Undergraduate research program in the NTU Robot Learning Lab, focusing on reinforcement learning for robotics.',
+      'Currently working on sim-to-real transfer for real-world robotic tasks leveraging differentiable physics engines.',
     ],
     tags: ['Reiforcement Learning', 'Robotics', 'Machine Learning']
+  },
+  {
+    title: 'NTU Vision & Learning Lab',
+    highlight: '',
+    time: 'Jul 2024 - Now',
+    link: [
+      { text: 'presentations', url: '' },
+    ],
+    description: '3D Vision Learning Research',
+    content: [
+      'Undergraduate research program in the NTU Vision & Learning Lab, focusing on 3D scene reconstruction tasks.',
+      'Currently researching on 3D Gaussian Splatting for dynamic scene reconstruction.',
+    ],
+    tags: ['Computer Vision', '3DGS', 'Machine Learning']
   },
   {
     title: 'Teaching Assistants',

@@ -1,9 +1,11 @@
 export const education = [
   {
     time: '2021 - Now',
+    title: 'National Taiwan University',
     content: [
-      'B.S. in NTU Electrical Engineering',
-      'GPA (2021 Spring ~ 2023 Fall) - 4.0 / 4.3'
+      ['Major', 'Electrical Engineering B.S.'],
+      ['In Major GPA', '4.01 / 4.30'],
+      ['CS Courses', 'Algorithm, Web Programming, Computer Architecture, Computer Graphics, Machine Learning, Reinforcement Learning']
     ]
   }
 ];
