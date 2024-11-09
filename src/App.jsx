@@ -1,13 +1,15 @@
+import Title from './components/title';
 import PersonalInfo from './components/personalInfo';
 import Education from './components/education';
 import Experiences from './components/experiences';
-import Title from './components/title';
+import Skills from './components/skills';
 
 import { personalInfo } from './data/personal_info';
 import { education } from './data/education';
 import { projects } from './data/experiences/projects';
 import { competitions } from './data/experiences/competitions';
 import { academics } from './data/experiences/academics';
+import { skills } from './data/skills';
 
 function App() {
   return (
@@ -33,6 +35,13 @@ function App() {
       {/* Academic Experiences Section - Display research, teaching, or other academic activities */}
       <Title title="Academics" />
       <Experiences title="Academics" data={academics} />
+
+      {/* Skills Section - List programming languages, tools, and technologies */}
+      <Title title="Tech Skills" />
+      <Skills data={skills} />
+
+      {/* Bottom margin */}
+      <div className="w-11/12 mb-3"></div>
     </div>
   );
 }
