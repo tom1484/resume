@@ -59,19 +59,6 @@ export const projects = [
     ],
     tags: ['Raspberry Pi', 'C++ Peripheral Control']
   },
-  {
-    title: 'Furuta Pendulum',
-    highlight: '',
-    time: 'Dec 2022',
-    link: [
-      { text: 'report', url: 'https://drive.google.com/file/d/18b7DX8dk0K--bYAh3qZRaT6zejtQcBO7/view?usp=share_link' },
-    ],
-    description: 'Digital Controller Design for Furuta Pendulum',
-    content: [
-      'Designed a digital controller for a Furuta pendulum model in MATLAB and tested it in a real-time system.',
-    ],
-    tags: ['Control System Design', 'Simulink', 'Digital Controller']
-  },
   // {
   //   title: '',
   //   highlight: '',
