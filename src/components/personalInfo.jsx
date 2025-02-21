@@ -1,4 +1,6 @@
 export default function PersonalInfo({ data }) {
+  const info = data.info;
+  const link = data.link;
   return (
     <div className="flex items-center justify-center h-fit w-11/12 my-4">
       <div className="flex flex-col items-center justify-center w-[30%]" />
@@ -8,7 +10,7 @@ export default function PersonalInfo({ data }) {
       <table className="w-[30%]">
         <tbody>
           {
-            data.map(([key, value]) => (
+            info.map(([key, value]) => (
               <tr key={key}>
                 <td
                   className="text-left font-sans text-sm font-semibold text-neutral-500 pr-2"
@@ -21,6 +23,26 @@ export default function PersonalInfo({ data }) {
               </tr>
             ))
           }
+          <tr>
+            <td
+              className="text-left font-sans text-sm font-semibold text-neutral-500 pr-2"
+            >
+              Links:
+            </td>
+            <td className="text-left font-sans text-sm text-neutral-500">
+              {
+                link.map(([key, value]) => (
+                  <a
+                    key={key}
+                    href={value}
+                    className="text-left font-sans text-sm font-semibold text-cyan-800 pr-2 mr-3 underline"
+                  >
+                    {key}
+                  </a>
+                ))
+              }
+            </td>
+          </tr>
         </tbody>
       </table>
     </div>

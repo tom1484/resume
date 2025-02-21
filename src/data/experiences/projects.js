@@ -9,10 +9,10 @@ export const projects = [
     ],
     description: 'Light Effect Editor for LightDance Show in NTUEE',
     content: [
-      'Built a Rust backend server handling complex SQL manipulation for LightDance Editor from scratch.',
+      'Built a Rust backend server from scratch to handle complex SQL manipulations for the LightDance Editor.',
       'Developed a Blender addon for light effect editing and 3D previewing from scratch.',
-      'Increased the performance by ~5x overall, compared to the previous JavaScript-based version.',
-      'Lead a team of 10 members to develop the software and integrate it with the hardware.',
+      'Improved performance by approximately 5x compared to the previous JavaScript-based version.',
+      'Led a team of 10 members to develop the software and integrate it with the hardware.',
     ],
     tags: ['Rust', 'Python', 'MySQL', 'GraphQL', 'Async Programming', 'Blender Addon']
   },
@@ -25,9 +25,9 @@ export const projects = [
     ],
     description: 'Automatic Music Sheet Page Turner in 24-hour Hackathon',
     content: [
-      'Real-time audio recording and processing with STM32 board via DMA for I2S protocol and CMSIS DSP library.',
-      'Implemented dynamic time warping (DTW) algorithm on STM32 to match the music sheet with the music being played.',
-      'Integrated the system with a servo motor to turn the pages of the music sheet automatically.',
+      'Implemented real-time audio recording and processing on an STM32 board using DMA for the I2S protocol and the CMSIS DSP library.',
+      'Developed a dynamic time warping (DTW) algorithm on the STM32 to match the music sheet with the music being played.',
+      'Integrated the system with a servo motor to automatically turn music sheet pages.',
     ],
     tags: ['Embedded System', 'Real-Time Audio Processing', 'Music Tracking with DTW']
   },
@@ -40,8 +40,8 @@ export const projects = [
     ],
     description: 'Android Bookkeeping Application',
     content: [
-      'Developed a mobile bookkeeping application tracking the income and outcome of/between personal accounts.',
-      'Full-stack React Native application using MongoDB as the database and Express.js as the backend server.',
+      'Developed a mobile app for tracking income and expenses across personal accounts.',
+      'Built a full-stack React Native application with MongoDB as the database and Express.js as the backend server.',
     ],
     tags: ['React Native', 'Android', 'MongoDB', 'Express.js', 'Restful API']
   },
@@ -54,8 +54,8 @@ export const projects = [
     ],
     description: 'Entrance Recording System for NTUEE MakerSpace',
     content: [
-      'Developed a physical system in C++, recording the entrance of students for the MakerSpace in the department.',
-      'Integrated an ID card scanner, LCD screen, Raspberry Pi, and a server to provide instructions and backstage management.',
+      'Designed a physical system in C++ to record students’ entrances to the MakerSpace.',
+      'Integrated an ID card scanner, LCD screen, Raspberry Pi, and server for instructions and backstage management.',
     ],
     tags: ['Raspberry Pi', 'C++ Peripheral Control']
   },

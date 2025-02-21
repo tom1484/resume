@@ -1,3 +1,4 @@
+import React from 'react';
 import SplitLine from './splitLine';
 
 export default function Experiences({ title: sectionTitle, data }) {
@@ -5,7 +6,7 @@ export default function Experiences({ title: sectionTitle, data }) {
     <div className="flex flex-col items-end justify-center h-fit w-11/12">
 
       {data.map(({ title, highlight, time, link, description, content, tags }, idx) => (
-        <>
+        <React.Fragment key={idx}>
           <div className="flex items-stretch h-fit w-full my-2">
             <div className="w-[22%] flex flex-col">
               <h2 className="font-sans text-lg">{title}</h2>
@@ -22,15 +23,15 @@ export default function Experiences({ title: sectionTitle, data }) {
                   <>
                     <br />
                     Links: {
-                      link.map(({ text, url }) => (
-                        <>
+                      link.map(({ text, url }, idx) => (
+                        <React.Fragment key={idx}>
                           <a
                             href={url}
-                            className="underline">
+                            className="underline text-cyan-800">
                             {text}
                           </a>
                           &nbsp;&nbsp;
-                        </>
+                        </React.Fragment>
                       ))
                     }
                   </>
@@ -45,24 +46,24 @@ export default function Experiences({ title: sectionTitle, data }) {
                 </p>
               }
               <ul className="list-disc list-inside mt-1">
-                {content.map((row) => (
-                  <li className="text-left font-sans text-sm text-neutral-800">
+                {content.map((row, idx) => (
+                  <li key={idx} className="text-left font-sans text-sm text-neutral-800">
                     {row}
                   </li>
                 ))}
               </ul>
               <p className="text-left font-sans text-sm text-neutral-500 mt-1">
                 {tags.map((tag, idx) => (
-                  <>
+                  <React.Fragment key={idx}>
                     {tag}
                     {idx < tags.length - 1 && " | "}
-                  </>
+                  </React.Fragment>
                 ))}
               </p>
             </div>
           </div>
           {idx < data.length - 1 && <SplitLine width="[80%]" weight="200" />}
-        </>
+        </React.Fragment>
       ))}
     </div>
   );
