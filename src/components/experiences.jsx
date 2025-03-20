@@ -1,7 +1,12 @@
 import React from 'react';
 import SplitLine from './splitLine';
+import { filterDataByTitles } from '../utils';
 
-export default function Experiences({ title: sectionTitle, data }) {
+export default function Experiences({ title: sectionTitle, data, selectedTitles }) {
+  if (selectedTitles && selectedTitles.length > 0) {
+    data = filterDataByTitles(data, selectedTitles);
+  }
+
   return (
     <div className="flex flex-col items-end justify-center h-fit w-11/12">
 

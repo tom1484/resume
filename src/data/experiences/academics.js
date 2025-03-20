@@ -9,7 +9,6 @@ export const academics = [
     description: 'Reinforcement learning research for robotics',
     content: [
       "Undergraduate research student at Prof. Shao-Hua Sun's Robot Learning Lab, focusing on reinforcement learning for robotic applications.",
-      // "Currently working on sim-to-real transfer for robotic tasks, leveraging differentiable physics engines.",
     ],
     tags: ['Reinforcement Learning', 'Robotics', 'Machine Learning']
   },
@@ -46,7 +45,6 @@ export const academics = [
     highlight: '',
     time: '2023 - 2024',
     link: [],
-    // description: 'Served as a teaching assistant for multiple courses at NTU.',
     content: [
       '2023-2024 Spring - Cornerstone EECS Design and Implementation',
       '2025 Spring - Signals and Systems',

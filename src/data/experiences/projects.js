@@ -31,20 +31,20 @@ export const projects = [
     ],
     tags: ['Embedded Systems', 'Real-Time Audio Processing', 'Music Tracking with DTW']
   },
-  // {
-  //   title: 'MoneyManager',
-  //   highlight: '',
-  //   time: 'Dec 2022 - Jan 2023',
-  //   link: [
-  //     { text: 'Project', url: 'https://github.com/tom1484/money-manager' },
-  //   ],
-  //   description: 'Android bookkeeping application',
-  //   content: [
-  //     'Developed a mobile app for tracking income and expenses across personal accounts.',
-  //     'Built a full-stack React Native application with MongoDB as the database and Express.js as the backend server.',
-  //   ],
-  //   tags: ['React Native', 'Android', 'MongoDB', 'Express.js', 'RESTful API']
-  // },
+  {
+    title: 'MoneyManager',
+    highlight: '',
+    time: 'Dec 2022 - Jan 2023',
+    link: [
+      { text: 'Project', url: 'https://github.com/tom1484/money-manager' },
+    ],
+    description: 'Android bookkeeping application',
+    content: [
+      'Developed a mobile app for tracking income and expenses across personal accounts.',
+      'Built a full-stack React Native application with MongoDB as the database and Express.js as the backend server.',
+    ],
+    tags: ['React Native', 'Android', 'MongoDB', 'Express.js', 'RESTful API']
+  },
   {
     title: 'MKS Access System',
     highlight: '',

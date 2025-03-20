@@ -26,15 +26,15 @@ function App() {
 
       {/* Academic Experiences Section - Display research, teaching, or other academic activities */}
       <Title title="Academics" />
-      <Experiences title="Academics" data={academics} />
+      <Experiences title="Academics" data={academics} selectedTitles={[]} />
 
       {/* Competitions Section - Showcase participation and achievements */}
       <Title title="Competitions" />
-      <Experiences title="Competitions" data={competitions} />
+      <Experiences title="Competitions" data={competitions} selectedTitles={[]} />
 
       {/* Projects Section - Highlight personal or professional projects */}
       <Title title="Projects" />
-      <Experiences title="Projects" data={projects} />
+      <Experiences title="Projects" data={projects} selectedTitles={[]} />
 
       {/* Skills Section - List programming languages, tools, and technologies */}
       <Title title="Tech Skills" />
