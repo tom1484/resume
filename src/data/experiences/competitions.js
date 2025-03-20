@@ -1,19 +1,12 @@
 export const competitions = [
   {
-    title: 'CPLC Lander Challenge',
-    highlight: '',
-    time: 'Nov 2023 - Present',
-    link: [
-      { text: 'Official', url: 'https://landerchallenge.space/' },
-      { text: 'Team', url: 'https://www.instagram.com/star_rocketry?igsh=MXRsYzd3dGRibDJmbw==' },
-    ],
-    description: 'Student-led self-landing rocket competition',
+    title: 'Information Competition',
+    time: 'Nov 2019',
+    description: 'Taipei City High School Programming Competition',
     content: [
-      'Leading the avionics team in developing the avionics system for a self-landing rocket.',
-      'Developing the main thrust valve (MTV) control system to regulate fuel flow.',
-      'Designing and implementing thrust vector control (TVC) to direct a 2,500-Newton engine.',
+      'Won third prize in a competition focused on problem-solving using algorithms and data structures.',
     ],
-    tags: ['Rocket', 'Avionics', 'Embedded Systems']
+    tags: ['Algorithm', 'Data Structure', 'C++']
   },
   {
     title: 'Kibo RPC',
@@ -29,5 +22,20 @@ export const competitions = [
       'Achieved the world champion title in the final round, with deployment conducted aboard the International Space Station.',
     ],
     tags: ['Android', 'OpenCV', 'Path Planning', 'Space Robotics']
+  },
+  {
+    title: 'CPLC Lander Challenge',
+    time: 'Nov 2023 - Present',
+    link: [
+      { text: 'Official', url: 'https://landerchallenge.space/' },
+      { text: 'Team', url: 'https://www.instagram.com/star_rocketry?igsh=MXRsYzd3dGRibDJmbw==' },
+    ],
+    description: 'Student-led self-landing rocket competition',
+    content: [
+      'Leading the avionics team in developing the avionics system for a self-landing rocket.',
+      'Developing the main thrust valve (MTV) control system to regulate fuel flow.',
+      'Designing and implementing thrust vector control (TVC) to direct a 2,500-Newton engine.',
+    ],
+    tags: ['Rocket', 'Avionics', 'Embedded Systems']
   },
 ];

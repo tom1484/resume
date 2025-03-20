@@ -16,7 +16,7 @@ export default function Experiences({ title: sectionTitle, data, selectedTitles 
             <div className="w-[22%] flex flex-col">
               <h2 className="font-sans text-lg">{title}</h2>
               {
-                highlight !== '' &&
+                (highlight && highlight !== '') &&
                 <p className="text-left font-sans text-sm text-orange-800">
                   {highlight}
                 </p>
@@ -24,7 +24,7 @@ export default function Experiences({ title: sectionTitle, data, selectedTitles 
               <p className="text-left align-top font-sans text-sm font-semibold text-neutral-500 pr-2">
                 {time}
                 {
-                  link.length > 0 &&
+                  (link && link.length) > 0 &&
                   <>
                     <br />
                     Links: {
@@ -45,7 +45,7 @@ export default function Experiences({ title: sectionTitle, data, selectedTitles 
             </div>
             <div className="w-[78%] flex flex-col justify-between">
               {
-                description !== '' &&
+                (description && description !== '') &&
                 <p className="text-left font-sans text-lg text-neutral-800">
                   {description}
                 </p>
@@ -57,14 +57,17 @@ export default function Experiences({ title: sectionTitle, data, selectedTitles 
                   </li>
                 ))}
               </ul>
-              <p className="text-left font-sans text-sm text-neutral-500 mt-1">
-                {tags.map((tag, idx) => (
-                  <React.Fragment key={idx}>
-                    {tag}
-                    {idx < tags.length - 1 && " | "}
-                  </React.Fragment>
-                ))}
-              </p>
+              {
+                (tags && tags.length > 0) &&
+                <p className="text-left font-sans text-sm text-neutral-500 mt-1">
+                  {tags.map((tag, idx) => (
+                    <React.Fragment key={idx}>
+                      {tag}
+                      {idx < tags.length - 1 && " | "}
+                    </React.Fragment>
+                  ))}
+                </p>
+              }
             </div>
           </div>
           {idx < data.length - 1 && <SplitLine width="[80%]" weight="200" />}

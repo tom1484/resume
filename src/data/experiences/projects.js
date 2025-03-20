@@ -1,24 +1,70 @@
 export const projects = [
   {
-    title: 'NTUEE LightDance',
-    highlight: '',
-    time: 'Oct 2023 - Mar 2024',
+    title: 'Intelligent Shopping Cart',
+    highlight: 'Patent',
+    time: 'Jan 2020 - Apr 2020',
     link: [
-      { text: 'Project', url: 'https://github.com/NTUEELightDance/LightDance-Editor' },
-      { text: 'Video', url: 'https://www.youtube.com/watch?v=ZYaDQQLl05Y' },
+      { text: 'Intro', url: 'https://www.youtube.com/watch?v=WfrQ2J9VpX0' }
     ],
-    description: 'Light effect editor for the LightDance show at NTUEE',
+    description: 'Shopping cart system for indoor navigation and automatic checkout',
     content: [
-      'Built a Rust backend server from scratch to handle complex SQL manipulations for the LightDance Editor.',
-      'Developed a Blender add-on for light effect editing and 3D previewing from scratch.',
-      'Improved performance by approximately 5× compared to the previous JavaScript-based version.',
-      'Led a team of 10 members to develop the software and integrate it with the hardware.',
+      'Developed a shopping cart mobile application navigating customers to the desired items in a store.',
+      'Implemented precise indoor localization using BLE beacons and filter algorithms.',
+      'Aquired Taiwan\'s utility model patent for the system.',
     ],
-    tags: ['Rust', 'Python', 'MySQL', 'GraphQL', 'Async Programming', 'Blender Add-on']
+    tags: ['Mobile App', 'Indoor Navigation', 'BLE', 'Patent']
+  },
+  {
+    title: 'Ear Detection Gate',
+    time: '2020',
+    description: 'Gate System for Identifying People by Ear Shape',
+    content: [
+      'Designed a scan system to identify people by ear shape using Yolo.',
+      'Achiedved identification without taking off masks during the COVID-19 pandemic.',
+    ],
+    tags: ['Object Detection', 'Yolo', 'Python']
+  },
+  {
+    title: 'Furuta Pendulum',
+    time: 'Dec 2022',
+    link: [
+      { text: 'Report', url: 'https://drive.google.com/file/d/18b7DX8dk0K--bYAh3qZRaT6zejtQcBO7/view?usp=share_link' },
+    ],
+    description: 'Digital Controller Design for Furuta Pendulum',
+    content: [
+      'Designed and analyzed a LQR controller for the linearized system of Furuta pendulum in Simulink simulation.',
+      'Implemented the controller on a real device and achieved a stable and accurate control performance.',
+    ],
+    tags: ['Control System Design', 'Simulink']
+  },
+  {
+    title: 'MKS Access System',
+    time: 'Jun 2022 - Oct 2022',
+    link: [
+      { text: 'Project', url: 'https://drive.google.com/file/d/1EKJGVKytfbCwLHq-11mKcscFEMStKAA6/view?usp=share_link' },
+    ],
+    description: 'Entrance recording system for NTUEE MakerSpace',
+    content: [
+      'Designed a physical system in C++ to record students’ entrances to the MakerSpace.',
+      'Integrated an ID card scanner, LCD screen, Raspberry Pi, and server for instructions and backend management.',
+    ],
+    tags: ['Raspberry Pi', 'C++ Peripheral Control']
+  },
+  {
+    title: 'MoneyManager',
+    time: 'Dec 2022 - Jan 2023',
+    link: [
+      { text: 'Project', url: 'https://github.com/tom1484/money-manager' },
+    ],
+    description: 'Android bookkeeping application',
+    content: [
+      'Developed a mobile app for tracking income and expenses across personal accounts.',
+      'Built a full-stack React Native application with MongoDB as the database and Express.js as the backend server.',
+    ],
+    tags: ['React Native', 'Android', 'MongoDB', 'Express.js', 'RESTful API']
   },
   {
     title: 'MusicTracker',
-    highlight: '',
     time: 'May 2023',
     link: [
       { text: 'Video', url: 'https://youtu.be/sDXGI1Jq3kc' },
@@ -32,31 +78,19 @@ export const projects = [
     tags: ['Embedded Systems', 'Real-Time Audio Processing', 'Music Tracking with DTW']
   },
   {
-    title: 'MoneyManager',
-    highlight: '',
-    time: 'Dec 2022 - Jan 2023',
+    title: 'NTUEE LightDance',
+    time: 'Oct 2023 - Mar 2024',
     link: [
-      { text: 'Project', url: 'https://github.com/tom1484/money-manager' },
+      { text: 'Project', url: 'https://github.com/NTUEELightDance/LightDance-Editor' },
+      { text: 'Video', url: 'https://www.youtube.com/watch?v=ZYaDQQLl05Y' },
     ],
-    description: 'Android bookkeeping application',
+    description: 'Light effect editor for the LightDance show at NTUEE',
     content: [
-      'Developed a mobile app for tracking income and expenses across personal accounts.',
-      'Built a full-stack React Native application with MongoDB as the database and Express.js as the backend server.',
+      'Built a Rust backend server from scratch to handle complex SQL manipulations for the LightDance Editor.',
+      'Developed a Blender add-on for light effect editing and 3D previewing from scratch.',
+      'Improved performance by approximately 5× compared to the previous JavaScript-based version.',
+      'Led a team of 10 members to develop the software and integrate it with the hardware.',
     ],
-    tags: ['React Native', 'Android', 'MongoDB', 'Express.js', 'RESTful API']
-  },
-  {
-    title: 'MKS Access System',
-    highlight: '',
-    time: 'Jun 2022 - Oct 2022',
-    link: [
-      { text: 'Project', url: 'https://drive.google.com/file/d/1EKJGVKytfbCwLHq-11mKcscFEMStKAA6/view?usp=share_link' },
-    ],
-    description: 'Entrance recording system for NTUEE MakerSpace',
-    content: [
-      'Designed a physical system in C++ to record students’ entrances to the MakerSpace.',
-      'Integrated an ID card scanner, LCD screen, Raspberry Pi, and server for instructions and backend management.',
-    ],
-    tags: ['Raspberry Pi', 'C++ Peripheral Control']
+    tags: ['Rust', 'Python', 'MySQL', 'GraphQL', 'Async Programming', 'Blender Add-on']
   },
 ];

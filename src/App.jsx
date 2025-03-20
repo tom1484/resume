@@ -9,6 +9,7 @@ import { education } from './data/education';
 import { projects } from './data/experiences/projects';
 import { competitions } from './data/experiences/competitions';
 import { academics } from './data/experiences/academics';
+import { extracurriculars } from './data/experiences/extracurricular';
 import { skills } from './data/skills';
 
 function App() {
@@ -35,6 +36,10 @@ function App() {
       {/* Projects Section - Highlight personal or professional projects */}
       <Title title="Projects" />
       <Experiences title="Projects" data={projects} selectedTitles={[]} />
+
+      {/* Extracurricular Section - Hobbies and additional activities */}
+      <Title title="Extracurricular" />
+      <Experiences title="Extracurricular" data={extracurriculars} selectedTitles={[]} />
 
       {/* Skills Section - List programming languages, tools, and technologies */}
       <Title title="Tech Skills" />
