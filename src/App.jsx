@@ -24,17 +24,17 @@ function App() {
       <Title title="Education" />
       <Education data={education} />
 
-      {/* Projects Section - Highlight personal or professional projects */}
-      <Title title="Projects" />
-      <Experiences title="Projects" data={projects} />
+      {/* Academic Experiences Section - Display research, teaching, or other academic activities */}
+      <Title title="Academics" />
+      <Experiences title="Academics" data={academics} />
 
       {/* Competitions Section - Showcase participation and achievements */}
       <Title title="Competitions" />
       <Experiences title="Competitions" data={competitions} />
 
-      {/* Academic Experiences Section - Display research, teaching, or other academic activities */}
-      <Title title="Academics" />
-      <Experiences title="Academics" data={academics} />
+      {/* Projects Section - Highlight personal or professional projects */}
+      <Title title="Projects" />
+      <Experiences title="Projects" data={projects} />
 
       {/* Skills Section - List programming languages, tools, and technologies */}
       <Title title="Tech Skills" />
