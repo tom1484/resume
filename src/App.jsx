@@ -26,23 +26,23 @@ function App() {
       <Education data={education} />
 
       {/* Academic Experiences Section - Display research, teaching, or other academic activities */}
-      <Title title="Academics" />
-      <Experiences title="Academics" data={academics} selectedTitles={[]} />
+      <Title title="Academic Experience" />
+      <Experiences title="Academic Experience" data={academics} selectedTitles={[]} />
 
       {/* Competitions Section - Showcase participation and achievements */}
-      <Title title="Competitions" />
-      <Experiences title="Competitions" data={competitions} selectedTitles={[]} />
+      <Title title="Competition Experience" />
+      <Experiences title="Competition Experience" data={competitions} selectedTitles={[]} />
 
       {/* Projects Section - Highlight personal or professional projects */}
-      <Title title="Projects" />
-      <Experiences title="Projects" data={projects} selectedTitles={[]} />
+      <Title title="Project Experience" />
+      <Experiences title="Project Experience" data={projects} selectedTitles={[]} />
 
       {/* Extracurricular Section - Hobbies and additional activities */}
       <Title title="Extracurricular" />
       <Experiences title="Extracurricular" data={extracurriculars} selectedTitles={[]} />
 
       {/* Skills Section - List programming languages, tools, and technologies */}
-      <Title title="Tech Skills" />
+      <Title title="Technical Skills" />
       <Skills data={skills} />
 
       {/* Bottom margin */}
