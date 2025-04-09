@@ -12,9 +12,11 @@ export default function Experiences({ title: sectionTitle, data, selectedTitles 
 
       {data.map(({ title, highlight, time, link, description, content, tags }, idx) => (
         <React.Fragment key={idx}>
-          <div className="flex items-stretch h-fit w-full my-2">
-            <div className="w-[22%] flex flex-col">
-              <h2 className="font-sans text-lg">{title}</h2>
+          <div className="flex items-stretch h-fit w-full">
+            <h2 className="font-sans text-lg">{title}</h2>
+          </div>
+          <div className="flex items-stretch h-fit w-full mb-1 ">
+            <div className="w-[18%] flex flex-col mt-1">
               {
                 (highlight && highlight !== '') &&
                 <p className="text-left font-sans text-sm text-orange-800">
@@ -43,17 +45,21 @@ export default function Experiences({ title: sectionTitle, data, selectedTitles 
                 }
               </p>
             </div>
-            <div className="w-[78%] flex flex-col justify-between">
+            <div className="w-[82%] flex flex-col justify-between">
               {
-                (description && description !== '') &&
-                <p className="text-left font-sans text-lg text-neutral-800">
-                  {description}
-                </p>
+                // (description && description !== '') &&
+                // <p className="text-left font-sans text-lg text-neutral-800">
+                //   {description}
+                // </p>
               }
               <ul className="list-disc list-inside mt-1">
                 {content.map((row, idx) => (
-                  <li key={idx} className="text-left font-sans text-sm text-neutral-800">
-                    {row}
+                  <li key={idx} className="text-left font-sans text-sm text-neutral-800" style={{ listStylePosition: 'outside' }}>
+                    {
+                      row.split('<br>').map((text, i) => (
+                        <React.Fragment key={i}>{text}{i < row.split('<br>').length - 1 && <br />}</React.Fragment>
+                      ))
+                    }
                   </li>
                 ))}
               </ul>
