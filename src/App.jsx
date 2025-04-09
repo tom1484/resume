@@ -12,6 +12,11 @@ import { academics } from './data/experiences/academics';
 import { extracurriculars } from './data/experiences/extracurricular';
 import { skills } from './data/skills';
 
+// TODO:
+//   Certifications (TOEFL, GRE, etc.)
+//   Multimodal Perception of Corner Cases in Autonomous Driving
+//   EE Camps
+
 function App() {
   return (
     <div className="h-full flex flex-col items-center">
@@ -42,8 +47,8 @@ function App() {
       <Experiences title="Extracurricular" data={extracurriculars} selectedTitles={[]} />
 
       {/* Skills Section - List programming languages, tools, and technologies */}
-      <Title title="Technical Skills" />
-      <Skills data={skills} />
+      {/* <Title title="Technical Skills" /> */}
+      {/* <Skills data={skills} /> */}
 
       {/* Bottom margin */}
       <div className="w-11/12 mb-3"></div>

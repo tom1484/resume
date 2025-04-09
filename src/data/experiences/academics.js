@@ -32,7 +32,7 @@ export const academics = [
     time: '2023 - Present',
     link: [],
     content: [
-      '2023-2024 Spring - Cornerstone EECS Design and Implementation<br>Assist freshmen in their first project integrating hardware and software, including Arduino, Python, algorithms and system engineering.',
+      '2023-2024 Spring - Cornerstone EECS Design and Implementation<br>Assisted first-year EE students in their first project integrating hardware and software, including Arduino, Python, algorithms and system engineering.',
       '2025 Spring - Signals and Systems',
     ],
     tags: ['Teaching', 'Electrical Engineering']
