@@ -2,7 +2,7 @@ export default function PersonalInfo({ data }) {
   const info = data.info;
   const link = data.link;
   return (
-    <div className="flex items-center justify-center h-fit w-11/12 my-4">
+    <div className="flex items-center justify-center h-fit w-11/12 mb-2">
       <table className="w-[30%]">
         <tbody>
           {
@@ -52,7 +52,7 @@ export default function PersonalInfo({ data }) {
               alt={`${key} QR code`}
               className="w-20 h-20"
             />
-            <span className="text-xs text-neutral-500 mt-1">{key}</span>
+            <span className="text-xs text-neutral-500 mt-0">{key}</span>
           </div>
         ))}
       </div>

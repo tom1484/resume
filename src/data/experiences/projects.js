@@ -16,6 +16,25 @@ export const projects = [
     tags: ['Rust', 'Python', 'MySQL', 'GraphQL', 'Async Programming', 'Blender Add-on']
   },
   {
+    title: 'Automatic Frisbee Shooter',
+    time: 'Sep 2023 - Dec 2023',
+    content: [
+      'Developed an automatic frisbee shooter with ROS on Raspberry Pi',
+      'Implemented a PID control system to adjust the shooting parameter and robot movement.',
+      'Designed a detection system using OpenCV to detect the target and adjust the shooting direction.',
+    ],
+    tags: ['Embedded Systems', 'OpenCV', 'PID Control'],
+  },
+  {
+    title: 'FPGA Laser Shooter',
+    time: 'May 2023 - June 2023',
+    content: [
+      'Designed a laser shooting system written in Verilog on FPGA, integrated with cricle detection and shooting control.',
+      'Implemented a pipelined architecture for real-time image processing.',
+    ],
+    tags: ['FPGA', 'Verilog', 'Image Processing'],
+  },
+  {
     title: 'MusicTracker - Automatic Music Sheet Page Turner',
     time: 'May 2023',
     link: [
@@ -74,7 +93,7 @@ export const projects = [
     // description: 'Gate System for Identifying People by Ear Shape',
     content: [
       'Designed a scan system to identify people by ear shape using Yolo.',
-      'Achiedved identification without taking off masks during the COVID-19 pandemic.',
+      'Achieved identification without taking off masks during the COVID-19 pandemic.',
     ],
     tags: ['Object Detection', 'Yolo', 'Python']
   },
