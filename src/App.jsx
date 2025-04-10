@@ -14,8 +14,6 @@ import { skills } from './data/skills';
 
 // TODO:
 //   Certifications (TOEFL, GRE, etc.)
-//   Multimodal Perception of Corner Cases in Autonomous Driving
-//   EE Camps
 
 function App() {
   return (

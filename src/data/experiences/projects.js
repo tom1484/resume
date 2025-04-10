@@ -1,5 +1,13 @@
 export const projects = [
   {
+    title: 'Multimodal Perception of Corner Cases in Autonomous Driving',
+    time: 'Nov 2024 - Dec 2024',
+    content: [
+      'Developed a system for multimodal perception and comprehension in autonomous driving, focusing on global scene understanding, local area reasoning, and actionable navigation using the CODA-LM dataset.',
+      'Enhanced the perception capabilities of LLaVA 1.5 7b by fine-tuning LoRA and incorporating additional modules to handle diverse scenes, small objects, and complex driving scenarios effectively.',
+    ]
+  },
+  {
     title: 'NTUEE LightDance - Light Effect Editor',
     time: 'Oct 2023 - Mar 2024',
     link: [
@@ -8,10 +16,9 @@ export const projects = [
     ],
     // description: 'Light effect editor for the LightDance show at NTUEE',
     content: [
-      'Built a Rust backend server from scratch to handle complex SQL manipulations for the LightDance Editor.',
-      'Developed a Blender add-on for light effect editing and 3D previewing from scratch.',
-      'Improved performance by approximately 5× compared to the previous JavaScript-based version.',
-      'Led a team of 10 members to develop the software and integrate it with the hardware.',
+      'Led a team of 10 members to develop a full-stack light effect editor, improving performance by approximately 5× compared to the previous JavaScript-based version.',
+      'Built a Rust backend server from scratch to handle complex SQL manipulations, supporting up to 10 users simultaneously editing more than 5000 LEDs and 1000 frames.',
+      'Developed a Blender add-on for light effect editing and 3D previewing from scratch, enabling real-time creation and visualization of light effects in a 3D environment.',
     ],
     tags: ['Rust', 'Python', 'MySQL', 'GraphQL', 'Async Programming', 'Blender Add-on']
   },
@@ -19,9 +26,9 @@ export const projects = [
     title: 'Automatic Frisbee Shooter',
     time: 'Sep 2023 - Dec 2023',
     content: [
-      'Developed an automatic frisbee shooter with ROS on Raspberry Pi',
-      'Implemented a PID control system to adjust the shooting parameter and robot movement.',
-      'Designed a detection system using OpenCV to detect the target and adjust the shooting direction.',
+      'Developed a fully-automated 4-Wheel-Drive frisbee shooter with ROS on Raspberry Pi.',
+      'Implemented a PID control system to adjust shooting parameters and robot movement, and designed a mechanism for high-speed frisbee launching.',
+      'Designed a detection system using OpenCV to track targets and adjust shooting direction according to frisbee dynamics.',
     ],
     tags: ['Embedded Systems', 'OpenCV', 'PID Control'],
   },
@@ -29,8 +36,8 @@ export const projects = [
     title: 'FPGA Laser Shooter',
     time: 'May 2023 - June 2023',
     content: [
-      'Designed a laser shooting system written in Verilog on FPGA, integrated with cricle detection and shooting control.',
-      'Implemented a pipelined architecture for real-time image processing.',
+      'Designed a laser shooting system written in Verilog on FPGA, integrated with target detection and shooting mechanism control.',
+      'Implemented a pipelined architecture for real-time Hough Circle Transform to detect targets in images.',
     ],
     tags: ['FPGA', 'Verilog', 'Image Processing'],
   },
@@ -42,9 +49,8 @@ export const projects = [
     ],
     // description: 'Automatic music sheet page turner in a 24-hour hackathon',
     content: [
-      'Implemented real-time audio recording and processing on an STM32 board using DMA for the I2S protocol and the CMSIS DSP library.',
-      'Developed a dynamic time warping (DTW) algorithm on the STM32 to match the music sheet with the music being played.',
-      'Integrated the system with a servo motor to automatically turn music sheet pages.',
+      'Implemented real-time audio recording and processing on an STM32 board using DMA for the I2S protocol and the CMSIS DSP library for SFFT and Mel spectrogram analysis.',
+      'Developed a dynamic time warping (DTW) algorithm on the STM32 to match music sheets with played audio, enabling automatic page turning via servo motor.',
     ],
     tags: ['Embedded Systems', 'Real-Time Audio Processing', 'Music Tracking with DTW']
   },
@@ -69,7 +75,7 @@ export const projects = [
     ],
     // description: 'Entrance recording system for NTUEE MakerSpace',
     content: [
-      'Designed a physical system in C++ to record students’ entrances to the MakerSpace.',
+      'Designed a physical system in C++ to record students\' entrances to our department\'s open lab.',
       'Integrated an ID card scanner, LCD screen, Raspberry Pi, and server for instructions and backend management.',
     ],
     tags: ['Raspberry Pi', 'C++ Peripheral Control']
@@ -82,8 +88,8 @@ export const projects = [
     ],
     // description: 'Digital Controller Design for Furuta Pendulum',
     content: [
-      'Designed and analyzed a LQR controller for the linearized system of Furuta pendulum in Simulink simulation.',
-      'Implemented the controller on a real device and achieved a stable and accurate control performance.',
+      'Designed and analyzed an LQR controller for the linearized system of a Furuta pendulum in Simulink.',
+      'Implemented the controller on physical hardware and achieved stable, accurate control performance.',
     ],
     tags: ['Control System Design', 'Simulink']
   },
@@ -92,8 +98,7 @@ export const projects = [
     time: '2020',
     // description: 'Gate System for Identifying People by Ear Shape',
     content: [
-      'Designed a scan system to identify people by ear shape using Yolo.',
-      'Achieved identification without taking off masks during the COVID-19 pandemic.',
+      'Designed a scanning system to identify people by ear shape using YOLO, enabling identification without mask removal during the COVID-19 pandemic.',
     ],
     tags: ['Object Detection', 'Yolo', 'Python']
   },
@@ -106,9 +111,8 @@ export const projects = [
     ],
     // description: 'Shopping cart system for indoor navigation and automatic checkout',
     content: [
-      'Developed a shopping cart mobile application navigating customers to the desired items in a store.',
-      'Implemented precise indoor localization using BLE beacons and filter algorithms.',
-      'Aquired Taiwan\'s utility model patent for the system.',
+      'Developed a shopping cart mobile application that guides customers to desired items in indoor markets by implementing precise localization using BLE beacons and filter algorithms.',
+      'Acquired Taiwan\'s utility model patent for the system as the patent owner.',
     ],
     tags: ['Mobile App', 'Indoor Navigation', 'BLE', 'Patent']
   },

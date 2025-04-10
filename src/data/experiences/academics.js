@@ -8,8 +8,8 @@ export const academics = [
     ],
     // description: '3D vision learning research',
     content: [
-      "Undergraduate research student at Prof. Frank Wang's Vision & Learning Lab, focusing on 3D scene reconstruction tasks.",
-      'Currently researching 4D Gaussian Splatting for dynamic scene reconstruction.',
+      "Conducting research as an undergraduate student at Prof. Frank Wang's Vision & Learning Lab, focusing on 3D scene reconstruction tasks.",
+      'Currently investigating 4D Gaussian Splatting techniques for dynamic scene reconstruction.',
     ],
     tags: ['Computer Vision', 'Dynamic Scene Reconstruction', 'Machine Learning']
   },
@@ -22,7 +22,7 @@ export const academics = [
     ],
     // description: 'Reinforcement learning research for robotics',
     content: [
-      "Undergraduate research student at Prof. Shao-Hua Sun's Robot Learning Lab, focusing on imitation learning and sim-to-real transfer of robots.",
+      "Conducting research as an undergraduate student at Prof. Shao-Hua Sun's Robot Learning Lab, focusing on imitation learning and sim-to-real transfer for robotic systems.",
     ],
     tags: ['Reinforcement Learning', 'Robotics', 'Imitation Learning', 'Sim-to-Real Transfer']
   },
@@ -32,8 +32,8 @@ export const academics = [
     time: '2023 - Present',
     link: [],
     content: [
-      '2023-2024 Spring - Cornerstone EECS Design and Implementation<br>Assisted first-year EE students in their first project integrating hardware and software, including Arduino, Python, algorithms and system engineering.',
-      '2025 Spring - Signals and Systems',
+      '2023-2024 Spring - Cornerstone EECS Design and Implementation<br>Assisted first-year EE students in their first project integrating hardware and software, including Arduino, Python, algorithms, and system engineering.',
+      '2024 Spring - Signals and Systems<br>Supporting students with signal processing concepts, Fourier transforms, and system analysis techniques.',
     ],
     tags: ['Teaching', 'Electrical Engineering']
   },
@@ -47,7 +47,7 @@ export const academics = [
     // description: 'Accelerating post-quantum cryptography (PQC) algorithms',
     content: [
       'Reconstructed a post-quantum cryptography algorithm using the AVX256 instruction set in C++ on the x86-64 architecture.',
-      'Achieved a 5× speedup compared to the original implementation while ensuring constant execution time.',
+      'Achieved a 5× performance improvement compared to the original implementation while maintaining constant execution time for security.',
     ],
     tags: ['C++', 'SIMD', 'Cryptography']
   },
