@@ -10,13 +10,19 @@ export default function Experiences({ title: sectionTitle, data, selectedTitles 
   return (
     <div className="flex flex-col items-end justify-center h-fit w-11/12">
 
-      {data.map(({ title, highlight, time, link, description, content, tags }, idx) => (
+      {data.map(({ title, titleFootnote, highlight, time, link, description, content, tags }, idx) => (
         <React.Fragment key={idx}>
-          <div className="flex items-stretch h-fit w-full">
+          <div className="flex items-center justify-between h-fit w-full">
             <h2 className="font-sans text-lg">{title}</h2>
+            {
+              titleFootnote && titleFootnote.length > 0 &&
+              <span className="text-neutral-500 text-sm ml-1">
+                {titleFootnote}
+              </span>
+            }
           </div>
           <div className="flex items-stretch h-fit w-full mb-1 ">
-            <div className="w-[18%] flex flex-col mt-1">
+            <div className="w-[22%] flex flex-col mt-1">
               {
                 (highlight && highlight !== '') &&
                 <p className="text-left font-sans text-sm text-orange-800">
@@ -45,7 +51,7 @@ export default function Experiences({ title: sectionTitle, data, selectedTitles 
                 }
               </p>
             </div>
-            <div className="w-[82%] flex flex-col justify-between">
+            <div className="w-[78%] flex flex-col justify-between">
               {
                 // (description && description !== '') &&
                 // <p className="text-left font-sans text-lg text-neutral-800">

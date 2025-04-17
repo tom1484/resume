@@ -1,54 +1,43 @@
 export const academics = [
   {
-    title: 'NTU Vision & Learning Lab',
-    highlight: '',
-    time: 'Jul 2024 - Present',
+    title: "NTU Vision & Learning Lab",
+    titleFootnote: "Prof. Frank Wang",
+    highlight: "",
+    time: "Jul 2024 - Present",
     link: [
-      { text: 'Presentations', url: 'https://docs.google.com/presentation/d/1BW9Sg_MG2R7otxRP0OfcDCt2AEdg2iP72PS-oatu98o/edit?usp=sharing' },
+      { text: "Presentations", url: "https://docs.google.com/presentation/d/1BW9Sg_MG2R7otxRP0OfcDCt2AEdg2iP72PS-oatu98o/edit?usp=sharing" },
     ],
-    // description: '3D vision learning research',
+    // description: "3D vision learning research",
     content: [
-      "Conducting research as an undergraduate student at Prof. Frank Wang's Vision & Learning Lab, focusing on 3D scene reconstruction tasks.",
-      'Currently investigating 4D Gaussian Splatting techniques for dynamic scene reconstruction.',
+      "Undergraduate student at Prof. Frank Wang's Vision & Learning Lab, focusing on 3D scene reconstruction tasks.",
+      "Currently researching on generalizable 4D Gaussian Splatting pipeline for dynamic scene reconstruction.",
     ],
-    tags: ['Computer Vision', 'Dynamic Scene Reconstruction', 'Machine Learning']
+    tags: ["Computer Vision", "Dynamic Scene Reconstruction", "Machine Learning"]
   },
   {
-    title: 'NTU Robot Learning Lab',
-    highlight: '',
-    time: 'Jul 2023 - Present',
+    title: "NTU Robot Learning Lab",
+    titleFootnote: "Prof. Shao-Hua Sun",
+    highlight: "",
+    time: "Jul 2023 - Present",
     link: [
-      { text: 'Meetings', url: 'https://docs.google.com/presentation/d/1Xv6ifq5p94_QihFSLVEMl6-prNVrInDqNQFzD4wy_0s/edit?usp=sharing' },
+      { text: "Meetings", url: "https://docs.google.com/presentation/d/1Xv6ifq5p94_QihFSLVEMl6-prNVrInDqNQFzD4wy_0s/edit?usp=sharing" },
     ],
-    // description: 'Reinforcement learning research for robotics',
+    // description: "Reinforcement learning research for robotics",
     content: [
-      "Conducting research as an undergraduate student at Prof. Shao-Hua Sun's Robot Learning Lab, focusing on imitation learning and sim-to-real transfer for robotic systems.",
+      "Undergraduate student at Prof. Shao-Hua Sun's Robot Learning Lab, focusing on imitation learning and sim-to-real transfer for robotic systems.",
+      "Currently working on skill discovery from videos project using image flow as action primitives."
     ],
-    tags: ['Reinforcement Learning', 'Robotics', 'Imitation Learning', 'Sim-to-Real Transfer']
+    tags: ["Reinforcement Learning", "Robotics", "Imitation Learning", "Sim-to-Real Transfer"]
   },
   {
-    title: 'Teaching Assistant',
-    highlight: '',
-    time: '2023 - Present',
+    title: "Teaching Assistant",
+    highlight: "",
+    time: "2023 - Present",
     link: [],
     content: [
-      '2023-2024 Spring - Cornerstone EECS Design and Implementation<br>Assisted first-year EE students in their first project integrating hardware and software, including Arduino, Python, algorithms, and system engineering.',
-      '2024 Spring - Signals and Systems<br>Supporting students with signal processing concepts, Fourier transforms, and system analysis techniques.',
+      "2023-2024 Spring - Cornerstone EECS Design and Implementation<br>Assisted first-year EE students in their first project integrating hardware and software, including Arduino, Python, algorithms, and system engineering.",
+      "2024 Spring - Signals and Systems<br>Supporting students with signal processing concepts, Fourier transforms, and system analysis techniques.",
     ],
-    tags: ['Teaching', 'Electrical Engineering']
-  },
-  {
-    title: 'IIS Summer Intern - Accelerated Post-Quantum Cryptography',
-    highlight: '',
-    time: 'Jul 2023 - Aug 2023',
-    link: [
-      { text: 'Project', url: 'https://github.com/IIS-summer-2023/meds-simd-highlevel' },
-    ],
-    // description: 'Accelerating post-quantum cryptography (PQC) algorithms',
-    content: [
-      'Reconstructed a post-quantum cryptography algorithm using the AVX256 instruction set in C++ on the x86-64 architecture.',
-      'Achieved a 5× performance improvement compared to the original implementation while maintaining constant execution time for security.',
-    ],
-    tags: ['C++', 'SIMD', 'Cryptography']
+    tags: ["Teaching", "Electrical Engineering"]
   },
 ];
