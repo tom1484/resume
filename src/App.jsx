@@ -1,15 +1,17 @@
 import Title from './components/title';
 import PersonalInfo from './components/personalInfo';
+import Publications from './components/publications';
 import Education from './components/education';
 import Experiences from './components/experiences';
 import Skills from './components/skills';
 
 import { personalInfo } from './data/personal_info';
 import { education } from './data/education';
-import { projects } from './data/experiences/projects';
-import { competitions } from './data/experiences/competitions';
 import { academics } from './data/experiences/academics';
 import { internships } from './data/experiences/internships.js';
+import { publications } from './data/publications';
+import { competitions } from './data/experiences/competitions';
+import { projects } from './data/experiences/projects';
 import { extracurriculars } from './data/experiences/extracurricular';
 import { skills } from './data/skills';
 
@@ -36,6 +38,9 @@ function App() {
       {/* Academic Experiences Section - Display research, teaching, or other academic activities */}
       <Title title="Internship" />
       <Experiences title="Internship" data={internships} selectedTitles={[]} />
+
+      <Title title="Publications" />
+      <Publications data={publications} />
 
       {/* Competitions Section - Showcase participation and achievements */}
       <Title title="Competition Experience" />
