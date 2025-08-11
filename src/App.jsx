@@ -1,66 +1,54 @@
+import React from 'react';
 import Title from './components/title';
-import PersonalInfo from './components/personalInfo';
-import Publications from './components/publications';
-import Education from './components/education';
-import Experiences from './components/experiences';
-import Skills from './components/skills';
-
-import { personalInfo } from './data/personal_info';
-import { education } from './data/education';
-import { academics } from './data/experiences/academics';
-import { internships } from './data/experiences/internships.js';
-import { publications } from './data/publications';
-import { competitions } from './data/experiences/competitions';
-import { projects } from './data/experiences/projects';
-import { extracurriculars } from './data/experiences/extracurricular';
-import { skills } from './data/skills';
+import DataValidationDemo from './components/DataValidationDemo';
+import { theme } from './config/theme';
+import { getComponent } from './config/componentRegistry';
+import { getData } from './data';
+import { ConfigProvider, useConfig } from './contexts/ConfigContext';
 
 // TODO:
 //   Certifications (TOEFL, GRE, etc.)
 
-function App() {
+function AppContent() {
+  const { getVisibleSections } = useConfig();
+  
+  const renderSection = (section) => {
+    const Component = getComponent(section.component);
+    if (!Component) return null;
+
+    const data = getData(section.dataKey);
+    if (!data) return null;
+
+    return (
+      <React.Fragment key={section.id}>
+        {section.title && <Title title={section.title} />}
+        <Component data={data} {...section.props} />
+      </React.Fragment>
+    );
+  };
+
   return (
-    <div className="h-full flex flex-col items-center">
+    <div className={theme.components.container.main}>
+      {/* Data Management Demo Panel */}
+      <DataValidationDemo />
+
       {/* Top margin */}
-      <div className="w-11/12 mb-3"></div>
+      <div className={`${theme.layout.containerWidth} ${theme.layout.margins.top}`}></div>
 
-      {/* Personal Information Section */}
-      <PersonalInfo data={personalInfo} />
-
-      {/* Education Section - Display academic background */}
-      <Title title="Education" />
-      <Education data={education} />
-
-      {/* Academic Experiences Section - Display research, teaching, or other academic activities */}
-      <Title title="Academic Experience" />
-      <Experiences title="Academic Experience" data={academics} selectedTitles={[]} />
-
-      {/* Academic Experiences Section - Display research, teaching, or other academic activities */}
-      <Title title="Internship" />
-      <Experiences title="Internship" data={internships} selectedTitles={[]} />
-
-      <Title title="Publications" />
-      <Publications data={publications} />
-
-      {/* Competitions Section - Showcase participation and achievements */}
-      <Title title="Competition Experience" />
-      <Experiences title="Competition Experience" data={competitions} selectedTitles={[]} />
-
-      {/* Projects Section - Highlight personal or professional projects */}
-      <Title title="Project Experience" />
-      <Experiences title="Project Experience" data={projects} selectedTitles={[]} />
-
-      {/* Extracurricular Section - Hobbies and additional activities */}
-      <Title title="Extracurricular" />
-      <Experiences title="Extracurricular" data={extracurriculars} selectedTitles={[]} />
-
-      {/* Skills Section - List programming languages, tools, and technologies */}
-      <Title title="Technical Skills" />
-      <Skills data={skills} />
+      {/* Dynamic sections rendering */}
+      {getVisibleSections().map(renderSection)}
 
       {/* Bottom margin */}
-      <div className="w-11/12 mb-3"></div>
+      <div className={`${theme.layout.containerWidth} ${theme.layout.margins.bottom}`}></div>
     </div>
+  );
+}
+
+function App() {
+  return (
+    <ConfigProvider>
+      <AppContent />
+    </ConfigProvider>
   );
 }
 
