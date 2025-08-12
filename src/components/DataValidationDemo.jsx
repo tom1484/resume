@@ -1,13 +1,29 @@
 import React, { useState, useEffect } from 'react';
 import { useDataValidation } from '../hooks/useResumeData';
 import { useConfig } from '../contexts/ConfigContext';
+import { getData } from '../data';
 
 export default function DataValidationDemo() {
   const [isVisible, setIsVisible] = useState(true);
+  const [expandedSections, setExpandedSections] = useState({});
+  const [dragState, setDragState] = useState({
+    draggedSection: null,
+    draggedItem: null,
+    draggedSectionId: null,
+    dragOverSection: null,
+    dragOverItem: null,
+    dragOverSectionId: null
+  });
   const { validationResult, validating, revalidate, isValid } = useDataValidation();
   const { 
     sectionVisibility, 
     toggleSection, 
+    itemVisibility,
+    toggleItem,
+    getSectionItemsWithVisibility,
+    getOrderedSections,
+    reorderSections,
+    reorderItems,
     leftColumnRatio, 
     updateLeftColumnRatio,
     allSections 
@@ -25,6 +41,97 @@ export default function DataValidationDemo() {
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
   }, []);
+
+  // Drag and drop handlers
+  const handleSectionDragStart = (e, sectionId, sectionIndex) => {
+    setDragState(prev => ({
+      ...prev,
+      draggedSection: sectionIndex,
+      draggedSectionId: sectionId
+    }));
+    e.dataTransfer.effectAllowed = 'move';
+    e.dataTransfer.setData('text/plain', ''); // For Firefox
+  };
+
+  const handleSectionDragOver = (e, sectionIndex) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+    setDragState(prev => ({
+      ...prev,
+      dragOverSection: sectionIndex
+    }));
+  };
+
+  const handleSectionDragLeave = () => {
+    setDragState(prev => ({
+      ...prev,
+      dragOverSection: null
+    }));
+  };
+
+  const handleSectionDrop = (e, dropIndex) => {
+    e.preventDefault();
+    const { draggedSection } = dragState;
+    if (draggedSection !== null && draggedSection !== dropIndex) {
+      reorderSections(draggedSection, dropIndex);
+    }
+    setDragState({
+      draggedSection: null,
+      draggedItem: null,
+      draggedSectionId: null,
+      dragOverSection: null,
+      dragOverItem: null,
+      dragOverSectionId: null
+    });
+  };
+
+  const handleItemDragStart = (e, sectionId, itemKey, itemIndex) => {
+    setDragState(prev => ({
+      ...prev,
+      draggedItem: itemIndex,
+      draggedSectionId: sectionId
+    }));
+    e.dataTransfer.effectAllowed = 'move';
+    e.dataTransfer.setData('text/plain', '');
+    e.stopPropagation();
+  };
+
+  const handleItemDragOver = (e, sectionId, itemIndex) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+    setDragState(prev => ({
+      ...prev,
+      dragOverItem: itemIndex,
+      dragOverSectionId: sectionId
+    }));
+    e.stopPropagation();
+  };
+
+  const handleItemDragLeave = (e) => {
+    setDragState(prev => ({
+      ...prev,
+      dragOverItem: null,
+      dragOverSectionId: null
+    }));
+    e.stopPropagation();
+  };
+
+  const handleItemDrop = (e, sectionId, dropIndex) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const { draggedItem, draggedSectionId } = dragState;
+    if (draggedItem !== null && draggedSectionId === sectionId && draggedItem !== dropIndex) {
+      reorderItems(sectionId, draggedItem, dropIndex);
+    }
+    setDragState({
+      draggedSection: null,
+      draggedItem: null,
+      draggedSectionId: null,
+      dragOverSection: null,
+      dragOverItem: null,
+      dragOverSectionId: null
+    });
+  };
 
   if (!isVisible) {
     return null;
@@ -69,7 +176,7 @@ export default function DataValidationDemo() {
       <div style={{ marginBottom: '15px' }}>
         <strong>Section Visibility:</strong>
         <div style={{ 
-          maxHeight: '120px', 
+          maxHeight: '200px', 
           overflow: 'auto',
           background: '#fff',
           padding: '8px',
@@ -77,23 +184,148 @@ export default function DataValidationDemo() {
           borderRadius: '4px',
           marginTop: '5px'
         }}>
-          {allSections.map(section => (
-            <label key={section.id} style={{ 
-              display: 'flex', 
-              alignItems: 'center',
-              fontSize: '11px',
-              marginBottom: '4px',
-              cursor: 'pointer'
-            }}>
-              <input
-                type="checkbox"
-                checked={sectionVisibility[section.id] || false}
-                onChange={() => toggleSection(section.id)}
-                style={{ marginRight: '6px' }}
-              />
-              {section.title || section.id}
-            </label>
-          ))}
+          {getOrderedSections().map((section, sectionIndex) => {
+            const data = getData(section.dataKey);
+            const hasItems = Array.isArray(data) && data.length > 0;
+            const isExpanded = expandedSections[section.id];
+            const itemsData = hasItems ? getSectionItemsWithVisibility(section.id) : [];
+            const isDraggedSection = dragState.draggedSection === sectionIndex;
+            const isDragOver = dragState.dragOverSection === sectionIndex;
+
+            return (
+              <div 
+                key={section.id} 
+                style={{ 
+                  marginBottom: '6px',
+                  opacity: isDraggedSection ? 0.5 : 1,
+                  backgroundColor: isDragOver ? '#e3f2fd' : 'transparent',
+                  border: isDragOver ? '2px dashed #2196f3' : '2px solid transparent',
+                  borderRadius: '4px',
+                  padding: '2px'
+                }}
+                draggable={true}
+                onDragStart={(e) => handleSectionDragStart(e, section.id, sectionIndex)}
+                onDragOver={(e) => handleSectionDragOver(e, sectionIndex)}
+                onDragLeave={handleSectionDragLeave}
+                onDrop={(e) => handleSectionDrop(e, sectionIndex)}
+              >
+                {/* Section level checkbox */}
+                <div style={{ display: 'flex', alignItems: 'center' }}>
+                  <span style={{ 
+                    cursor: 'grab',
+                    fontSize: '10px',
+                    color: '#666',
+                    marginRight: '4px',
+                    userSelect: 'none'
+                  }}>⋮⋮</span>
+                  <label style={{ 
+                    display: 'flex', 
+                    alignItems: 'center',
+                    fontSize: '11px',
+                    cursor: 'pointer',
+                    flex: 1
+                  }}>
+                    <input
+                      type="checkbox"
+                      checked={sectionVisibility[section.id] || false}
+                      onChange={() => toggleSection(section.id)}
+                      style={{ marginRight: '6px' }}
+                    />
+                    <strong>{section.title || section.id}</strong>
+                  </label>
+                  
+                  {/* Expand/collapse button for sections with items */}
+                  {hasItems && (
+                    <button
+                      onClick={() => setExpandedSections(prev => ({
+                        ...prev,
+                        [section.id]: !prev[section.id]
+                      }))}
+                      style={{
+                        background: 'none',
+                        border: 'none',
+                        fontSize: '10px',
+                        cursor: 'pointer',
+                        padding: '2px 6px',
+                        color: '#666'
+                      }}
+                      title={isExpanded ? 'Collapse' : 'Expand'}
+                    >
+                      {isExpanded ? '▼' : '▶'}
+                    </button>
+                  )}
+                </div>
+
+                {/* Item level checkboxes */}
+                {hasItems && isExpanded && (
+                  <div style={{ marginLeft: '20px', marginTop: '4px' }}>
+                    <div style={{ marginBottom: '4px' }}>
+                      <span style={{ fontSize: '9px', color: '#666' }}>
+                        ({itemsData.filter(item => item.visible).length}/{itemsData.length} visible)
+                      </span>
+                    </div>
+                    
+                    {itemsData.map((item, itemIndex) => {
+                      const isDraggedItem = dragState.draggedItem === itemIndex && dragState.draggedSectionId === section.id;
+                      const isDragOverItem = dragState.dragOverItem === itemIndex && dragState.dragOverSectionId === section.id;
+
+                      return (
+                        <div
+                          key={item.itemKey}
+                          style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            fontSize: '10px',
+                            marginBottom: '2px',
+                            opacity: isDraggedItem ? 0.5 : 1,
+                            backgroundColor: isDragOverItem ? '#fff3e0' : 'transparent',
+                            border: isDragOverItem ? '1px dashed #ff9800' : '1px solid transparent',
+                            borderRadius: '2px',
+                            padding: '1px 2px'
+                          }}
+                          draggable={true}
+                          onDragStart={(e) => handleItemDragStart(e, section.id, item.itemKey, itemIndex)}
+                          onDragOver={(e) => handleItemDragOver(e, section.id, itemIndex)}
+                          onDragLeave={handleItemDragLeave}
+                          onDrop={(e) => handleItemDrop(e, section.id, itemIndex)}
+                        >
+                          <span style={{ 
+                            cursor: 'grab',
+                            fontSize: '8px',
+                            color: '#999',
+                            marginRight: '4px',
+                            userSelect: 'none'
+                          }}>⋮</span>
+                          <label style={{ 
+                            display: 'flex', 
+                            alignItems: 'center',
+                            cursor: 'pointer',
+                            color: item.visible ? '#000' : '#666',
+                            flex: 1
+                          }}>
+                            <input
+                              type="checkbox"
+                              checked={item.visible}
+                              onChange={() => toggleItem(section.id, item.itemKey)}
+                              style={{ marginRight: '6px' }}
+                            />
+                            <span style={{ 
+                              overflow: 'hidden',
+                              textOverflow: 'ellipsis',
+                              whiteSpace: 'nowrap',
+                              maxWidth: '200px'
+                            }}>
+                              {item.title || item.itemKey}
+                            </span>
+                          </label>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+            );
+          })}
         </div>
       </div>
 

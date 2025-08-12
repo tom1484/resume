@@ -10,14 +10,14 @@ import { ConfigProvider, useConfig } from './contexts/ConfigContext';
 //   Certifications (TOEFL, GRE, etc.)
 
 function AppContent() {
-  const { getVisibleSections } = useConfig();
+  const { getVisibleSections, getVisibleItems } = useConfig();
   
   const renderSection = (section) => {
     const Component = getComponent(section.component);
     if (!Component) return null;
 
-    const data = getData(section.dataKey);
-    if (!data) return null;
+    const data = getVisibleItems(section.id);
+    if (!data || (Array.isArray(data) && data.length === 0)) return null;
 
     return (
       <React.Fragment key={section.id}>
