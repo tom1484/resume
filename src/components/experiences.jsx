@@ -3,6 +3,7 @@ import Container from './layout/Container';
 import ExperienceItem from './composed/ExperienceItem';
 import SplitLine from './splitLine';
 import { filterDataByTitles } from '../utils';
+import { theme } from '../config/theme';
 
 export default function Experiences({ title: sectionTitle, data, selectedTitles }) {
   if (selectedTitles && selectedTitles.length > 0) {
@@ -16,7 +17,7 @@ export default function Experiences({ title: sectionTitle, data, selectedTitles 
           <div className="w-full">
             <ExperienceItem {...item} />
           </div>
-          {idx < data.length - 1 && <SplitLine width="[80%]" weight="200" />}
+          {idx < data.length - 1 && <div className={theme.layout.spacing.itemGap}><SplitLine width="[80%]" weight="200" /></div>}
         </React.Fragment>
       ))}
     </Container>

@@ -9,6 +9,68 @@
   }
 }
 
+/* Print styles to keep components grouped together */
+@media print {
+  /* Keep experience items together */
+  [class*="ExperienceItem"], 
+  [class*="experienceItem"],
+  /* Keep publication items together */
+  [class*="PublicationItem"],
+  [class*="publicationItem"],
+  /* Keep two-column layouts together */
+  [class*="TwoColumnLayout"] > div,
+  /* Keep section content together */
+  section,
+  article {
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+  
+  /* Keep experience and publication groups together */
+  [class*="experiences"] > div,
+  [class*="publications"] > div,
+  [class*="education"] > div,
+  [class*="skills"] > div {
+    page-break-inside: avoid;
+    break-inside: avoid;
+    page-break-after: avoid;
+    break-after: avoid;
+  }
+  
+  /* Avoid breaking between title and content */
+  h1, h2, h3, h4, h5, h6 {
+    page-break-after: avoid;
+    break-after: avoid;
+  }
+  
+  /* Keep Title component with following content using custom class */
+  .print-keep-with-next {
+    page-break-after: avoid;
+    break-after: avoid;
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+  
+  /* Keep content that follows title together with title */
+  .print-keep-with-next + * {
+    page-break-before: avoid;
+    break-before: avoid;
+  }
+  
+  /* Additional safety for title elements */
+  .print-keep-with-next h2,
+  .print-keep-with-next hr {
+    page-break-after: avoid;
+    break-after: avoid;
+  }
+  
+  /* Keep lists together */
+  ul, ol {
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+}
+
 /* body { */
 /*   margin: 0; */
 /*   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", */

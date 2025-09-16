@@ -11,6 +11,7 @@ export default function ExperienceItem({
   titleFootnote,
   highlight,
   time,
+  location,
   link = [],
   content = [],
   tags = [],
@@ -29,6 +30,12 @@ export default function ExperienceItem({
       )}
       <p className={theme.components.experiences.timeText}>
         {time}
+        {location && (
+          <>
+            <br />
+            {location}
+          </>
+        )}
         {showLinks && link && link.length > 0 && (
           <>
             <br />

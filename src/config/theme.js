@@ -8,7 +8,7 @@ export const theme = {
     },
     spacing: {
       sectionGap: 'mb-3',
-      itemGap: 'my-2',
+      itemGap: 'my-1',
       smallGap: 'mt-1',
       mediumGap: 'ml-5',
       padding: 'p-2',

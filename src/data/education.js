@@ -4,7 +4,7 @@ export const education = [
     title: 'National Taiwan University',
     content: [
       ['Major', 'Electrical Engineering B.S.'],
-      ['Overall GPA', '3.97 / 4.30'],
+      ['Overall GPA', '3.83 / 4.0'],
       // ['CS Courses', 'Algorithm, Web Programming, Computer Architecture, Computer Graphics, Machine Learning, Reinforcement Learning']
     ]
   }

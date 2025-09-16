@@ -6,6 +6,7 @@ import { getData } from '../data';
 export default function DataValidationDemo() {
   const [isVisible, setIsVisible] = useState(true);
   const [expandedSections, setExpandedSections] = useState({});
+  const [importStatus, setImportStatus] = useState('');
   const [dragState, setDragState] = useState({
     draggedSection: null,
     draggedItem: null,
@@ -24,6 +25,8 @@ export default function DataValidationDemo() {
     getOrderedSections,
     reorderSections,
     reorderItems,
+    exportConfiguration,
+    importConfiguration,
     leftColumnRatio, 
     updateLeftColumnRatio,
     allSections 
@@ -131,6 +134,28 @@ export default function DataValidationDemo() {
       dragOverItem: null,
       dragOverSectionId: null
     });
+  };
+
+  // Import/Export handlers
+  const handleExport = () => {
+    exportConfiguration();
+  };
+
+  const handleImportFile = async (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      try {
+        setImportStatus('Importing...');
+        await importConfiguration(file);
+        setImportStatus('✓ Imported successfully!');
+        setTimeout(() => setImportStatus(''), 3000);
+      } catch (error) {
+        setImportStatus(`✗ Error: ${error.message}`);
+        setTimeout(() => setImportStatus(''), 5000);
+      }
+      // Reset file input
+      event.target.value = '';
+    }
   };
 
   if (!isVisible) {
@@ -326,6 +351,71 @@ export default function DataValidationDemo() {
               </div>
             );
           })}
+        </div>
+      </div>
+
+      {/* Export/Import Configuration */}
+      <div style={{ marginBottom: '15px' }}>
+        <strong>Configuration:</strong>
+        <div style={{ 
+          display: 'flex', 
+          flexDirection: 'column',
+          gap: '6px',
+          marginTop: '5px'
+        }}>
+          <div style={{ display: 'flex', gap: '8px' }}>
+            <button
+              onClick={handleExport}
+              style={{
+                background: '#4caf50',
+                color: 'white',
+                border: 'none',
+                fontSize: '10px',
+                cursor: 'pointer',
+                padding: '4px 8px',
+                borderRadius: '3px',
+                flex: 1
+              }}
+              title="Export current configuration to JSON file"
+            >
+              📥 Export Config
+            </button>
+            
+            <label style={{
+              background: '#2196f3',
+              color: 'white',
+              border: 'none',
+              fontSize: '10px',
+              cursor: 'pointer',
+              padding: '4px 8px',
+              borderRadius: '3px',
+              flex: 1,
+              textAlign: 'center',
+              display: 'block'
+            }}>
+              📤 Import Config
+              <input
+                type="file"
+                accept=".json"
+                onChange={handleImportFile}
+                style={{ display: 'none' }}
+              />
+            </label>
+          </div>
+          
+          {importStatus && (
+            <div style={{
+              fontSize: '9px',
+              color: importStatus.includes('✓') ? '#4caf50' : 
+                    importStatus.includes('✗') ? '#f44336' : '#666',
+              textAlign: 'center',
+              padding: '2px',
+              backgroundColor: '#f9f9f9',
+              borderRadius: '2px'
+            }}>
+              {importStatus}
+            </div>
+          )}
         </div>
       </div>
 

@@ -162,6 +162,67 @@ export function ConfigProvider({ children }) {
     });
   };
 
+  const exportConfiguration = () => {
+    const config = {
+      version: '1.0',
+      timestamp: new Date().toISOString(),
+      sectionVisibility,
+      sectionOrder,
+      itemVisibility,
+      itemOrder,
+      leftColumnRatio
+    };
+    
+    const dataStr = JSON.stringify(config, null, 2);
+    const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+    
+    const exportFileDefaultName = `resume-config-${new Date().toISOString().split('T')[0]}.json`;
+    
+    const linkElement = document.createElement('a');
+    linkElement.setAttribute('href', dataUri);
+    linkElement.setAttribute('download', exportFileDefaultName);
+    linkElement.click();
+  };
+
+  const importConfiguration = (file) => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        try {
+          const config = JSON.parse(e.target.result);
+          
+          // Validate configuration structure
+          if (!config.version) {
+            throw new Error('Invalid configuration file: missing version');
+          }
+          
+          // Apply configuration with fallbacks
+          if (config.sectionVisibility) {
+            setSectionVisibility(config.sectionVisibility);
+          }
+          if (config.sectionOrder) {
+            setSectionOrder(config.sectionOrder);
+          }
+          if (config.itemVisibility) {
+            setItemVisibility(config.itemVisibility);
+          }
+          if (config.itemOrder) {
+            setItemOrder(config.itemOrder);
+          }
+          if (typeof config.leftColumnRatio === 'number') {
+            setLeftColumnRatio(config.leftColumnRatio);
+          }
+          
+          resolve(config);
+        } catch (error) {
+          reject(error);
+        }
+      };
+      reader.onerror = () => reject(new Error('Failed to read file'));
+      reader.readAsText(file);
+    });
+  };
+
   const value = {
     sectionVisibility,
     setSectionVisibility,
@@ -183,6 +244,8 @@ export function ConfigProvider({ children }) {
     getVisibleSections,
     getVisibleItems,
     getSectionItemsWithVisibility,
+    exportConfiguration,
+    importConfiguration,
     allSections: sectionsConfig
   };
 
