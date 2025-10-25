@@ -1,6 +1,9 @@
-import { getProfile, DEFAULT_PROFILE } from './profiles';
+import { getProfile, DEFAULT_PROFILE, experienceConfigs } from './profiles';
 import { validateResumeData } from './validation';
 import { DataTransformer } from './transformers';
+
+// Export experience configs
+export { experienceConfigs };
 
 // Current active profile
 let currentProfileId = DEFAULT_PROFILE;

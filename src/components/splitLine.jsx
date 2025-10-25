@@ -1,7 +1,13 @@
-import { theme } from '../config/theme';
+import { useTheme } from '../contexts/ThemeContext';
 
-export default function SplitLine({ width, weight }) {
+export default function SplitLine({ variant = 'default', className = '' }) {
+  const { theme } = useTheme();
+  
+  const style = variant === 'section' 
+    ? theme.components.splitLine.section 
+    : theme.components.splitLine.default;
+  
   return (
-    <hr className={`${theme.components.splitLine.default} w-${width} bg-neutral-${weight}`} />
+    <hr className={`${style} w-full ${className}`} />
   );
 }

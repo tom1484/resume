@@ -1,4 +1,4 @@
-import { theme } from '../../config/theme';
+import { useTheme } from '../../contexts/ThemeContext';
 
 // Generic Container component for consistent layout
 export default function Container({ 
@@ -10,6 +10,8 @@ export default function Container({
   className = '',
   ...props 
 }) {
+  const { theme } = useTheme();
+  
   const getContainerStyles = () => {
     let styles = [];
     

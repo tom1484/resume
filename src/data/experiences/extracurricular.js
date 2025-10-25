@@ -1,3 +1,8 @@
+// Configuration for this section
+export const extracurricularsConfig = {
+  infoLayout: 'inline', // 'inline' or 'standalone'
+};
+
 export const extracurriculars = [
   {
     title: 'NTUEE Camp - Summer Camp for High School Students',

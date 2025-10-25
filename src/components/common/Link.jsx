@@ -1,4 +1,4 @@
-import { theme } from '../../config/theme';
+import { useTheme } from '../../contexts/ThemeContext';
 
 // Generic Link component with consistent styling
 export default function Link({ 
@@ -9,6 +9,8 @@ export default function Link({
   className = '',
   ...props 
 }) {
+  const { theme } = useTheme();
+  
   // Auto-detect external links
   const isExternal = external !== null ? external : href?.startsWith('http');
   

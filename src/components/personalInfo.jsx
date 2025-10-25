@@ -1,9 +1,11 @@
 import TwoColumnLayout from './layout/TwoColumnLayout';
 import Link from './common/Link';
 import Image from './common/Image';
-import { theme } from '../config/theme';
+import { useTheme } from '../contexts/ThemeContext';
 
 export default function PersonalInfo({ data }) {
+  const { theme } = useTheme();
+  
   const info = data.info;
   const link = data.link;
   

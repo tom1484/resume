@@ -1,4 +1,4 @@
-import { theme } from '../../config/theme';
+import { useTheme } from '../../contexts/ThemeContext';
 
 // Generic Card component for consistent styling
 export default function Card({ 
@@ -11,6 +11,8 @@ export default function Card({
   shadow = false,
   ...props 
 }) {
+  const { theme } = useTheme();
+  
   const getCardStyles = () => {
     let styles = [];
     

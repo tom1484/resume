@@ -1,4 +1,4 @@
-import { theme } from '../../config/theme';
+import { useTheme } from '../../contexts/ThemeContext';
 
 // Generic Image component with consistent styling and loading states
 export default function Image({ 
@@ -13,6 +13,8 @@ export default function Image({
   onError = null,
   ...props 
 }) {
+  const { theme } = useTheme();
+  
   const getImageStyles = () => {
     let styles = [];
     

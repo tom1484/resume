@@ -1,6 +1,11 @@
+// Configuration for this section
+export const competitionsConfig = {
+  infoLayout: 'inline', // 'inline' or 'standalone'
+};
+
 export const competitions = [
   {
-    title: 'CPLC Lander Challenge - Student-led Self-landing Rocket Competition',
+    title: 'CPLC Lander Challenge - Student Self-landing Rocket',
     time: 'Nov 2023 - Present',
     link: [
       { text: 'Official', url: 'https://landerchallenge.space/' },

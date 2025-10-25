@@ -1,6 +1,8 @@
-import { theme } from '../config/theme';
+import { useTheme } from '../contexts/ThemeContext';
 
 export default function Title({ title }) {
+  const { theme } = useTheme();
+  
   return (
     <div className={`${theme.components.title.container} ${theme.layout.containerWidth} print-keep-with-next`}>
       <div className={theme.components.title.titleWrapper}>

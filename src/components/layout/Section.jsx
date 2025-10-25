@@ -1,6 +1,6 @@
 import React from 'react';
 import Container from './Container';
-import { theme } from '../../config/theme';
+import { useTheme } from '../../contexts/ThemeContext';
 
 // Generic Section wrapper component
 export default function Section({ 
@@ -14,6 +14,8 @@ export default function Section({
   spacing = 'default',
   ...props 
 }) {
+  const { theme } = useTheme();
+  
   const getSectionSpacing = () => {
     switch (spacing) {
       case 'none':

@@ -1,3 +1,8 @@
+// Configuration for this section
+export const academicsConfig = {
+  infoLayout: 'standalone', // 'inline' or 'standalone'
+};
+
 export const academics = [
   {
     title: "NTU Vision & Learning Lab",

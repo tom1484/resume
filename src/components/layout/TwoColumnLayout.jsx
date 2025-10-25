@@ -1,4 +1,4 @@
-import { theme } from '../../config/theme';
+import { useTheme } from '../../contexts/ThemeContext';
 import { useConfig } from '../../contexts/ConfigContext';
 
 // Two-column layout component used in experiences, publications, education
@@ -12,6 +12,7 @@ export default function TwoColumnLayout({
   className = '',
   ...props 
 }) {
+  const { theme } = useTheme();
   const { leftColumnRatio } = useConfig();
   const getLayoutStyles = () => {
     let styles = ['flex h-fit w-full'];

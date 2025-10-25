@@ -1,3 +1,8 @@
+// Configuration for this section
+export const internshipsConfig = {
+  infoLayout: 'standalone', // 'inline' or 'standalone'
+};
+
 export const internships = [
   {
     title: "IIS Summer Intern - Accelerated Post-Quantum Cryptography",
@@ -23,7 +28,7 @@ export const internships = [
       { text: "Company", url: "https://www.ambarella.com/" },
     ],
     content: [
-      "Refactored and modularized the legacy AI Image Signal Processing (AISP) motion detection codebase, improving readability, maintainability, and enabling faster experimentation with new ML modules.",
+      // "Refactored and modularized the legacy AI Image Signal Processing (AISP) motion detection codebase, improving readability, maintainability, and enabling faster experimentation with new ML modules.",
       "Integrated ParamNet into the motion detection CNN architecture, designing convolutional LoRA adapters conditioned on ISO and shutter ratio embeddings to dynamically adapt network weights for different camera settings.",
       "Developed a pre-training and fine-tuning pipeline across varying ISO/shutter ratios, reducing redundant training runs by ~20% and enabling efficient adaptation to narrower ranges of settings.",
       "Significantly improved training stability: reduced the variance of evaluation loss fluctuations by over 10× compared to the baseline, yielding smoother convergence and more reliable model performance.",

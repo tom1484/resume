@@ -1,5 +1,5 @@
 import React from 'react';
-import { theme } from '../../config/theme';
+import { useTheme } from '../../contexts/ThemeContext';
 
 // Generic List component for various list types
 export default function List({ 
@@ -11,12 +11,14 @@ export default function List({
   renderItem = null,
   ...props 
 }) {
+  const { theme } = useTheme();
+  
   if (!items || !Array.isArray(items)) return null;
 
   const getListStyles = () => {
     switch (variant) {
       case 'bulleted':
-        return `${theme.components.experiences.list} overflow-hidden`;
+        return `${theme.components.experiences.list} overflow-hidden pl-5`;
       case 'inline':
         return 'flex flex-wrap gap-2 overflow-hidden';
       case 'vertical':

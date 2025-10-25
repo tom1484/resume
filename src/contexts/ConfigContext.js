@@ -25,7 +25,8 @@ export function ConfigProvider({ children }) {
     sectionsConfig.forEach(section => {
       const data = getData(section.dataKey);
       if (Array.isArray(data)) {
-        initial[section.id] = data.map((item, index) => item.title || `item-${index}`);
+        // Use index as stable identifier instead of title
+        initial[section.id] = data.map((item, index) => index);
       }
     });
     return initial;
@@ -39,8 +40,8 @@ export function ConfigProvider({ children }) {
       if (Array.isArray(data)) {
         initial[section.id] = {};
         data.forEach((item, index) => {
-          const itemKey = item.title || `item-${index}`;
-          initial[section.id][itemKey] = true; // Default to visible
+          // Use index as stable identifier instead of title
+          initial[section.id][index] = true; // Default to visible
         });
       }
     });
@@ -73,8 +74,8 @@ export function ConfigProvider({ children }) {
       const data = getData(sectionsConfig.find(s => s.id === sectionId)?.dataKey);
       if (Array.isArray(data)) {
         data.forEach((item, index) => {
-          const itemKey = item.title || `item-${index}`;
-          newSectionItems[itemKey] = visible;
+          // Use index as stable identifier instead of title
+          newSectionItems[index] = visible;
         });
       }
       return {
@@ -127,15 +128,14 @@ export function ConfigProvider({ children }) {
     const data = getData(section.dataKey);
     if (!Array.isArray(data)) return data;
     
-    // Apply custom ordering
+    // Apply custom ordering using indices
     const orderedData = itemOrder[sectionId] ? 
-      itemOrder[sectionId].map(itemKey => 
-        data.find((item, index) => (item.title || `item-${index}`) === itemKey)
-      ).filter(Boolean) : data;
+      itemOrder[sectionId].map(itemIndex => data[itemIndex]).filter(Boolean) : data;
     
-    return orderedData.filter((item, index) => {
-      const itemKey = item.title || `item-${index}`;
-      return itemVisibility[sectionId]?.[itemKey] !== false;
+    return orderedData.filter((item, originalIndex) => {
+      // Find the original index in the unordered data
+      const dataIndex = data.indexOf(item);
+      return itemVisibility[sectionId]?.[dataIndex] !== false;
     });
   };
 
@@ -146,20 +146,20 @@ export function ConfigProvider({ children }) {
     const data = getData(section.dataKey);
     if (!Array.isArray(data)) return [];
     
-    // Apply custom ordering
+    // Apply custom ordering using indices
     const orderedData = itemOrder[sectionId] ? 
-      itemOrder[sectionId].map(itemKey => 
-        data.find((item, index) => (item.title || `item-${index}`) === itemKey)
-      ).filter(Boolean) : data;
+      itemOrder[sectionId].map(itemIndex => ({
+        item: data[itemIndex],
+        originalIndex: itemIndex
+      })).filter(entry => entry.item) : 
+      data.map((item, index) => ({ item, originalIndex: index }));
     
-    return orderedData.map((item, index) => {
-      const itemKey = item.title || `item-${index}`;
-      return {
-        ...item,
-        itemKey,
-        visible: itemVisibility[sectionId]?.[itemKey] !== false
-      };
-    });
+    return orderedData.map(({ item, originalIndex }) => ({
+      ...item,
+      itemKey: originalIndex, // Use index as itemKey
+      visible: itemVisibility[sectionId]?.[originalIndex] !== false,
+      title: item.title || `Item ${originalIndex + 1}` // Ensure title exists for display
+    }));
   };
 
   const exportConfiguration = () => {

@@ -1,3 +1,5 @@
+import { experienceConfigs } from '../data';
+
 export const sectionsConfig = [
   {
     id: 'personal-info',
@@ -23,7 +25,8 @@ export const sectionsConfig = [
     dataKey: 'academics',
     props: {
       title: 'Academic Experience',
-      selectedTitles: []
+      selectedTitles: [],
+      config: experienceConfigs.academics
     }
   },
   {
@@ -34,7 +37,8 @@ export const sectionsConfig = [
     dataKey: 'internships',
     props: {
       title: 'Internship',
-      selectedTitles: []
+      selectedTitles: [],
+      config: experienceConfigs.internships
     }
   },
   {
@@ -53,7 +57,8 @@ export const sectionsConfig = [
     dataKey: 'competitions',
     props: {
       title: 'Competition Experience',
-      selectedTitles: []
+      selectedTitles: [],
+      config: experienceConfigs.competitions
     }
   },
   {
@@ -64,7 +69,8 @@ export const sectionsConfig = [
     dataKey: 'projects',
     props: {
       title: 'Project Experience',
-      selectedTitles: []
+      selectedTitles: [],
+      config: experienceConfigs.projects
     }
   },
   {
@@ -75,7 +81,8 @@ export const sectionsConfig = [
     dataKey: 'extracurriculars',
     props: {
       title: 'Extracurricular',
-      selectedTitles: []
+      selectedTitles: [],
+      config: experienceConfigs.extracurriculars
     }
   },
   {

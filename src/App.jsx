@@ -1,16 +1,17 @@
 import React from 'react';
 import Title from './components/title';
 import DataValidationDemo from './components/DataValidationDemo';
-import { theme } from './config/theme';
 import { getComponent } from './config/componentRegistry';
 import { getData } from './data';
 import { ConfigProvider, useConfig } from './contexts/ConfigContext';
+import { ThemeProvider, useTheme } from './contexts/ThemeContext';
 
 // TODO:
 //   Certifications (TOEFL, GRE, etc.)
 
 function AppContent() {
   const { getVisibleSections, getVisibleItems } = useConfig();
+  const { theme } = useTheme();
   
   const renderSection = (section) => {
     const Component = getComponent(section.component);
@@ -29,7 +30,7 @@ function AppContent() {
 
   return (
     <div className={theme.components.container.main}>
-      {/* Data Management Demo Panel */}
+      {/* Data Management Demo Panel (includes theme switcher) */}
       <DataValidationDemo />
 
       {/* Top margin */}
@@ -46,9 +47,11 @@ function AppContent() {
 
 function App() {
   return (
-    <ConfigProvider>
-      <AppContent />
-    </ConfigProvider>
+    <ThemeProvider>
+      <ConfigProvider>
+        <AppContent />
+      </ConfigProvider>
+    </ThemeProvider>
   );
 }
 

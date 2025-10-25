@@ -1,4 +1,4 @@
-import { theme } from '../../config/theme';
+import { useTheme } from '../../contexts/ThemeContext';
 
 // Generic Badge component for tags, highlights, and labels
 export default function Badge({ 
@@ -9,6 +9,8 @@ export default function Badge({
   className = '',
   ...props 
 }) {
+  const { theme } = useTheme();
+  
   const getBadgeStyles = () => {
     let styles = [theme.typography.fontFamily];
     

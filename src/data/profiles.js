@@ -1,13 +1,22 @@
 // Multiple resume profiles support
 import { personalInfo } from './personal_info';
 import { education } from './education';
-import { academics } from './experiences/academics';
-import { internships } from './experiences/internships';
+import { academics, academicsConfig } from './experiences/academics';
+import { internships, internshipsConfig } from './experiences/internships';
 import { publications } from './publications';
-import { competitions } from './experiences/competitions';
-import { projects } from './experiences/projects';
-import { extracurriculars } from './experiences/extracurricular';
+import { competitions, competitionsConfig } from './experiences/competitions';
+import { projects, projectsConfig } from './experiences/projects';
+import { extracurriculars, extracurricularsConfig } from './experiences/extracurricular';
 import { skills } from './skills';
+
+// Export configs for experiences sections
+export const experienceConfigs = {
+  academics: academicsConfig,
+  internships: internshipsConfig,
+  competitions: competitionsConfig,
+  projects: projectsConfig,
+  extracurriculars: extracurricularsConfig
+};
 
 // Default full profile
 export const fullProfile = {

@@ -75,7 +75,8 @@ export const schemas = {
   // Skills entries schema
   skill: {
     title: { type: 'string', required: true, minLength: 1 },
-    icon: { type: 'string', required: true, minLength: 1 }
+    icon: { type: 'string', required: true, minLength: 1 },
+    category: { type: 'string', required: false }
   },
 
   // Personal info schema

@@ -1,3 +1,8 @@
+// Configuration for this section
+export const projectsConfig = {
+  infoLayout: 'inline', // 'inline' or 'standalone'
+};
+
 export const projects = [
   {
     title: 'Multimodal Perception of Corner Cases in Autonomous Driving',
