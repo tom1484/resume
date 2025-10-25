@@ -1,9 +1,9 @@
 export const publications = [
   {
-    title: "Learning Skill Abstraction from Action-Free Videos via Optical Flow",
+    title: "Learning Skills from Action-Free Videos",
     authors: ["Hung-Chieh Fang*", "Kuo-Han Hung*", "!Chu-Rong Chen", "Po-Jung Chou", "Chun-Kai Yang", "Po-Chen Ko", "Yu-Chiang Frank Wang", "Yueh-Hua Wu", "Min-Hung Chen", "Shao-Hua Sun"],
     publication: {
-      conference: "NeurIPS 2025",
+      conference: "ICLR 2026",
       status: "Under Review",
     },
     time: "May 2025",

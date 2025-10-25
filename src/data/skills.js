@@ -5,7 +5,7 @@ const skillsData = {
       icon: 'rust.png',
     },
     {
-      title: 'C++',
+      title: 'C/C++',
       icon: 'cpp.png',
     },
     {
@@ -13,8 +13,25 @@ const skillsData = {
       icon: 'python.png',
     },
     {
+      title: 'CUDA',
+    },
+    {
       title: 'TypeScript',
       icon: 'typescript.svg',
+    },
+  ],
+  Frameworks: [
+    {
+      title: 'PyTorch',
+    },
+    {
+      title: 'ROS2'
+    },
+    {
+      title: 'React',
+    },
+    {
+      title: 'Android Development',
     },
   ],
   Tools: [
@@ -26,18 +43,17 @@ const skillsData = {
       title: 'Fusion 360',
       icon: 'fusion360.png',
     },
+    {
+      title: 'KiCad',
+    },
   ],
   Others: [
-    {
-      title: 'Full Stack',
-      icon: 'full-stack.png',
-    },
     {
       title: 'STM32',
       icon: 'stm32.png',
     },
     {
-      title: 'MATLAB',
+      title: 'MATLAB/Simulink',
       icon: 'matlab.png',
     },
   ]

@@ -13,6 +13,21 @@ export const projects = [
     ]
   },
   {
+    title: 'CPLC Lander Challenge - Student Self-landing Rocket',
+    time: 'Nov 2023 - Present',
+    link: [
+      { text: 'Official', url: 'https://landerchallenge.space/' },
+      { text: 'Team', url: 'https://www.instagram.com/star_rocketry?igsh=MXRsYzd3dGRibDJmbw==' },
+    ],
+    // description: 'Student-led self-landing rocket competition',
+    content: [
+      'Leading the avionics team in developing the control system for a self-landing rocket.',
+      'Developing the main thrust valve (MTV) control system to precisely regulate fuel flow.',
+      'Designing and implementing thrust vector control (TVC) to direct a 2,500-Newton engine for stable flight.',
+    ],
+    tags: ['Rocket', 'Avionics', 'Embedded Systems']
+  },
+  {
     title: 'NTUEE LightDance - Light Effect Editor',
     time: 'Oct 2023 - Mar 2024',
     link: [

@@ -5,6 +5,14 @@ export const extracurricularsConfig = {
 
 export const extracurriculars = [
   {
+    title: 'Minister of the Academic Department of NTUEE Student Association',
+    time: 'Jul 2023 - Jul 2024',
+    content: [
+      'In charge of organizing academic events and workshops for electrical engineering students, including embedded system tutorials, programming tools workshops, and career talks.',
+      'Manage the department\'s maker space, ensuring availability of resources and tools for student projects.',
+    ]
+  },
+  {
     title: 'NTUEE Camp - Summer Camp for High School Students',
     time: 'Jun 2023 - Jul 2023',
     content: [
