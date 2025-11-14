@@ -13,21 +13,6 @@ export const projects = [
     ]
   },
   {
-    title: 'CPLC Lander Challenge - Student Self-landing Rocket',
-    time: 'Nov 2023 - Present',
-    link: [
-      { text: 'Official', url: 'https://landerchallenge.space/' },
-      { text: 'Team', url: 'https://www.instagram.com/star_rocketry?igsh=MXRsYzd3dGRibDJmbw==' },
-    ],
-    // description: 'Student-led self-landing rocket competition',
-    content: [
-      'Leading the avionics team in developing the control system for a self-landing rocket.',
-      'Developing the main thrust valve (MTV) control system to precisely regulate fuel flow.',
-      'Designing and implementing thrust vector control (TVC) to direct a 2,500-Newton engine for stable flight.',
-    ],
-    tags: ['Rocket', 'Avionics', 'Embedded Systems']
-  },
-  {
     title: 'NTUEE LightDance - Light Effect Editor',
     time: 'Oct 2023 - Mar 2024',
     link: [
@@ -36,9 +21,9 @@ export const projects = [
     ],
     // description: 'Light effect editor for the LightDance show at NTUEE',
     content: [
-      'Led a team of 10 members to develop a full-stack light effect editor, improving performance by approximately 5× compared to the previous JavaScript-based version.',
-      'Built a Rust backend server from scratch to handle complex SQL manipulations, supporting up to 10 users simultaneously editing more than 5000 LEDs and 1000 frames.',
-      'Developed a Blender add-on for light effect editing and 3D previewing from scratch, enabling real-time creation and visualization of light effects in a 3D environment.',
+      'Led 10 members to develop a full-stack light effect editor, improving performance by approximately 5× compared to the previous JavaScript-based version.',
+      'Built a Rust backend server to handle complex SQL manipulations, supporting up to 10 users simultaneously editing more than 5000 LEDs and 1000 frames.',
+      'Developed Blender add-ons for light effect editing and 3D previewing, enabling real-time creation and visualization of light effects in a 3D environment.',
     ],
     tags: ['Rust', 'Python', 'MySQL', 'GraphQL', 'Async Programming', 'Blender Add-on']
   },
@@ -69,8 +54,8 @@ export const projects = [
     ],
     // description: 'Automatic music sheet page turner in a 24-hour hackathon',
     content: [
-      'Implemented real-time audio recording and processing on an STM32 board using DMA for the I2S protocol and the CMSIS DSP library for SFFT and Mel spectrogram analysis.',
-      'Developed a dynamic time warping (DTW) algorithm on the STM32 to match music sheets with played audio, enabling automatic page turning via servo motor.',
+      'Implemented real-time audio processing on STM32 using DMA for I2S protocol and the CMSIS DSP library for SFFT and Mel spectrogram analysis.',
+      'Developed a dynamic time warping (DTW) algorithm on STM32 to match music sheets with played audio, enabling automatic page turning via servo motor.',
     ],
     tags: ['Embedded Systems', 'Real-Time Audio Processing', 'Music Tracking with DTW']
   },

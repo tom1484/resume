@@ -30,24 +30,24 @@ export const sectionsConfig = [
     }
   },
   {
-    id: 'internship',
-    component: 'Experiences',
-    title: 'Internship',
-    enabled: true,
-    dataKey: 'internships',
-    props: {
-      title: 'Internship',
-      selectedTitles: [],
-      config: experienceConfigs.internships
-    }
-  },
-  {
     id: 'publications',
     component: 'Publications',
     title: 'Publications',
     enabled: true,
     dataKey: 'publications',
     props: {}
+  },
+  {
+    id: 'working',
+    component: 'Experiences',
+    title: 'Work Experience',
+    enabled: true,
+    dataKey: 'working',
+    props: {
+      title: 'Work Experience',
+      selectedTitles: [],
+      config: experienceConfigs.working
+    }
   },
   {
     id: 'competition-experience',

@@ -2,7 +2,7 @@
 import { personalInfo } from './personal_info';
 import { education } from './education';
 import { academics, academicsConfig } from './experiences/academics';
-import { internships, internshipsConfig } from './experiences/internships';
+import { working, workingConfig } from './experiences/working';
 import { publications } from './publications';
 import { competitions, competitionsConfig } from './experiences/competitions';
 import { projects, projectsConfig } from './experiences/projects';
@@ -12,7 +12,7 @@ import { skills } from './skills';
 // Export configs for experiences sections
 export const experienceConfigs = {
   academics: academicsConfig,
-  internships: internshipsConfig,
+  working: workingConfig,
   competitions: competitionsConfig,
   projects: projectsConfig,
   extracurriculars: extracurricularsConfig
@@ -27,7 +27,7 @@ export const fullProfile = {
     personalInfo,
     education,
     academics,
-    internships,
+    working: working,
     publications,
     competitions,
     projects,
@@ -61,11 +61,11 @@ export const academicProfile = {
 export const industryProfile = {
   id: 'industry',
   name: 'Industry Resume',
-  description: 'Focus on internships, projects, and technical skills',
+  description: 'Focus on working, projects, and technical skills',
   data: {
     personalInfo,
     education,
-    internships,
+    working: working,
     projects,
     competitions,
     skills

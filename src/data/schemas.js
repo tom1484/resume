@@ -141,7 +141,7 @@ export const schemaMap = {
   personalInfo: 'personalInfo',
   education: 'education',
   academics: 'experience',
-  internships: 'experience', 
+  working: 'experience', 
   publications: 'publication',
   competitions: 'experience',
   projects: 'experience',

@@ -1,9 +1,9 @@
 // Configuration for this section
-export const internshipsConfig = {
-  infoLayout: 'standalone', // 'inline' or 'standalone'
+export const workingConfig = {
+  infoLayout: 'inline', // 'inline' or 'standalone'
 };
 
-export const internships = [
+export const working = [
   {
     title: "IIS Summer Intern - Accelerated Post-Quantum Cryptography",
     highlight: "",
@@ -17,7 +17,7 @@ export const internships = [
       "Reconstructed a post-quantum cryptography algorithm using the AVX256 instruction set in C++ on the x86-64 architecture.",
       "Achieved a 5× performance improvement compared to the original implementation while maintaining constant execution time for security.",
     ],
-    tags: ["C++", "SIMD", "Cryptography"]
+    // tags: ["C++", "SIMD", "Cryptography"]
   },
   {
     title: "Ambarella Software Engineering Intern - Embedded AI, Algorithm, Tools",
@@ -33,6 +33,6 @@ export const internships = [
       "Developed a pre-training and fine-tuning pipeline across varying ISO/shutter ratios, reducing redundant training runs by ~20% and enabling efficient adaptation to narrower ranges of settings.",
       "Significantly improved training stability: reduced the variance of evaluation loss fluctuations by over 10× compared to the baseline, yielding smoother convergence and more reliable model performance.",
     ],
-    tags: ["Python", "Embedded Systems", "Machine Learning", "Image Signal Processing", "Computer Vision"]
+    tags: ["Embedded Systems", "Machine Learning", "Image Signal Processing", "Computer Vision"]
   },
 ];

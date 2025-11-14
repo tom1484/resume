@@ -141,7 +141,7 @@ Complete section wrapper with title and divider.
 Higher-level components that combine base components for specific use cases.
 
 #### `ExperienceItem`
-Complete experience entry (projects, academics, internships).
+Complete experience entry (projects, academics, working).
 
 ```jsx
 <ExperienceItem
