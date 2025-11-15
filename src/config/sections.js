@@ -1,4 +1,4 @@
-import { experienceConfigs } from '../data';
+import { experienceConfigs, publicationsConfig } from '../data';
 
 export const sectionsConfig = [
   {
@@ -35,7 +35,9 @@ export const sectionsConfig = [
     title: 'Publications',
     enabled: true,
     dataKey: 'publications',
-    props: {}
+    props: {
+      config: publicationsConfig
+    }
   },
   {
     id: 'working',

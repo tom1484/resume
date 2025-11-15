@@ -25,7 +25,7 @@ export const working = [
     time: "Jun 2025 - Aug 2025",
     location: "Santa Clara, CA",
     link: [
-      { text: "Company", url: "https://www.ambarella.com/" },
+      // { text: "Company", url: "https://www.ambarella.com/" },
     ],
     content: [
       // "Refactored and modularized the legacy AI Image Signal Processing (AISP) motion detection codebase, improving readability, maintainability, and enabling faster experimentation with new ML modules.",

@@ -3,7 +3,7 @@ import { personalInfo } from './personal_info';
 import { education } from './education';
 import { academics, academicsConfig } from './experiences/academics';
 import { working, workingConfig } from './experiences/working';
-import { publications } from './publications';
+import { publications, publicationsConfig } from './publications';
 import { competitions, competitionsConfig } from './experiences/competitions';
 import { projects, projectsConfig } from './experiences/projects';
 import { extracurriculars, extracurricularsConfig } from './experiences/extracurricular';
@@ -17,6 +17,9 @@ export const experienceConfigs = {
   projects: projectsConfig,
   extracurriculars: extracurricularsConfig
 };
+
+// Export config for publications section
+export { publicationsConfig };
 
 // Default full profile
 export const fullProfile = {

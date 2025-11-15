@@ -17,7 +17,7 @@ export const projects = [
     time: 'Oct 2023 - Mar 2024',
     link: [
       { text: 'Project', url: 'https://github.com/NTUEELightDance/LightDance-Editor' },
-      { text: 'Video', url: 'https://www.youtube.com/watch?v=ZYaDQQLl05Y' },
+      { text: 'Video', url: 'https://www.youtube.com/watch?v=HviYqvcldPU' },
     ],
     // description: 'Light effect editor for the LightDance show at NTUEE',
     content: [

@@ -5,7 +5,7 @@ import PublicationItemNormal from './variants/normal/PublicationItemNormal';
 import { filterDataByTitles } from '../utils';
 import { useTheme } from '../contexts/ThemeContext';
 
-export default function Publications({ title: sectionTitle, data, selectedTitles }) {
+export default function Publications({ title: sectionTitle, data, selectedTitles, config = {} }) {
   const { themeMode, theme, THEME_MODES } = useTheme();
   
   if (selectedTitles && selectedTitles.length > 0) {
@@ -22,7 +22,8 @@ export default function Publications({ title: sectionTitle, data, selectedTitles
       {data.map((item, idx) => (
         <PublicationItem 
           key={idx} 
-          {...item} 
+          {...item}
+          config={config}
           isLast={idx === data.length - 1}
         />
       ))}

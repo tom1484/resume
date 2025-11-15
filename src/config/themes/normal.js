@@ -94,8 +94,8 @@ export const normalTheme = {
     },
     publications: {
       container: 'flex flex-col items-end justify-center h-fit',
-      titleRow: 'flex items-stretch h-fit w-full',
-      authorRow: 'flex items-stretch h-fit w-full',
+      titleRow: 'flex items-center justify-between h-fit w-full',
+      authorRow: 'flex items-center justify-between h-fit w-full',
       contentRow: 'flex items-stretch h-fit w-full mb-1',
       timeSection: 'w-[18%] flex flex-col mt-1',
       contentSection: 'w-[82%] flex flex-col justify-between',

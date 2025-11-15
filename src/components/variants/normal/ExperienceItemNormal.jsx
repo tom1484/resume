@@ -32,7 +32,7 @@ export default function ExperienceItemNormal({
     <>
       <div className={`${className} w-full`} {...props}>
         {/* Title Row */}
-        <div className={`${theme.components.experiences.titleRow}`}>
+        <div className={theme.components.experiences.titleRow}>
           <h2 className={theme.typography.heading}>{title}</h2>
           {titleFootnote ? (
             // If titleFootnote exists (academics), show it on the same row

@@ -1,12 +1,25 @@
+// Configuration for this section
+export const publicationsConfig = {
+  infoLayout: 'inline', // 'inline' or 'standalone'
+};
+
 export const publications = [
   {
-    title: "Learning Skills from Action-Free Videos",
-    authors: ["Hung-Chieh Fang*", "Kuo-Han Hung*", "!Chu-Rong Chen", "Po-Jung Chou", "Chun-Kai Yang", "et al."],
+    title: "Advancing Structured Priors for Sparse-Voxel Surface Reconstruction",
+    authors: ["Ting-Hsun Chi", "!Chu-Rong Chen", "Chi Tun Hsu", "Hsuan-Ting Lin", "Sheng-Yu Huang", "Cheng Sun", "Yu-Chiang Frank Wang"],
     publication: {
-      conference: "ICLR",
+      conference: "CVPR 2026",
       status: "Under Review",
     },
-    time: "2026",
+  },
+  {
+    title: "Learning Skills from Action-Free Videos",
+    authors: ["Hung-Chieh Fang*", "Kuo-Han Hung*", "!Chu-Rong Chen", "Po-Jung Chou", "Chun-Kai Yang", "Po-Chen Ko", "et al."],
+    // authors: ["Hung-Chieh Fang*", "Kuo-Han Hung*", "!Chu-Rong Chen", "Po-Jung Chou", "Chun-Kai Yang", "Po-Chen Ko", "Yu-Chiang Frank Wang", "Yueh-Hua Wu", "Min-Hung Chen", "Shao-Hua Sun"],
+    publication: {
+      conference: "ICLR 2026",
+      status: "Under Review",
+    },
     // link: [
     //   { text: "Paper", url: "" },
     // ],

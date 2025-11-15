@@ -10,7 +10,7 @@ export const academics = [
     highlight: "",
     time: "Jul 2024 - Present",
     link: [
-      { text: "Presentations", url: "https://docs.google.com/presentation/d/1BW9Sg_MG2R7otxRP0OfcDCt2AEdg2iP72PS-oatu98o/edit?usp=sharing" },
+      // { text: "Presentations", url: "https://docs.google.com/presentation/d/1BW9Sg_MG2R7otxRP0OfcDCt2AEdg2iP72PS-oatu98o/edit?usp=sharing" },
     ],
     content: [
       "Proposed a framework for generalizable dynamic scene reconstruction using Gaussian Splatting by leveraging decomposed grid-based spatiotemporal representation.",
@@ -24,7 +24,7 @@ export const academics = [
     highlight: "",
     time: "Aug 2022 - Aug 2025",
     link: [
-      { text: "Meetings", url: "https://docs.google.com/presentation/d/1Xv6ifq5p94_QihFSLVEMl6-prNVrInDqNQFzD4wy_0s/edit?usp=sharing" },
+      // { text: "Meetings", url: "https://docs.google.com/presentation/d/1Xv6ifq5p94_QihFSLVEMl6-prNVrInDqNQFzD4wy_0s/edit?usp=sharing" },
     ],
     content: [
       "Developed a sim-to-real transfer pipeline for online physical parameter estimation for robotic tasks using differentiable simulation.",

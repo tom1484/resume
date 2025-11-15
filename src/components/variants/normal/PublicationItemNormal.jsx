@@ -17,9 +17,14 @@ export default function PublicationItemNormal({
   showLinks = true,
   isLast = false,
   className = '',
+  config = {},
   ...props 
 }) {
   const { theme } = useTheme();
+  
+  // Determine layout: use config if available, default to 'inline'
+  const infoLayout = config.infoLayout || 'inline';
+  const isStandalone = infoLayout === 'standalone';
   
   const renderAuthors = () => (
     <span className={theme.components.publications.authorText}>
@@ -41,10 +46,28 @@ export default function PublicationItemNormal({
 
   return (
     <>
-      <div className={className} {...props}>
+      <div className={`${className} w-full`} {...props}>
         {/* Title Row */}
         <div className={theme.components.publications.titleRow}>
           <h2 className={theme.typography.heading}>{title}</h2>
+          {!isStandalone && (
+            <span className={theme.components.experiences.timeText}>
+              {publication.conference || publication.journal} - {publication.status}
+              {showLinks && link && link.length > 0 && (
+                <>
+                  {' • '}
+                  {link.map(({ text, url }, idx) => (
+                    <React.Fragment key={idx}>
+                      <Link href={url} variant="underline">
+                        {text}
+                      </Link>
+                      {idx < link.length - 1 && <>, </>}
+                    </React.Fragment>
+                  ))}
+                </>
+              )}
+            </span>
+          )}
         </div>
         
         {/* Authors Row */}
@@ -52,31 +75,35 @@ export default function PublicationItemNormal({
           {renderAuthors()}
         </div>
         
-        {/* Publication Info Row - Single line under authors */}
-        <div className="mb-2">
-          <span className={theme.components.experiences.timeText}>
-            {time} • {publication.conference || publication.journal} - {publication.status}
-            {showLinks && link && link.length > 0 && (
-              <>
-                {' • '}
-                {link.map(({ text, url }, idx) => (
-                  <React.Fragment key={idx}>
-                    <Link href={url} variant="underline">
-                      {text}
-                    </Link>
-                    {idx < link.length - 1 && <>, </>}
-                  </React.Fragment>
-                ))}
-              </>
-            )}
-          </span>
-        </div>
+        {/* Publication Info Row - Show only for standalone layout */}
+        {isStandalone && (
+          <div className="mb-2">
+            <span className={theme.components.experiences.timeText}>
+              {publication.conference || publication.journal} - {publication.status}
+              {showLinks && link && link.length > 0 && (
+                <>
+                  {' • '}
+                  {link.map(({ text, url }, idx) => (
+                    <React.Fragment key={idx}>
+                      <Link href={url} variant="underline">
+                        {text}
+                      </Link>
+                      {idx < link.length - 1 && <>, </>}
+                    </React.Fragment>
+                  ))}
+                </>
+              )}
+            </span>
+          </div>
+        )}
         
         {/* Content Section */}
-        <List 
-          items={content}
-          variant="bulleted"
-        />
+        {content && content.length > 0 && (
+          <List 
+            items={content}
+            variant="bulleted"
+          />
+        )}
         
         {/* Tags Section */}
         {showTags && tags && tags.length > 0 && (
@@ -92,9 +119,7 @@ export default function PublicationItemNormal({
       
       {/* Splitline - only show if not the last item */}
       {!isLast && (
-        <div className="my-2">
-          <SplitLine variant="default" />
-        </div>
+        <SplitLine variant="default" />
       )}
     </>
   );

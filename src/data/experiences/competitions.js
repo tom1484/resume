@@ -9,7 +9,7 @@ export const competitions = [
     time: 'Nov 2023 - Present',
     link: [
       { text: 'Official', url: 'https://landerchallenge.space/' },
-      { text: 'Team', url: 'https://www.instagram.com/star_rocketry?igsh=MXRsYzd3dGRibDJmbw==' },
+      { text: 'Team', url: 'https://www.facebook.com/p/STAR-Student-Society-of-Taiwan-Advanced-Rocketry-61558308603436/' },
     ],
     content: [
       'Leading the avionics team in developing the control system for a self-landing rocket.',
