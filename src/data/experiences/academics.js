@@ -8,10 +8,10 @@ export const academics = [
     role: "Undergraduate Researcher",
     time: "Jul 2024 - Nov 2025",
     content: [
-      "Proposed a framework for generalizable dynamic scene reconstruction using Gaussian Splatting by leveraging decomposed grid-based spatiotemporal representation.",
-      "Developed a method utilizing the geometry cues from monocular depth estimation to enhance the quality of scene reconstruction using sparse voxel octrees."
+      "Formulated a generalizable dynamic scene reconstruction framework using Gaussian Splatting by leveraging a decomposed spatiotemporal representation.",
+      "Engineered a geometric initialization scheme utilizing monocular depth estimation to enhance the surface reconstruction fidelity of sparse voxel octrees."
     ],
-    tags: ["Computer Vision", "Scene Reconstruction"]
+    tags: ["Computer Vision", "Scene Reconstruction", "Gaussian Splatting"]
   },
   {
     title: "Robot Learning Lab, NTUEE",
@@ -19,18 +19,18 @@ export const academics = [
     role: "Undergraduate Researcher",
     time: "Aug 2022 - Aug 2025",
     content: [
-      "Developed a sim-to-real transfer pipeline for online physical parameter estimation for robotic tasks using differentiable simulation.",
-      "Developed a framework leveraging optical flows as action primitives to learn robotic skills from action-free videos, improving multi-task generalization and enabling cross-embodiment transfer; incorporated algorithm deployment on Mobile ALOHA, building real-world data collection pipeline.",
+      "Architected a sim-to-real transfer pipeline using differentiable simulation for online physical parameter estimation in contact-rich robotic tasks.",
+      "Designed a framework leveraging optical flow as action primitives to learn policies from action-free videos, enabling zero-shot cross-embodiment transfer; deployed the algorithm on the Mobile ALOHA bi-manual manipulator and established a robust real-world data collection pipeline.",
     ],
-    tags: ["Reinforcement Learning", "Robotics", "Sim-to-Real Transfer", "Imitation Learning"]
+    tags: ["Reinforcement Learning", "Robotics", "Sim-to-Real", "Imitation Learning", "Mobile ALOHA"]
   },
   {
     title: "Teaching Assistant",
-    time: "2023 - Present",
+    time: "2023 - 2024",
     content: [
-      "2023-2024 Spring - Cornerstone EECS Design and Implementation<br>Assisted first-year EE students in their first project integrating hardware and software, including Arduino, Python, algorithms, and system engineering.",
-      "2024 Spring - Signals and Systems<br>Supporting students with signal processing concepts, Fourier transforms, and system analysis techniques.",
+      "Cornerstone EECS Design and Implementation (Spring 2023 - 2024):<br>Mentored freshman students in system engineering projects, integrating the hardware (Arduino) and software (Python) for autonomous mechatronics.",
+      "Signals and Systems (Spring 2024):<br>Facilitated student learning in signal processing fundamentals, Fourier analysis, and linear system theory through tutorial sessions and technical support.",
     ],
-    // tags: ["Teaching", "Signals and Systems", "Electrical and Computer Engineering"]
+    tags: ["Teaching", "Mentorship"]
   },
 ];

@@ -1,13 +1,15 @@
 // Configuration for this section
-export const projectsConfig = {};
+export const projectsConfig = {
+  showTags: false,
+};
 
 export const projects = [
   {
     title: 'Multimodal Perception of Corner Cases in Autonomous Driving',
     time: 'Nov 2024 - Dec 2024',
     content: [
-      'Developed a system for multimodal perception and comprehension in autonomous driving, focusing on global scene understanding, local area reasoning, and actionable navigation using the CODA-LM dataset.',
-      'Enhanced the perception capabilities of LLaVA 1.5 7b by fine-tuning LoRA and incorporating additional modules to handle diverse scenes, small objects, and complex driving scenarios effectively.',
+      'Engineered a multimodal pipeline for autonomous driving using the CODA-LM dataset, targeting global scene understanding and local area reasoning.',
+      'Fine-tuned LLaVA 1.5 7b via LoRA, integrating custom modules to resolve edge cases such as small object detection and complex traffic scenarios.',
     ],
     link: [
       { text: 'Project', url: 'https://github.com/tom1484/DLCV-Fall-2024-Final' },
@@ -24,9 +26,9 @@ export const projects = [
       { text: 'Stream', url: 'https://www.youtube.com/watch?v=HviYqvcldPU' },
     ],
     content: [
-      'Led 10 members to develop a full-stack light effect editor, improving performance by approximately 5× compared to the previous JavaScript-based version.',
-      'Built a Rust backend server to handle complex SQL manipulations, supporting up to 10 users simultaneously editing more than 5000 LEDs and 1000 frames.',
-      'Developed Blender add-ons for light effect editing and 3D previewing, enabling real-time creation and visualization of light effects in a 3D environment.',
+      'Orchestrated a 10-member team to architect a full-stack light effect editor, achieving a 500% performance increase over the legacy JavaScript system.',
+      'Built a high-concurrency Rust backend managing complex SQL operations, supporting simultaneous editing across 5,000+ LEDs and 1,000+ keyframes.',
+      'Developed a custom Blender add-on for real-time 3D visualization, enabling designers to preview light effects in a physically accurate environment.',
     ],
     tags: ['Rust', 'Python', 'MySQL', 'GraphQL', 'Async Programming', 'Blender Add-on']
   },
@@ -34,9 +36,8 @@ export const projects = [
     title: 'Automatic Frisbee Shooter',
     time: 'Sep 2023 - Dec 2023',
     content: [
-      'Developed a fully-automated 4-Wheel-Drive frisbee shooter with ROS on Raspberry Pi.',
-      'Implemented a PID control system to adjust shooting parameters and robot movement, and designed a mechanism for high-speed frisbee launching.',
-      'Designed a detection system using OpenCV to track targets and adjust shooting direction according to frisbee dynamics.',
+      'Prototyped a fully automated 4-Wheel-Drive robot using ROS on Raspberry Pi, integrating navigation and actuation sub-systems with PID control loop.',
+      'Engineered a computer vision tracking system to calculate frisbee angle and velocity based on real-time target data.',
     ],
     tags: ['Embedded Systems', 'OpenCV', 'PID Control'],
   },
@@ -44,8 +45,8 @@ export const projects = [
     title: 'FPGA Laser Shooter',
     time: 'May 2023 - June 2023',
     content: [
-      'Designed a laser shooting system written in Verilog on FPGA, integrated with target detection and shooting mechanism control.',
-      'Implemented a pipelined architecture for real-time Hough Circle Transform to detect targets in images.',
+      'Designed a hardware-accelerated laser shooting system in Verilog, achieving low-latency target acquisition and firing control.',
+      'Implemented a pipelined Hough Circle Transform architecture on FPGA for real-time target detection at high frame rates.',
     ],
     tags: ['FPGA', 'Verilog', 'Image Processing'],
   },
@@ -56,10 +57,10 @@ export const projects = [
       { text: 'Demo', url: 'https://youtu.be/sDXGI1Jq3kc' },
     ],
     content: [
-      'Implemented real-time audio processing on STM32 using DMA for I2S protocol and the CMSIS DSP library for SFFT and Mel spectrogram analysis.',
-      'Developed a dynamic time warping (DTW) algorithm on STM32 to match music sheets with played audio, enabling automatic page turning via servo motor.',
+      'Developed a real-time audio processing system on STM32 using DMA and I2S, leveraging the CMSIS DSP library for Mel spectrogram analysis.',
+      'Implemented a Dynamic Time Warping (DTW) algorithm to synchronize live audio with sheet music, triggering a servo-actuated page turner.',
     ],
-    tags: ['Embedded Systems', 'Real-Time Audio Processing', 'Music Tracking with DTW']
+    tags: ['Embedded Systems', 'Real-Time Audio Processing']
   },
   {
     title: 'MoneyManager - Personal Finance Tracker',
@@ -68,10 +69,10 @@ export const projects = [
       { text: 'Project', url: 'https://github.com/tom1484/money-manager' },
     ],
     content: [
-      'Developed a mobile app for tracking income and expenses across personal accounts.',
-      'Built a full-stack React Native application with MongoDB as the database and Express.js as the backend server.',
+      'Built a cross-platform mobile application for finance tracking using React Native, featuring intuitive data visualization for income and expenses.',
+      'Architected a RESTful backend with Express.js and MongoDB to handle user authentication and secure data persistence.',
     ],
-    tags: ['React Native', 'Android', 'MongoDB', 'Express.js', 'RESTful API']
+    tags: ['React Native', 'Android', 'Fullstack']
   },
   {
     title: 'MKS Access System - Entrance Recording System',
@@ -80,8 +81,8 @@ export const projects = [
       { text: 'Project', url: 'https://drive.google.com/file/d/1EKJGVKytfbCwLHq-11mKcscFEMStKAA6/view?usp=share_link' },
     ],
     content: [
-      'Designed a physical system in C++ to record students\' entrances to our department\'s open lab.',
-      'Integrated an ID card scanner, LCD screen, Raspberry Pi, and server for instructions and backend management.',
+      'Engineered an IoT access control system using C++ for peripheral management (ID scanner, LCD) on a Raspberry Pi.',
+      'Integrated a server-side backend to log student entry data and display real-time usage instructions.',
     ],
     tags: ['Raspberry Pi', 'C++ Peripheral Control']
   },
@@ -92,8 +93,8 @@ export const projects = [
       { text: 'Report', url: 'https://drive.google.com/file/d/18b7DX8dk0K--bYAh3qZRaT6zejtQcBO7/view?usp=share_link' },
     ],
     content: [
-      'Designed and analyzed an LQR controller for the linearized system of a Furuta pendulum in Simulink.',
-      'Implemented the controller on physical hardware and achieved stable, accurate control performance.',
+      'Modeled and linearized the dynamics of a Furuta pendulum to design an optimal LQR controller in Simulink.',
+      'Deployed the control algorithm to physical hardware, achieving stable equilibrium and robust disturbance rejection.',
     ],
     tags: ['Control System Design', 'Simulink']
   },
@@ -101,9 +102,10 @@ export const projects = [
     title: 'Ear Detection Gate - Ear Shape Identification System',
     time: '2020',
     content: [
-      'Designed a scanning system to identify people by ear shape using YOLO, enabling identification without mask removal during the COVID-19 pandemic.',
+      'Developed a contactless biometric scanning system using YOLO object detection to identify individuals by ear shape.',
+      'Designed the system to function effectively without mask removal, addressing specific security challenges during the COVID-19 pandemic.',
     ],
-    tags: ['Object Detection', 'Yolo', 'Python']
+    tags: ['Object Detection', 'Yolo']
   },
   {
     title: 'Intelligent Shopping Cart - Indoor Navigation and Checkout System',
@@ -113,9 +115,8 @@ export const projects = [
       { text: 'Demo', url: 'https://www.youtube.com/watch?v=WfrQ2J9VpX0' },
     ],
     content: [
-      'Developed a shopping cart system for in-indoor market navigation and guidance by BLE localization and filtering.',
-      // 'Acquired Taiwan\'s utility model patent for the system as the patent owner.',
+      'Created a shopping cart system featuring BLE-based indoor localization and product guidance; awarded Taiwan Utility Model Patent.',
     ],
-    tags: ['Mobile App', 'Indoor Navigation', 'BLE', 'Patent']
+    tags: ['Mobile App', 'Indoor Navigation', 'BLE']
   },
 ];

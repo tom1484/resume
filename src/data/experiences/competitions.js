@@ -8,15 +8,14 @@ export const competitions = [
     role: 'Avionics Team Lead',
     time: 'Nov 2023 - Oct 2025',
     link: [
-      // { text: 'Official', url: 'https://landerchallenge.space/' },
       { text: 'Team', url: 'https://www.facebook.com/p/STAR-Student-Society-of-Taiwan-Advanced-Rocketry-61558308603436/' },
     ],
     content: [
-      'Leading the avionics team in developing the control system for a self-landing rocket.',
-      'Developing the main thrust valve (MTV) control system to precisely regulate fuel flow.',
-      'Designing and implementing thrust vector control (TVC) to direct a 2,500-Newton engine for stable flight.',
+      'Spearheaded the avionics division for a VTVL (Vertical Takeoff, Vertical Landing) rocket, overseeing system integration and safety-critical control logic.',
+      'Engineered a high-precision closed-loop control system for the Main Thrust Valve (MTV) to dynamically regulate propellant flow and thrust output.',
+      'Architected the Thrust Vector Control (TVC) algorithm for stabilizing and targeting a 2,500N engine.',
     ],
-    tags: ['Rocket', 'Avionics', 'Embedded Systems']
+    tags: ['Rocketry', 'Avionics', 'Embedded Systems', 'Control', 'System Engineering']
   },
   {
     title: 'Kibo RPC - International Space Robotics Challenge',
@@ -27,19 +26,14 @@ export const competitions = [
       { text: 'Stream', url: 'https://youtu.be/NjOgNrPMUJs?t=5368' },
     ],
     content: [
-      'Designed and implemented a vision-based laser aiming system for the Astrobee robot using OpenCV.',
-      'Developed a trajectory planning algorithm to efficiently navigate the robot between designated points on the International Space Station.',
-      'Achieved the world champion title in the final round, with successful deployment conducted aboard the International Space Station.',
+      'Secured the World Championship representing Taiwan, with code successfully deployed on JAXA\'s Astrobee robot aboard the International Space Station.',
+      'Developed a vision-based laser aiming system and an trajectory planning engine to autonomously navigate obstacle-filled "Keep-Out Zones" with high accuracy and safety.',
     ],
-    tags: ['Android', 'OpenCV', 'Path Planning', 'Space Robotics']
+    // content: [
+    //   'Designed and implemented a vision-based laser aiming system for the Astrobee robot using OpenCV.',
+    //   'Developed a trajectory planning algorithm to efficiently navigate the robot between designated points on the International Space Station.',
+    //   'Achieved the world champion title in the final round, with successful deployment conducted aboard the International Space Station.',
+    // ],
+    tags: ['Android', 'OpenCV', 'Trajectory Planning', 'Space Robotics', 'Visual Servoing']
   },
-  // {
-  //   title: 'Taipei City High School Programming Competition',
-  //   time: 'Nov 2019',
-  //   // description: 'Taipei City High School Programming Competition',
-  //   content: [
-  //     'Won third prize in a city-wide competition focused on solving complex problems using algorithms and data structures.',
-  //   ],
-  //   tags: ['Algorithm', 'Data Structure', 'C++']
-  // },
 ];

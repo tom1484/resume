@@ -8,8 +8,8 @@ export const extracurriculars = [
     role: 'Minister of Academic Department',
     time: 'Jul 2023 - Jul 2024',
     content: [
-      'In charge of organizing academic events and workshops for electrical engineering students, including embedded system tutorials, programming tools workshops, and career talks.',
-      'Manage the department\'s maker space, ensuring availability of resources and tools for student projects.',
+      'Directed the academic division in curating technical workshops, including embedded systems tutorials, PCB design, and career development seminars for the EE student body.',
+      'Oversaw the operations of the department MakerSpace, managing equipment maintenance and resource allocation to support student innovation projects.',
     ]
   },
   {
@@ -18,22 +18,15 @@ export const extracurriculars = [
     role: 'Teaching Team Lead',
     time: 'Jun 2023 - Jul 2023',
     content: [
-      'Led the teaching team and directed 20 electrical engineering students in designing software and hardware workshops for high school students.',
+      'Led a 20-member teaching team to architect a comprehensive engineering curriculum, designing hands-on software (Python) and hardware (Arduino) projects for high school students.',
     ]
   },
-  // {
-  //   title: 'Calligraphy',
-  //   time: '2010 - Present',
-  //   content: [
-  //     'Practiced calligraphy as a hobby since the age of 7.',
-  //     'Won numerous awards in calligraphy competitions, including first prize at the district level.',
-  //   ],
-  // },
   {
     title: 'Robot Club',
     time: '2018 - 2021',
     content: [
-      'Built bipedal combat robots for local robot competitions and co-founded our high school\'s First Robot Competition team.',
+      'Engineered custom bipedal combat robots for regional competitions, focusing on structural stability and actuator control.',
+      'Co-founded the high school\'s inaugural robotics competition team, establishing a framework for future participation in national contests.',
     ]
   },
 ];

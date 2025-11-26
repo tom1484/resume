@@ -1,4 +1,9 @@
 const skillsData = {
+  Languages: [
+    {
+      title: 'English (TOEFL 115, GRE 329)',
+    }
+  ],
   Programming: [
     {
       title: 'Rust',
@@ -34,7 +39,7 @@ const skillsData = {
       title: 'Android Development',
     },
   ],
-  Tools: [
+  'Design Tools': [
     {
       title: 'AutoCAD',
       icon: 'autocad.png',
@@ -47,7 +52,7 @@ const skillsData = {
       title: 'KiCad',
     },
   ],
-  Others: [
+  Platforms: [
     {
       title: 'STM32',
       icon: 'stm32.png',
