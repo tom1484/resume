@@ -1,12 +1,12 @@
 // Configuration for this section
-export const competitionsConfig = {
-  infoLayout: 'inline', // 'inline' or 'standalone'
-};
+export const competitionsConfig = {};
 
 export const competitions = [
   {
     title: 'CPLC Lander Challenge - Student Self-landing Rocket',
-    time: 'Nov 2023 - Present',
+    location: 'Taipei & Hsinchu, Taiwan',
+    role: 'Avionics Team Lead',
+    time: 'Nov 2023 - Oct 2025',
     link: [
       { text: 'Official', url: 'https://landerchallenge.space/' },
       { text: 'Team', url: 'https://www.facebook.com/p/STAR-Student-Society-of-Taiwan-Advanced-Rocketry-61558308603436/' },
@@ -21,6 +21,7 @@ export const competitions = [
   {
     title: 'Kibo RPC - International Space Robotics Challenge',
     highlight: 'World Champion',
+    role: 'Navigation Team Lead',
     time: 'Jun 2022 - Oct 2022',
     link: [
       { text: 'Video', url: 'https://youtu.be/NjOgNrPMUJs?t=5368' },

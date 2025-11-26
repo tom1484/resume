@@ -1,7 +1,5 @@
 // Configuration for this section
-export const publicationsConfig = {
-  infoLayout: 'inline', // 'inline' or 'standalone'
-};
+export const publicationsConfig = {};
 
 export const publications = [
   {
@@ -9,17 +7,22 @@ export const publications = [
     authors: ["Ting-Hsun Chi", "!Chu-Rong Chen", "Chi Tun Hsu", "Hsuan-Ting Lin", "Sheng-Yu Huang", "Cheng Sun", "Yu-Chiang Frank Wang"],
     publication: {
       conference: "CVPR 2026",
-      status: "Under Review",
+      status: "Under Review"
     },
+    // link: [
+    //   { text: "Paper", url: "https://openreview.net/forum?id=fGOzILGeIf" },
+    // ]
   },
   {
-    title: "Learning Skills from Action-Free Videos",
+    title: "Learning Skill Abstraction from Action-Free Videos via Optical Flow",
     authors: ["Hung-Chieh Fang*", "Kuo-Han Hung*", "!Chu-Rong Chen", "Po-Jung Chou", "Chun-Kai Yang", "Po-Chen Ko", "et al."],
     // authors: ["Hung-Chieh Fang*", "Kuo-Han Hung*", "!Chu-Rong Chen", "Po-Jung Chou", "Chun-Kai Yang", "Po-Chen Ko", "Yu-Chiang Frank Wang", "Yueh-Hua Wu", "Min-Hung Chen", "Shao-Hua Sun"],
     publication: {
-      conference: "ICLR 2026",
-      status: "Under Review",
+      conference: "ICML 2025 Workshop WM",
     },
+    link: [
+      { text: "Paper", url: "https://openreview.net/pdf?id=7Udx16p9Rz" },
+    ]
     // link: [
     //   { text: "Paper", url: "" },
     // ],

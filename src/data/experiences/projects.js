@@ -13,7 +13,9 @@ export const projects = [
     ]
   },
   {
-    title: 'NTUEE LightDance - Light Effect Editor',
+    title: 'NTUEE LightDance',
+    location: 'Taipei, Taiwan',
+    role: 'Software Team Lead',
     time: 'Oct 2023 - Mar 2024',
     link: [
       { text: 'Project', url: 'https://github.com/NTUEELightDance/LightDance-Editor' },

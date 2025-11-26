@@ -1,11 +1,11 @@
 // Configuration for this section
-export const extracurricularsConfig = {
-  infoLayout: 'inline', // 'inline' or 'standalone'
-};
+export const extracurricularsConfig = {};
 
 export const extracurriculars = [
   {
-    title: 'Minister of the Academic Department of NTUEE Student Association',
+    title: 'NTUEE Student Association',
+    location: 'Taipei, Taiwan',
+    role: 'Minister of Academic Department',
     time: 'Jul 2023 - Jul 2024',
     content: [
       'In charge of organizing academic events and workshops for electrical engineering students, including embedded system tutorials, programming tools workshops, and career talks.',

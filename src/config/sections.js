@@ -66,11 +66,11 @@ export const sectionsConfig = [
   {
     id: 'project-experience',
     component: 'Experiences',
-    title: 'Project Experience',
+    title: 'Projects',
     enabled: true,
     dataKey: 'projects',
     props: {
-      title: 'Project Experience',
+      title: 'Projects',
       selectedTitles: [],
       config: experienceConfigs.projects
     }
@@ -88,9 +88,9 @@ export const sectionsConfig = [
     }
   },
   {
-    id: 'technical-skills',
+    id: 'skills',
     component: 'Skills',
-    title: 'Technical Skills',
+    title: 'Skills',
     enabled: true,
     dataKey: 'skills',
     props: {}
