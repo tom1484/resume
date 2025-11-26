@@ -7,7 +7,7 @@ export default function Education({ data }) {
   
   return (
     <Container variant="section" width="section">
-      {data.map(({ time, title, content }, idx) => {
+      {data.map(({ time, title, content, selectedCourses }, idx) => {
         // For normal mode, arrange content in N rows x 2 columns table
         const tableContent = themeMode === THEME_MODES.NORMAL ? (() => {
           const rows = [];
@@ -48,6 +48,22 @@ export default function Education({ data }) {
                           ))}
                         </tr>
                       ))}
+                      {selectedCourses && (
+                        <tr>
+                          <td colSpan="2" className={theme.components.education.tableCell}>
+                            <span className={theme.components.education.tableKey}>
+                              Selected Courses:
+                            </span>{' '}
+                            <span className={theme.components.education.tableValue}>
+                              {selectedCourses.map(([course, grade], idx) => (
+                                <span key={idx}>
+                                  {course} ({grade}){idx < selectedCourses.length - 1 ? ', ' : ''}
+                                </span>
+                              ))}
+                            </span>
+                          </td>
+                        </tr>
+                      )}
                     </tbody>
                   </table>
                 ) : (
@@ -64,6 +80,20 @@ export default function Education({ data }) {
                           </td>
                         </tr>
                       ))}
+                      {selectedCourses && (
+                        <tr>
+                          <td className={theme.components.education.tableKey}>
+                            Selected Courses:
+                          </td>
+                          <td className={theme.components.education.tableValue}>
+                            {selectedCourses.map(([course, grade], idx) => (
+                              <span key={idx}>
+                                {course} ({grade}){idx < selectedCourses.length - 1 ? ', ' : ''}
+                              </span>
+                            ))}
+                          </td>
+                        </tr>
+                      )}
                     </tbody>
                   </table>
                 )}

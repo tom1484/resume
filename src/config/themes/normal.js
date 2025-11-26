@@ -29,13 +29,13 @@ export const normalTheme = {
     }
   },
   typography: {
-    mainTitle: 'font-sans text-4xl',
-    sectionTitle: 'font-sans text-xl text-black-700',
-    heading: 'font-sans text-lg',
-    subheading: 'font-sans text-sm font-semibold',
-    bodyText: 'font-sans text-sm',
+    mainTitle: 'font-bold font-serif text-4xl',
+    sectionTitle: 'font-bold font-serif text-xl text-black-700',
+    heading: 'font-serif text-lg',
+    subheading: 'font-serif text-sm font-semibold',
+    bodyText: 'font-serif text-sm',
     caption: 'text-xs',
-    fontFamily: 'font-sans'
+    fontFamily: 'font-serif'
   },
   colors: {
     primary: 'text-neutral-800',
@@ -43,7 +43,7 @@ export const normalTheme = {
     accent: 'text-orange-800',
     link: 'text-black-800',
     linkUnderline: 'underline text-black-800',
-    highlight: 'font-bold text-black',
+    highlight: 'font-bold text-cyan',
     border: 'border-gray-400',
     divider: 'border-t-gray-400 bg-neutral-300',
     dividerLight: 'bg-neutral-200'
@@ -75,9 +75,9 @@ export const normalTheme = {
       qrItem: 'mb-2 flex flex-col items-center ml-5',
       qrImage: 'w-20 h-20',
       qrLabel: 'text-xs text-neutral-500 mt-0',
-      tableKey: 'text-left font-sans text-sm font-semibold text-neutral-500 pr-2',
-      tableValue: 'text-left font-sans text-sm text-neutral-500',
-      link: 'text-left font-sans text-sm font-semibold text-black-800 pr-2 mr-3 underline'
+      tableKey: 'text-left font-serif text-sm font-semibold text-neutral-500 pr-2',
+      tableValue: 'text-left font-serif text-sm text-neutral-500',
+      link: 'text-left font-serif text-sm font-semibold text-black-800 pr-2 mr-3 underline'
     },
     experiences: {
       container: 'flex flex-col items-end justify-center h-fit',
@@ -86,10 +86,10 @@ export const normalTheme = {
       timeSection: 'flex flex-col mt-1',
       contentSection: 'flex flex-col justify-between',
       list: 'list-disc list-outside mt-1',
-      listItem: 'text-left font-sans text-sm text-neutral-800 break-words overflow-wrap-anywhere',
-      tags: 'text-left font-sans text-sm text-neutral-500 mt-1',
-      highlight: 'text-left align-center font-sans text-sm text-black-800',
-      timeText: 'text-left align-center font-sans text-sm font-semibold text-neutral-500 pr-2',
+      listItem: 'text-left font-serif text-sm text-neutral-800 break-words overflow-wrap-anywhere',
+      tags: 'text-left font-serif text-sm text-neutral-500 mt-1',
+      highlight: 'text-left align-center font-serif text-sm text-cyan-800',
+      timeText: 'text-left align-center font-serif text-sm font-semibold text-neutral-500 pr-2',
       titleFootnote: 'text-neutral-500 text-sm ml-1'
     },
     publications: {
@@ -99,7 +99,7 @@ export const normalTheme = {
       contentRow: 'flex items-stretch h-fit w-full mb-1',
       timeSection: 'w-[18%] flex flex-col mt-1',
       contentSection: 'w-[82%] flex flex-col justify-between',
-      authorText: 'font-sans text-sm font-semibold text-neutral-500',
+      authorText: 'font-serif text-sm font-semibold text-neutral-500',
       authorHighlight: 'font-bold text-black'
     },
     education: {
@@ -108,8 +108,8 @@ export const normalTheme = {
       timeSection: 'flex flex-col',
       contentSection: 'flex flex-col justify-between',
       table: 'w-[100%] table-fixed',
-      tableKey: 'w-[14%] align-center text-left font-sans text-sm font-semibold text-neutral-800 pr-2',
-      tableValue: 'text-left align-center font-sans text-sm text-neutral-800'
+      tableKey: 'w-[14%] align-center text-left font-serif text-sm font-semibold text-neutral-800 pr-2',
+      tableValue: 'text-left align-center font-serif text-sm text-neutral-800'
     },
     skills: {
       container: 'flex flex-col items-end justify-center h-fit',

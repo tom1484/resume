@@ -26,13 +26,13 @@ export const theme = {
     }
   },
   typography: {
-    mainTitle: 'font-sans text-4xl',
-    sectionTitle: 'font-sans text-xl text-cyan-700',
-    heading: 'font-sans text-lg',
-    subheading: 'font-sans text-sm font-semibold',
-    bodyText: 'font-sans text-sm',
+    mainTitle: 'fond-serif text-4xl',
+    sectionTitle: 'fond-serif text-xl text-cyan-700',
+    heading: 'fond-serif text-lg',
+    subheading: 'fond-serif text-sm font-semibold',
+    bodyText: 'fond-serif text-sm',
     caption: 'text-xs',
-    fontFamily: 'font-sans'
+    fontFamily: 'fond-serif'
   },
   colors: {
     primary: 'text-neutral-800',
@@ -72,9 +72,9 @@ export const theme = {
       qrItem: 'mb-2 flex flex-col items-center ml-5',
       qrImage: 'w-20 h-20',
       qrLabel: 'text-xs text-neutral-500 mt-0',
-      tableKey: 'text-left font-sans text-sm font-semibold text-neutral-500 pr-2',
-      tableValue: 'text-left font-sans text-sm text-neutral-500',
-      link: 'text-left font-sans text-sm font-semibold text-cyan-800 pr-2 mr-3 underline'
+      tableKey: 'text-left fond-serif text-sm font-semibold text-neutral-500 pr-2',
+      tableValue: 'text-left fond-serif text-sm text-neutral-500',
+      link: 'text-left fond-serif text-sm font-semibold text-cyan-800 pr-2 mr-3 underline'
     },
     experiences: {
       container: 'flex flex-col items-end justify-center h-fit',
@@ -83,10 +83,10 @@ export const theme = {
       timeSection: 'flex flex-col mt-1',
       contentSection: 'flex flex-col justify-between',
       list: 'list-disc list-inside mt-1',
-      listItem: 'text-left font-sans text-sm text-neutral-800 break-words overflow-wrap-anywhere',
-      tags: 'text-left font-sans text-sm text-neutral-500 mt-1',
-      highlight: 'text-left font-sans text-sm text-orange-800',
-      timeText: 'text-left align-top font-sans text-sm font-semibold text-neutral-500 pr-2',
+      listItem: 'text-left fond-serif text-sm text-neutral-800 break-words overflow-wrap-anywhere',
+      tags: 'text-left fond-serif text-sm text-neutral-500 mt-1',
+      highlight: 'text-left fond-serif text-sm text-orange-800',
+      timeText: 'text-left align-top fond-serif text-sm font-semibold text-neutral-500 pr-2',
       titleFootnote: 'text-neutral-500 text-sm ml-1'
     },
     publications: {
@@ -96,7 +96,7 @@ export const theme = {
       contentRow: 'flex items-stretch h-fit w-full mb-1',
       timeSection: 'w-[18%] flex flex-col mt-1',
       contentSection: 'w-[82%] flex flex-col justify-between',
-      authorText: 'font-sans text-sm font-semibold text-neutral-500',
+      authorText: 'fond-serif text-sm font-semibold text-neutral-500',
       authorHighlight: 'font-bold text-black'
     },
     education: {
@@ -105,15 +105,15 @@ export const theme = {
       timeSection: 'flex flex-col',
       contentSection: 'flex flex-col justify-between',
       table: 'w-[100%] table-fixed',
-      tableKey: 'w-[14%] align-top text-left font-sans text-sm font-semibold text-neutral-800 pr-2',
-      tableValue: 'text-left font-sans text-sm text-neutral-800'
+      tableKey: 'w-[14%] align-top text-left fond-serif text-sm font-semibold text-neutral-800 pr-2',
+      tableValue: 'text-left fond-serif text-sm text-neutral-800'
     },
     skills: {
       container: 'flex flex-col items-end justify-center h-fit',
       wrapper: 'flex flex-wrap justify-start h-fit w-full',
       item: 'flex items-center h-fit w-fit rounded-xl border-gray-400 border p-2 mt-2 mr-3',
       icon: 'h-8 mr-2',
-      text: 'font-sans text-sm'
+      text: 'fond-serif text-sm'
     },
     splitLine: {
       default: 'h-0.5 border-t-gray-400'

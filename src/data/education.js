@@ -1,11 +1,18 @@
 export const education = [
   {
-    time: '2021 - Now',
+    time: 'Sep 2021 - Dec 2025',
     title: 'National Taiwan University',
     content: [
-      ['Major', 'Electrical Engineering B.S.'],
-      ['Overall GPA', '3.83 / 4.0'],
-      // ['CS Courses', 'Algorithm, Web Programming, Computer Architecture, Computer Graphics, Machine Learning, Reinforcement Learning']
+      ['Major', 'Bachelar of Science in Engineering - Electrical Engineering'],
+      ['GPA', '3.97 / 4.3'],
+    ],
+    selectedCourses: [
+      ['Operating Systems', 'A+'],
+      ['Computer Graphics', 'A+'],
+      ['Robotics', 'A+'],
+      ['Robot Sensing and Control', 'A+'],
+      ['Precision Motion Control', 'A+'],
+      ['Reinforcement Learning', 'A+'],
     ]
   }
 ];
