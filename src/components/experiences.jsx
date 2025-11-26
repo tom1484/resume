@@ -10,6 +10,7 @@ function ExperienceItem({
   title,
   titleFootnote,
   highlight,
+  role,
   time,
   location,
   link = [],
@@ -26,9 +27,7 @@ function ExperienceItem({
   const { theme } = useTheme();
 
   // Determine if we need two rows or can collapse to one
-  const rightInfo = titleFootnote || location || '';
-  const leftSubInfo = showHighlight && highlight ? highlight : '';
-  const needsTwoRows = rightInfo || leftSubInfo;
+  const needsTwoRows = (titleFootnote || location) || (showHighlight && highlight) || role;
 
   const renderLinks = () => {
     if (!showLinks || !link || link.length === 0) return null;
@@ -47,6 +46,39 @@ function ExperienceItem({
     );
   };
 
+  const titleItem = (
+    <h2 className={theme.typography.heading}>{title}</h2>
+  );
+
+  const highlightItem = showHighlight && highlight ? (
+    <span className={theme.components.experiences.highlight}>
+      {highlight}
+    </span>
+  ) : null;
+
+  const leftInfoItem = (
+    <span className={theme.components.experiences.role}>
+      {role}
+    </span>
+  );
+
+  const rightInfoItem = titleFootnote ? (
+    <span className={theme.components.experiences.titleFootnote}>
+      {titleFootnote}
+    </span>
+  ) : location ? (
+    <span className={theme.components.experiences.titleFootnote}>
+      {location}
+    </span>
+  ) : null;
+
+  const timeItem = (
+    <span className={theme.components.experiences.timeText}>
+      {time}
+      {renderLinks()}
+    </span>
+  );
+
   return (
     <>
       <div className={`${className} w-full`} {...props}>
@@ -54,27 +86,20 @@ function ExperienceItem({
           <>
             {/* Row 1: Title (left) and Location/Footnote (right) */}
             <div className={theme.components.experiences.titleRow}>
-              <h2 className={theme.typography.heading}>{title}</h2>
-              <span className={theme.components.experiences.titleFootnote}>
-                {rightInfo}
-              </span>
+              {titleItem}
+              {rightInfoItem}
             </div>
 
             {/* Row 2: Role/Highlight (left) and Time (right) */}
             <div className={`${theme.components.experiences.titleRow} mb-2`}>
-              <span className={theme.components.experiences.highlight}>
-                {leftSubInfo}
-              </span>
-              <span className={theme.components.experiences.timeText}>
-                {time}
-                {renderLinks()}
-              </span>
+              {leftInfoItem}
+              {timeItem}
             </div>
           </>
         ) : (
           /* Single Row: Title (left) and Time (right) */
           <div className={`${theme.components.experiences.titleRow} mb-2`}>
-            <h2 className={theme.typography.heading}>{title}</h2>
+            {titleItem}
             <span className={theme.components.experiences.timeText}>
               {time}
               {renderLinks()}

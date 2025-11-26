@@ -19,7 +19,13 @@ export default function Education({ data }) {
 
         return (
           <React.Fragment key={idx}>
-            <h2 className={theme.typography.heading}>{title}</h2>
+            <div className={theme.components.education.titleRow}>
+              <h2 className={theme.typography.heading}>{title}</h2>
+              <span className={theme.components.education.timeText}>
+                {time}
+              </span>
+            </div>
+            {/* <h2 className={theme.typography.heading}>{title}</h2> */}
             <table className={theme.components.education.table}>
               <tbody>
                 {tableContent.map((row, rowIdx) => (
