@@ -1,7 +1,5 @@
-// Normal theme - compact and gray design
-// Currently identical to vibrant - will be customized later
-
-export const normalTheme = {
+// Default configuration
+export default {
   layout: {
     containerWidth: 'w-11/12',
     margins: {
@@ -19,7 +17,7 @@ export const normalTheme = {
     },
     widths: {
       timeColumn: 'w-[18%] min-w-[18%] max-w-[18%]',
-      timeColumnWide: 'w-[22%] min-w-[22%] max-w-[22%]', 
+      timeColumnWide: 'w-[22%] min-w-[22%] max-w-[22%]',
       contentColumn: 'w-[82%] min-w-[82%] max-w-[82%]',
       contentColumnNarrow: 'w-[78%] min-w-[78%] max-w-[78%]',
       personalInfoLeft: 'w-[30%]',
@@ -123,3 +121,4 @@ export const normalTheme = {
     }
   }
 };
+

@@ -1,4 +1,4 @@
-import { useTheme } from '../../contexts/ThemeContext';
+import { useTheme } from '../../contexts/themeContext';
 
 // Generic Card component for consistent styling
 export default function Card({ 

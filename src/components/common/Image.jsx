@@ -1,4 +1,4 @@
-import { useTheme } from '../../contexts/ThemeContext';
+import { useTheme } from '../../contexts/themeContext';
 
 // Generic Image component with consistent styling and loading states
 export default function Image({ 

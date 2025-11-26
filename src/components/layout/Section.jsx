@@ -1,6 +1,6 @@
 import React from 'react';
-import Container from './Container';
-import { useTheme } from '../../contexts/ThemeContext';
+import { useTheme } from '@contexts/themeContext';
+import Container from '@components/layout/container';
 
 // Generic Section wrapper component
 export default function Section({ 

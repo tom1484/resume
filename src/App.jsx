@@ -1,10 +1,9 @@
 import React from 'react';
-import Title from './components/title';
-import DataValidationDemo from './components/DataValidationDemo';
-import { getComponent } from './config/componentRegistry';
-import { getData } from './data';
-import { ConfigProvider, useConfig } from './contexts/ConfigContext';
-import { ThemeProvider, useTheme } from './contexts/ThemeContext';
+import { getComponent } from '@config/componentRegistry';
+import { ConfigProvider, useConfig } from '@contexts/configContext';
+import { ThemeProvider, useTheme } from '@contexts/themeContext';
+import Title from '@components/title';
+import DataValidationDemo from '@components/dataValidation';
 
 // TODO:
 //   Certifications (TOEFL, GRE, etc.)
@@ -12,7 +11,7 @@ import { ThemeProvider, useTheme } from './contexts/ThemeContext';
 function AppContent() {
   const { getVisibleSections, getVisibleItems } = useConfig();
   const { theme } = useTheme();
-  
+
   const renderSection = (section) => {
     const Component = getComponent(section.component);
     if (!Component) return null;

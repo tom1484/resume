@@ -1,4 +1,4 @@
-import { useTheme } from '../../contexts/ThemeContext';
+import { useTheme } from '../../contexts/themeContext';
 
 // Generic Link component with consistent styling
 export default function Link({ 

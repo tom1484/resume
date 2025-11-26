@@ -1,5 +1,5 @@
-import { useTheme } from '../../contexts/ThemeContext';
-import { useConfig } from '../../contexts/ConfigContext';
+import { useTheme } from '@contexts/themeContext';
+import { useConfig } from '@contexts/configContext';
 
 // Two-column layout component used in experiences, publications, education
 export default function TwoColumnLayout({ 

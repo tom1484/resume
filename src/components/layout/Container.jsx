@@ -1,4 +1,4 @@
-import { useTheme } from '../../contexts/ThemeContext';
+import { useTheme } from '@contexts/themeContext';
 
 // Generic Container component for consistent layout
 export default function Container({ 

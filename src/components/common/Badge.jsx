@@ -1,4 +1,4 @@
-import { useTheme } from '../../contexts/ThemeContext';
+import { useTheme } from '../../contexts/themeContext';
 
 // Generic Badge component for tags, highlights, and labels
 export default function Badge({ 

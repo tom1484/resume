@@ -1,5 +1,5 @@
 import React from 'react';
-import { useTheme } from '../../contexts/ThemeContext';
+import { useTheme } from '../../contexts/themeContext';
 
 // Generic List component for various list types
 export default function List({ 

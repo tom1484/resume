@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState } from 'react';
-import { sectionsConfig } from '../config/sections';
-import { getData } from '../data';
+import { sectionsConfig } from '@config/sections';
+import { getData } from '@data';
 
 const ConfigContext = createContext();
 
@@ -112,7 +112,7 @@ export function ConfigProvider({ children }) {
   };
 
   const getOrderedSections = () => {
-    return sectionOrder.map(sectionId => 
+    return sectionOrder.map(sectionId =>
       sectionsConfig.find(section => section.id === sectionId)
     ).filter(Boolean);
   };
@@ -124,14 +124,14 @@ export function ConfigProvider({ children }) {
   const getVisibleItems = (sectionId) => {
     const section = sectionsConfig.find(s => s.id === sectionId);
     if (!section) return [];
-    
+
     const data = getData(section.dataKey);
     if (!Array.isArray(data)) return data;
-    
+
     // Apply custom ordering using indices
-    const orderedData = itemOrder[sectionId] ? 
+    const orderedData = itemOrder[sectionId] ?
       itemOrder[sectionId].map(itemIndex => data[itemIndex]).filter(Boolean) : data;
-    
+
     return orderedData.filter((item, originalIndex) => {
       // Find the original index in the unordered data
       const dataIndex = data.indexOf(item);
@@ -142,18 +142,18 @@ export function ConfigProvider({ children }) {
   const getSectionItemsWithVisibility = (sectionId) => {
     const section = sectionsConfig.find(s => s.id === sectionId);
     if (!section) return [];
-    
+
     const data = getData(section.dataKey);
     if (!Array.isArray(data)) return [];
-    
+
     // Apply custom ordering using indices
-    const orderedData = itemOrder[sectionId] ? 
+    const orderedData = itemOrder[sectionId] ?
       itemOrder[sectionId].map(itemIndex => ({
         item: data[itemIndex],
         originalIndex: itemIndex
-      })).filter(entry => entry.item) : 
+      })).filter(entry => entry.item) :
       data.map((item, index) => ({ item, originalIndex: index }));
-    
+
     return orderedData.map(({ item, originalIndex }) => ({
       ...item,
       itemKey: originalIndex, // Use index as itemKey
@@ -172,12 +172,12 @@ export function ConfigProvider({ children }) {
       itemOrder,
       leftColumnRatio
     };
-    
+
     const dataStr = JSON.stringify(config, null, 2);
-    const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
-    
+    const dataUri = 'data:application/json;charset=utf-8,' + encodeURIComponent(dataStr);
+
     const exportFileDefaultName = `resume-config-${new Date().toISOString().split('T')[0]}.json`;
-    
+
     const linkElement = document.createElement('a');
     linkElement.setAttribute('href', dataUri);
     linkElement.setAttribute('download', exportFileDefaultName);
@@ -190,12 +190,12 @@ export function ConfigProvider({ children }) {
       reader.onload = (e) => {
         try {
           const config = JSON.parse(e.target.result);
-          
+
           // Validate configuration structure
           if (!config.version) {
             throw new Error('Invalid configuration file: missing version');
           }
-          
+
           // Apply configuration with fallbacks
           if (config.sectionVisibility) {
             setSectionVisibility(config.sectionVisibility);
@@ -212,7 +212,7 @@ export function ConfigProvider({ children }) {
           if (typeof config.leftColumnRatio === 'number') {
             setLeftColumnRatio(config.leftColumnRatio);
           }
-          
+
           resolve(config);
         } catch (error) {
           reject(error);

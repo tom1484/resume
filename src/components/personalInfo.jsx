@@ -1,7 +1,6 @@
-import TwoColumnLayout from './layout/TwoColumnLayout';
-import Link from './common/Link';
-import Image from './common/Image';
-import { useTheme } from '../contexts/ThemeContext';
+import { useTheme } from '@contexts/themeContext';
+import Link from '@components/common/link';
+import Image from '@components/common/image';
 
 export default function PersonalInfo({ data }) {
   const { theme } = useTheme();

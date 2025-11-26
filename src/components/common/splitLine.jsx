@@ -1,4 +1,4 @@
-import { useTheme } from '../contexts/ThemeContext';
+import { useTheme } from '@contexts/themeContext';
 
 export default function SplitLine({ variant = 'default', className = '' }) {
   const { theme } = useTheme();

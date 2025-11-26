@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { useDataValidation } from '../hooks/useResumeData';
-import { useConfig } from '../contexts/ConfigContext';
-import { useTheme } from '../contexts/ThemeContext';
-import { getData } from '../data';
+import { useDataValidation } from '@hooks/useResumeData';
+import { useConfig } from '@contexts/configContext';
+import { getData } from '@data';
 
 export default function DataValidationDemo() {
   const [isVisible, setIsVisible] = useState(true);
@@ -32,7 +31,6 @@ export default function DataValidationDemo() {
     updateLeftColumnRatio,
     allSections 
   } = useConfig();
-  const { themeMode, toggleTheme, THEME_MODES } = useTheme();
 
   // Keyboard shortcut: Ctrl/Cmd + D
   useEffect(() => {
@@ -445,44 +443,6 @@ export default function DataValidationDemo() {
         </div>
         <div style={{ fontSize: '10px', color: '#666', marginTop: '2px' }}>
           Right column: {100 - leftColumnRatio}%
-        </div>
-      </div>
-
-      {/* Theme Switcher */}
-      <div style={{ marginBottom: '15px' }}>
-        <strong>Theme Mode:</strong>
-        <button
-          onClick={toggleTheme}
-          style={{
-            width: '100%',
-            marginTop: '5px',
-            padding: '8px',
-            fontSize: '12px',
-            fontWeight: 'bold',
-            borderRadius: '4px',
-            border: 'none',
-            cursor: 'pointer',
-            transition: 'all 0.2s',
-            background: themeMode === THEME_MODES.VIBRANT 
-              ? 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
-              : 'linear-gradient(135deg, #6B7280 0%, #4B5563 100%)',
-            color: 'white',
-            boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
-          }}
-          onMouseOver={(e) => {
-            e.currentTarget.style.transform = 'translateY(-1px)';
-            e.currentTarget.style.boxShadow = '0 4px 8px rgba(0,0,0,0.15)';
-          }}
-          onMouseOut={(e) => {
-            e.currentTarget.style.transform = 'translateY(0)';
-            e.currentTarget.style.boxShadow = '0 2px 4px rgba(0,0,0,0.1)';
-          }}
-          title={`Switch to ${themeMode === THEME_MODES.VIBRANT ? 'Normal' : 'Vibrant'} mode`}
-        >
-          {themeMode === THEME_MODES.VIBRANT ? '🎨 Vibrant Mode' : '📄 Normal Mode'}
-        </button>
-        <div style={{ fontSize: '9px', color: '#666', marginTop: '4px', textAlign: 'center' }}>
-          Click to toggle between themes
         </div>
       </div>
 

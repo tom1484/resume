@@ -1,4 +1,4 @@
-import { experienceConfigs, publicationsConfig } from '../data';
+import { experienceConfigs, publicationsConfig } from '@data';
 
 export const sectionsConfig = [
   {
