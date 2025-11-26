@@ -29,21 +29,17 @@ function ExperienceItem({
   // Determine if we need two rows or can collapse to one
   const needsTwoRows = (footnote || location) || (showHighlight && highlight) || role;
 
-  const titleItem = (
-    <span className={theme.typography.heading}>{title}</span>
-  );
-
   const highlightItem = showHighlight && highlight ? (
     <span className={theme.components.experiences.highlight}>
       {highlight}
     </span>
   ) : null;
 
-  const roleItem = (
+  const roleItem = role ? (
     <span className={theme.components.experiences.role}>
       {role}
     </span>
-  );
+  ) : null;
 
   const linkItem = link.length > 0 ? link.map(({ text, url }, idx) => (
     <React.Fragment key={idx}>
@@ -54,10 +50,20 @@ function ExperienceItem({
     </React.Fragment>
   )) : null;
 
+  const titleItem = !needsTwoRows && linkItem ? (
+    <span className="flex items-center">
+      <span className={theme.typography.heading}>{title}</span>
+      <div className='mr-1' />
+      {linkItem}
+    </span>
+  ) : (
+    <span className={theme.typography.heading}>{title}</span>
+  );
+
   const leftInfoItem = (
     <div className={theme.components.experiences.leftInfoRow}>
       {highlightItem}
-      {highlightItem && <span className={theme.components.experiences.infoSpace}>·</span>}
+      {highlightItem && roleItem && <span className={theme.components.experiences.infoSpace}>·</span>}
       {roleItem}
       {linkItem && <span className={theme.components.experiences.infoSpace}>·</span>}
       {linkItem}
