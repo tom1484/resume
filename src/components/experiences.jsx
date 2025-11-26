@@ -8,7 +8,7 @@ import SplitLine from '@components/common/splitLine';
 
 function ExperienceItem({
   title,
-  titleFootnote,
+  footnote,
   highlight,
   role,
   time,
@@ -27,7 +27,7 @@ function ExperienceItem({
   const { theme } = useTheme();
 
   // Determine if we need two rows or can collapse to one
-  const needsTwoRows = (titleFootnote || location) || (showHighlight && highlight) || role;
+  const needsTwoRows = (footnote || location) || (showHighlight && highlight) || role;
 
   const renderLinks = () => {
     if (!showLinks || !link || link.length === 0) return null;
@@ -62,12 +62,12 @@ function ExperienceItem({
     </span>
   );
 
-  const rightInfoItem = titleFootnote ? (
-    <span className={theme.components.experiences.titleFootnote}>
-      {titleFootnote}
+  const rightInfoItem = footnote ? (
+    <span className={theme.components.experiences.footnote}>
+      {footnote}
     </span>
   ) : location ? (
-    <span className={theme.components.experiences.titleFootnote}>
+    <span className={theme.components.experiences.footnote}>
       {location}
     </span>
   ) : null;

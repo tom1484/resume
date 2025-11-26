@@ -6,9 +6,9 @@ export const academicsConfig = {
 export const academics = [
   {
     title: "Vision & Learning Lab, NTUEE",
-    titleFootnote: "Prof. Frank Wang",
-    highlight: "",
-    time: "Jul 2024 - Present",
+    footnote: "Prof. Frank Wang",
+    role: "Undergraduate Researcher",
+    time: "Jul 2024 - Nov 2025",
     link: [
       // { text: "Presentations", url: "https://docs.google.com/presentation/d/1BW9Sg_MG2R7otxRP0OfcDCt2AEdg2iP72PS-oatu98o/edit?usp=sharing" },
     ],
@@ -20,7 +20,7 @@ export const academics = [
   },
   {
     title: "Robot Learning Lab, NTUEE",
-    titleFootnote: "Prof. Shao-Hua Sun",
+    footnote: "Prof. Shao-Hua Sun",
     highlight: "",
     time: "Aug 2022 - Aug 2025",
     link: [

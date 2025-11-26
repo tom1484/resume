@@ -86,7 +86,7 @@ export default {
       highlight: 'font-semibold font-serif text-left align-center text-sm text-cyan-800',
       role: 'font-semibold font-serif text-left align-center text-sm text-neutral-500',
       timeText: 'font-semibold font-serif text-left align-center text-sm text-neutral-500',
-      titleFootnote: 'font-semibold font-serif text-neutral-500 text-sm ml-1'
+      footnote: 'font-semibold font-serif text-neutral-500 text-sm ml-1'
     },
     publications: {
       titleRow: 'flex items-center justify-between h-fit w-full',

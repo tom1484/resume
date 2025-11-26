@@ -4,7 +4,7 @@ export const schemas = {
   // Base schema for experience-type entries (academics, projects, competitions, etc.)
   experience: {
     title: { type: 'string', required: true, minLength: 1 },
-    titleFootnote: { type: 'string', required: false },
+    footnote: { type: 'string', required: false },
     highlight: { type: 'string', required: false },
     time: { type: 'string', required: true, minLength: 1 },
     link: { 
