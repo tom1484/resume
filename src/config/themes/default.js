@@ -80,15 +80,17 @@ export default {
     experiences: {
       item: 'flex items-stretch h-fit w-full',
       titleRow: 'flex items-center justify-between h-fit w-full',
-      leftInfoRow: 'flex items-center justify-start h-fit',
-      list: 'list-disc list-outside mt-1',
-      listItem: 'font-serif text-left text-sm text-neutral-800 break-words overflow-wrap-anywhere',
-      tags: 'font-semibold font-serif text-left text-sm text-neutral-500 mt-1',
+      infoRow: 'flex items-center justify-between h-fit w-full mb-1',
+      infoRowLeft: 'flex items-center justify-start h-fit',
+      infoSplit: 'font-bold font-serif text-left align-center text-sm text-neutral-500 mx-1',
       highlight: 'font-semibold font-serif text-left align-center text-sm text-cyan-800',
       role: 'font-semibold font-serif text-left align-center text-sm text-neutral-500',
-      infoSpace: 'font-bold font-serif text-left align-center text-sm text-neutral-500 mx-1',
-      timeText: 'font-semibold font-serif text-left align-center text-sm text-neutral-500',
-      footnote: 'font-semibold font-serif text-neutral-500 text-sm ml-1'
+      footnote: 'font-semibold font-serif text-neutral-500 text-sm ml-1',
+      location: 'font-semibold font-serif text-neutral-500 text-sm ml-1',
+      time: 'font-semibold font-serif text-left align-center text-sm text-neutral-500',
+      list: 'list-disc list-outside',
+      listItem: 'font-serif text-left text-sm text-neutral-800 break-words overflow-wrap-anywhere',
+      tags: 'font-semibold font-serif text-left text-sm text-neutral-500 mt-1',
     },
     publications: {
       titleRow: 'flex items-center justify-between h-fit w-full',
@@ -109,7 +111,7 @@ export default {
       text: 'font-bold font-serif'
     },
     splitLine: {
-      default: 'mt-1 h-0.5 bg-gray-300 border-0',
+      default: 'my-1 h-0.5 bg-gray-300 border-0',
       section: 'h-1 bg-gray-600 border-0'
     },
     link: {

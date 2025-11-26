@@ -16,18 +16,18 @@ function ExperienceItem({
   link = [],
   content = [],
   tags = [],
+  isLast = false,
   showTags = true,
   showHighlight = true,
   showLinks = true,
-  isLast = false,
-  className = '',
-  config = {},
   ...props
 }) {
   const { theme } = useTheme();
 
   // Determine if we need two rows or can collapse to one
-  const needsTwoRows = (footnote || location) || (showHighlight && highlight) || role;
+  const hasTitleRowRight = footnote || location;
+  const hasInfoRowLeft = (showHighlight && highlight) || role;
+  const needsTwoRows = hasTitleRowRight || hasInfoRowLeft;
 
   const highlightItem = showHighlight && highlight ? (
     <span className={theme.components.experiences.highlight}>
@@ -50,7 +50,7 @@ function ExperienceItem({
     </React.Fragment>
   )) : null;
 
-  const titleItem = !needsTwoRows && linkItem ? (
+  const titleRowLeftItem = !needsTwoRows && linkItem ? (
     <span className="flex items-center">
       <span className={theme.typography.heading}>{title}</span>
       <div className='mr-1' />
@@ -60,28 +60,30 @@ function ExperienceItem({
     <span className={theme.typography.heading}>{title}</span>
   );
 
-  const leftInfoItem = (
-    <div className={theme.components.experiences.leftInfoRow}>
+  const titleRowRightItem = hasTitleRowRight ? (
+    footnote ? (
+      <span className={theme.components.experiences.footnote}>
+        {footnote}
+      </span>
+    ) : (
+      <span className={theme.components.experiences.location}>
+        {location}
+      </span>
+    )
+  ) : null;
+
+  const infoRowLeftItem = (
+    <div className={theme.components.experiences.infoRowLeft}>
       {highlightItem}
-      {highlightItem && roleItem && <span className={theme.components.experiences.infoSpace}>·</span>}
+      {highlightItem && roleItem && <span className={theme.components.experiences.infoSplit}>·</span>}
       {roleItem}
-      {linkItem && <span className={theme.components.experiences.infoSpace}>·</span>}
+      {linkItem && <span className={theme.components.experiences.infoSplit}>·</span>}
       {linkItem}
     </div>
   );
 
-  const rightInfoItem = footnote ? (
-    <span className={theme.components.experiences.footnote}>
-      {footnote}
-    </span>
-  ) : location ? (
-    <span className={theme.components.experiences.footnote}>
-      {location}
-    </span>
-  ) : null;
-
-  const timeItem = (
-    <span className={theme.components.experiences.timeText}>
+  const infoRowRightItem = (
+    <span className={theme.components.experiences.time}>
       {time}
     </span>
   );
@@ -93,21 +95,20 @@ function ExperienceItem({
           <>
             {/* Row 1: Title (left) and Location/Footnote (right) */}
             <div className={theme.components.experiences.titleRow}>
-              {titleItem}
-              {rightInfoItem}
+              {titleRowLeftItem}
+              {titleRowRightItem}
             </div>
-
             {/* Row 2: Role/Highlight (left) and Time (right) */}
-            <div className={`${theme.components.experiences.titleRow}`}>
-              {leftInfoItem}
-              {timeItem}
+            <div className={theme.components.experiences.infoRow}>
+              {infoRowLeftItem}
+              {infoRowRightItem}
             </div>
           </>
         ) : (
           /* Single Row: Title (left) and Time (right) */
-          <div className={`${theme.components.experiences.titleRow}`}>
-            {titleItem}
-            {timeItem}
+          <div className={theme.components.experiences.titleRow}>
+            {titleRowLeftItem}
+            {infoRowRightItem}
           </div>
         )}
 
@@ -148,7 +149,7 @@ export default function Experiences({ title: sectionTitle, data, selectedTitles,
         <ExperienceItem
           key={idx}
           {...item}
-          config={config}
+          {...config}
           isLast={idx === data.length - 1}
         />
       ))}
