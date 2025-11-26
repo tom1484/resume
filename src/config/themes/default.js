@@ -78,39 +78,30 @@ export default {
       link: 'text-left font-serif text-sm font-semibold text-black-800 pr-2 mr-3 underline'
     },
     experiences: {
-      container: 'flex flex-col items-end justify-center h-fit',
       item: 'flex items-stretch h-fit w-full',
       titleRow: 'flex items-center justify-between h-fit w-full',
-      timeSection: 'flex flex-col mt-1',
-      contentSection: 'flex flex-col justify-between',
       list: 'list-disc list-outside mt-1',
       listItem: 'font-serif text-left text-sm text-neutral-800 break-words overflow-wrap-anywhere',
       tags: 'font-semibold font-serif text-left text-sm text-neutral-500 mt-1',
       highlight: 'font-semibold font-serif text-left align-center text-sm text-cyan-800',
+      role: 'font-semibold font-serif text-left align-center text-sm text-neutral-500',
       timeText: 'font-semibold font-serif text-left align-center text-sm text-neutral-500',
       titleFootnote: 'font-semibold font-serif text-neutral-500 text-sm ml-1'
     },
     publications: {
-      container: 'flex flex-col items-end justify-center h-fit',
       titleRow: 'flex items-center justify-between h-fit w-full',
       authorRow: 'flex items-center justify-between h-fit w-full',
-      contentRow: 'flex items-stretch h-fit w-full mb-1',
-      timeSection: 'w-[18%] flex flex-col mt-1',
-      contentSection: 'w-[82%] flex flex-col justify-between',
       authorText: 'font-serif text-sm font-semibold text-neutral-500',
       authorHighlight: 'font-bold text-black'
     },
     education: {
-      container: 'flex flex-col items-end justify-center h-fit',
-      item: 'flex items-stretch h-fit w-full my-2',
-      timeSection: 'flex flex-col',
-      contentSection: 'flex flex-col justify-between',
+      titleRow: 'flex items-center justify-between h-fit w-full',
+      timeText: 'font-semibold font-serif text-left align-center text-sm text-neutral-500',
       table: 'w-[100%] table-fixed',
       tableKey: 'w-[14%] align-center text-left font-serif text-sm font-semibold text-neutral-800 pr-2',
       tableValue: 'text-left align-center font-serif text-sm text-neutral-800'
     },
     skills: {
-      container: 'flex flex-col items-end justify-center h-fit',
       wrapper: 'flex flex-col justify-start h-fit w-full',
       category: 'text-neutral-600',
       text: 'font-bold'
