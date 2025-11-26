@@ -95,8 +95,9 @@ export default {
     publications: {
       titleRow: 'flex items-center justify-between h-fit w-full',
       authorRow: 'flex items-center justify-between h-fit w-full',
-      authorText: 'font-serif text-sm font-semibold text-neutral-500',
-      authorHighlight: 'font-bold text-black'
+      author: 'font-serif text-sm font-semibold text-neutral-500',
+      authorHighlight: 'font-bold text-black',
+      conference: 'font-semibold font-serif text-left align-center text-sm text-neutral-500',
     },
     education: {
       titleRow: 'flex items-center justify-between h-fit w-full',
@@ -111,7 +112,7 @@ export default {
       text: 'font-bold font-serif'
     },
     splitLine: {
-      default: 'my-1 h-0.5 bg-gray-300 border-0',
+      default: 'mt-2 mb-1 h-0.5 bg-gray-300 border-0',
       section: 'h-1 bg-gray-600 border-0'
     },
     link: {

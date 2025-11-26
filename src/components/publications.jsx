@@ -28,7 +28,7 @@ function PublicationItem({
   const isStandalone = infoLayout === 'standalone';
 
   const renderAuthors = () => (
-    <span className={theme.components.publications.authorText}>
+    <span className={theme.components.publications.author}>
       {authors.map((author, idx) => {
         const isHighlighted = author.startsWith('!');
         const name = isHighlighted ? author.slice(1) : author;
@@ -51,7 +51,7 @@ function PublicationItem({
         {/* Title Row */}
         <div className={theme.components.publications.titleRow}>
           <h2 className={theme.typography.heading}>{title}</h2>
-          <span className={theme.components.experiences.timeText}>
+          <span className={theme.components.publications.conference}>
             {publication.conference || publication.journal}
             {
               publication.status && <> -  {publication.status}</>
