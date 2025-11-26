@@ -1,26 +1,6 @@
 import { useTheme } from '@contexts/themeContext';
 import Container from '@components/layout/container';
 
-// function SkillItem({ 
-//   title,
-//   icon,
-//   category,
-//   variant = 'default',
-//   showIcon = false, // Icon not used in normal mode
-//   className = '',
-//   ...props 
-// }) {
-//   const { theme } = useTheme();
-
-//   // This component is kept for compatibility but not used in normal mode
-//   // Normal mode uses a grouped display in skills.jsx
-//   return (
-//     <span className={`${theme.components.skills.text} ${className}`}>
-//       {title}
-//     </span>
-//   );
-// }
-
 
 export default function Skills({ data }) {
   const { theme } = useTheme();

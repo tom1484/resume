@@ -51,52 +51,28 @@ function PublicationItem({
         {/* Title Row */}
         <div className={theme.components.publications.titleRow}>
           <h2 className={theme.typography.heading}>{title}</h2>
-          {!isStandalone && (
-            <span className={theme.components.experiences.timeText}>
-              {publication.conference || publication.journal} - {publication.status}
-              {showLinks && link && link.length > 0 && (
-                <>
-                  {' • '}
-                  {link.map(({ text, url }, idx) => (
-                    <React.Fragment key={idx}>
-                      <Link href={url} variant="underline">
-                        {text}
-                      </Link>
-                      {idx < link.length - 1 && <>, </>}
-                    </React.Fragment>
-                  ))}
-                </>
-              )}
-            </span>
-          )}
+          <span className={theme.components.experiences.timeText}>
+            {publication.conference || publication.journal}
+            {
+              publication.status && <> -  {publication.status}</>
+            }
+          </span>
         </div>
 
         {/* Authors Row */}
         <div className={theme.components.publications.authorRow}>
           {renderAuthors()}
+          {
+            link.length > 0 ? link.map(({ text, url }, idx) => (
+                <React.Fragment key={idx}>
+                  <Link href={url} variant="block">
+                    {text}
+                  </Link>
+                  {idx !== link.length - 1 && <div className='mr-1' />}
+                </React.Fragment>
+              )) : null
+          }
         </div>
-
-        {/* Publication Info Row - Show only for standalone layout */}
-        {isStandalone && (
-          <div className="mb-2">
-            <span className={theme.components.experiences.timeText}>
-              {publication.conference || publication.journal} - {publication.status}
-              {showLinks && link && link.length > 0 && (
-                <>
-                  {' • '}
-                  {link.map(({ text, url }, idx) => (
-                    <React.Fragment key={idx}>
-                      <Link href={url} variant="underline">
-                        {text}
-                      </Link>
-                      {idx < link.length - 1 && <>, </>}
-                    </React.Fragment>
-                  ))}
-                </>
-              )}
-            </span>
-          </div>
-        )}
 
         {/* Content Section */}
         {content && content.length > 0 && (

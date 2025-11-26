@@ -1,3 +1,4 @@
+import clsx from 'clsx';
 import { useTheme } from '@contexts/themeContext';
 
 // Generic Container component for consistent layout
@@ -75,7 +76,7 @@ export default function Container({
 
   return (
     <div 
-      className={`${getContainerStyles()} ${className}`}
+      className={clsx(getContainerStyles(), className)}
       {...props}
     >
       {children}

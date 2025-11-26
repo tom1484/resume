@@ -21,7 +21,7 @@ export default function PersonalInfo({ data }) {
             </td>
           </tr>
         ))}
-        <tr>
+        {/* <tr>
           <td className={theme.components.personalInfo.tableKey}>
             Links:
           </td>
@@ -36,7 +36,7 @@ export default function PersonalInfo({ data }) {
               </Link>
             ))}
           </td>
-        </tr>
+        </tr> */}
       </tbody>
     </table>
   );
@@ -51,16 +51,14 @@ export default function PersonalInfo({ data }) {
 
   const renderQRSection = () => (
     <div className={theme.components.personalInfo.qrSection}>
-      {data.qrcodes && data.qrcodes.map(([key, value]) => (
-        <Image
+      {link.map(([key, value]) => (
+        <Link
           key={key}
-          src={`/asset/image/${value}`}
-          alt={`${key} QR code`}
-          variant="default"
-          size="qr"
-          label={key}
-          labelPosition="bottom"
-        />
+          href={value}
+          className={theme.components.personalInfo.link}
+        >
+          {key}
+        </Link>
       ))}
     </div>
   );

@@ -29,25 +29,8 @@ function ExperienceItem({
   // Determine if we need two rows or can collapse to one
   const needsTwoRows = (footnote || location) || (showHighlight && highlight) || role;
 
-  const renderLinks = () => {
-    if (!showLinks || !link || link.length === 0) return null;
-    return (
-      <>
-        {' • '}
-        {link.map(({ text, url }, idx) => (
-          <React.Fragment key={idx}>
-            <Link href={url} variant="underline">
-              {text}
-            </Link>
-            {idx < link.length - 1 && <>, </>}
-          </React.Fragment>
-        ))}
-      </>
-    );
-  };
-
   const titleItem = (
-    <h2 className={theme.typography.heading}>{title}</h2>
+    <span className={theme.typography.heading}>{title}</span>
   );
 
   const highlightItem = showHighlight && highlight ? (
@@ -56,10 +39,29 @@ function ExperienceItem({
     </span>
   ) : null;
 
-  const leftInfoItem = (
+  const roleItem = (
     <span className={theme.components.experiences.role}>
       {role}
     </span>
+  );
+
+  const linkItem = link.length > 0 ? link.map(({ text, url }, idx) => (
+    <React.Fragment key={idx}>
+      <Link href={url} variant="block">
+        {text}
+      </Link>
+      {idx !== link.length - 1 && <div className='mr-1' />}
+    </React.Fragment>
+  )) : null;
+
+  const leftInfoItem = (
+    <div className={theme.components.experiences.leftInfoRow}>
+      {highlightItem}
+      {highlightItem && <span className={theme.components.experiences.infoSpace}>·</span>}
+      {roleItem}
+      {linkItem && <span className={theme.components.experiences.infoSpace}>·</span>}
+      {linkItem}
+    </div>
   );
 
   const rightInfoItem = footnote ? (
@@ -75,13 +77,12 @@ function ExperienceItem({
   const timeItem = (
     <span className={theme.components.experiences.timeText}>
       {time}
-      {renderLinks()}
     </span>
   );
 
   return (
     <>
-      <div className={`${className} w-full`} {...props}>
+      <div className="w-full print-no-break-in" {...props}>
         {needsTwoRows ? (
           <>
             {/* Row 1: Title (left) and Location/Footnote (right) */}
@@ -91,19 +92,16 @@ function ExperienceItem({
             </div>
 
             {/* Row 2: Role/Highlight (left) and Time (right) */}
-            <div className={`${theme.components.experiences.titleRow} mb-2`}>
+            <div className={`${theme.components.experiences.titleRow}`}>
               {leftInfoItem}
               {timeItem}
             </div>
           </>
         ) : (
           /* Single Row: Title (left) and Time (right) */
-          <div className={`${theme.components.experiences.titleRow} mb-2`}>
+          <div className={`${theme.components.experiences.titleRow}`}>
             {titleItem}
-            <span className={theme.components.experiences.timeText}>
-              {time}
-              {renderLinks()}
-            </span>
+            {timeItem}
           </div>
         )}
 

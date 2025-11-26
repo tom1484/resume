@@ -3,17 +3,17 @@ export default {
   layout: {
     containerWidth: 'w-11/12',
     margins: {
-      top: 'mb-3',
-      bottom: 'mb-3',
-      section: 'mb-2'
+      top: 'mb-1',
+      bottom: 'mb-1',
+      section: 'mb-1'
     },
     spacing: {
-      sectionGap: 'mb-3',
+      sectionGap: 'mb-1',
       itemGap: 'my-1',
       smallGap: 'mt-1',
       mediumGap: 'ml-5',
-      padding: 'p-2',
-      paddingRight: 'pr-2'
+      padding: 'p-1',
+      paddingRight: 'pr-1'
     },
     widths: {
       timeColumn: 'w-[18%] min-w-[18%] max-w-[18%]',
@@ -62,7 +62,7 @@ export default {
     },
     title: {
       container: 'flex flex-col items-start justify-center h-fit',
-      titleWrapper: 'w-full flex flex-col items-start justify-start mb-2',
+      titleWrapper: 'w-full flex flex-col items-start justify-start mb-1',
       divider: 'h-0.5 w-[100%] border-t-gray-600 bg-gray-600'
     },
     personalInfo: {
@@ -71,7 +71,7 @@ export default {
       nameSection: 'flex flex-col items-center justify-center w-[40%]',
       qrSection: 'flex flex-row items-center justify-end w-[30%]',
       qrItem: 'mb-2 flex flex-col items-center ml-5',
-      qrImage: 'w-20 h-20',
+      qrImage: 'w-15 h-10',
       qrLabel: 'text-xs text-neutral-500 mt-0',
       tableKey: 'text-left font-serif text-sm font-semibold text-neutral-500 pr-2',
       tableValue: 'text-left font-serif text-sm text-neutral-500',
@@ -80,11 +80,13 @@ export default {
     experiences: {
       item: 'flex items-stretch h-fit w-full',
       titleRow: 'flex items-center justify-between h-fit w-full',
+      leftInfoRow: 'flex items-center justify-start h-fit',
       list: 'list-disc list-outside mt-1',
       listItem: 'font-serif text-left text-sm text-neutral-800 break-words overflow-wrap-anywhere',
       tags: 'font-semibold font-serif text-left text-sm text-neutral-500 mt-1',
       highlight: 'font-semibold font-serif text-left align-center text-sm text-cyan-800',
       role: 'font-semibold font-serif text-left align-center text-sm text-neutral-500',
+      infoSpace: 'font-bold font-serif text-left align-center text-sm text-neutral-500 mx-1',
       timeText: 'font-semibold font-serif text-left align-center text-sm text-neutral-500',
       footnote: 'font-semibold font-serif text-neutral-500 text-sm ml-1'
     },
@@ -103,12 +105,16 @@ export default {
     },
     skills: {
       wrapper: 'flex flex-col justify-start h-fit w-full',
-      category: 'text-neutral-600',
-      text: 'font-bold'
+      category: 'font-bold font-serif text-neutral-600',
+      text: 'font-bold font-serif'
     },
     splitLine: {
-      default: 'my-2 h-0.5 bg-gray-300 border-0',
+      default: 'mt-1 h-0.5 bg-gray-300 border-0',
       section: 'h-1 bg-gray-600 border-0'
+    },
+    link: {
+      default: 'font-bold font-serif text-sm underline text-neutral-500',
+      block: 'font-bold font-serif text-sm underline text-neutral-500'
     }
   }
 };
