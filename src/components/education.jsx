@@ -1,6 +1,6 @@
+import React from 'react';
 import { useTheme } from '@contexts/themeContext';
 import Container from '@components/layout/container';
-import TwoColumnLayout from '@components/layout/twoColumnLayout';
 
 export default function Education({ data }) {
   const { theme } = useTheme();
@@ -18,59 +18,47 @@ export default function Education({ data }) {
         })();
 
         return (
-          <TwoColumnLayout
-            key={idx}
-            leftColumn={
-              <h2 className={theme.typography.heading}>{time}</h2>
-            }
-            rightColumn={
-              <>
-                <h2 className={theme.typography.heading}>{title}</h2>
-                <table className={theme.components.education.table}>
-                  <tbody>
-                    {tableContent.map((row, rowIdx) => (
-                      <tr key={rowIdx}>
-                        {row.map((cell, cellIdx) => (
-                          cell ? (
-                            <td key={cellIdx} className={theme.components.education.tableCell}>
-                              <span className={theme.components.education.tableKey}>
-                                {cell[0]}:
-                              </span>{' '}
-                              <span className={theme.components.education.tableValue}>
-                                {cell[1]}
-                              </span>
-                            </td>
-                          ) : (
-                            <td key={cellIdx} className={theme.components.education.tableCell}></td>
-                          )
-                        ))}
-                      </tr>
-                    ))}
-                    {selectedCourses && (
-                      <tr>
-                        <td colSpan="2" className={theme.components.education.tableCell}>
+          <React.Fragment key={idx}>
+            <h2 className={theme.typography.heading}>{title}</h2>
+            <table className={theme.components.education.table}>
+              <tbody>
+                {tableContent.map((row, rowIdx) => (
+                  <tr key={rowIdx}>
+                    {row.map((cell, cellIdx) => (
+                      cell ? (
+                        <td key={cellIdx} className={theme.components.education.tableCell}>
                           <span className={theme.components.education.tableKey}>
-                            Selected Courses:
+                            {cell[0]}:
                           </span>{' '}
                           <span className={theme.components.education.tableValue}>
-                            {selectedCourses.map(([course, grade], idx) => (
-                              <span key={idx}>
-                                {course} ({grade}){idx < selectedCourses.length - 1 ? ', ' : ''}
-                              </span>
-                            ))}
+                            {cell[1]}
                           </span>
                         </td>
-                      </tr>
-                    )}
-                  </tbody>
-                </table>
-              </>
-            }
-            leftWidth="dynamic"
-            rightWidth="dynamic"
-            alignment="top"
-            className=""
-          />
+                      ) : (
+                        <td key={cellIdx} className={theme.components.education.tableCell}></td>
+                      )
+                    ))}
+                  </tr>
+                ))}
+                {selectedCourses && (
+                  <tr>
+                    <td colSpan="2" className={theme.components.education.tableCell}>
+                      <span className={theme.components.education.tableKey}>
+                        Selected Courses:
+                      </span>{' '}
+                      <span className={theme.components.education.tableValue}>
+                        {selectedCourses.map(([course, grade], idx) => (
+                          <span key={idx}>
+                            {course} ({grade}){idx < selectedCourses.length - 1 ? ', ' : ''}
+                          </span>
+                        ))}
+                      </span>
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </React.Fragment>
         );
       })}
     </Container>

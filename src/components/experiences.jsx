@@ -25,72 +25,59 @@ function ExperienceItem({
 }) {
   const { theme } = useTheme();
 
-  // Determine layout: use config if available, fall back to titleFootnote check
-  const infoLayout = config.infoLayout || (titleFootnote ? 'standalone' : 'inline');
-  const isStandalone = infoLayout === 'standalone';
+  // Determine if we need two rows or can collapse to one
+  const rightInfo = titleFootnote || location || '';
+  const leftSubInfo = showHighlight && highlight ? highlight : '';
+  const needsTwoRows = rightInfo || leftSubInfo;
+
+  const renderLinks = () => {
+    if (!showLinks || !link || link.length === 0) return null;
+    return (
+      <>
+        {' • '}
+        {link.map(({ text, url }, idx) => (
+          <React.Fragment key={idx}>
+            <Link href={url} variant="underline">
+              {text}
+            </Link>
+            {idx < link.length - 1 && <>, </>}
+          </React.Fragment>
+        ))}
+      </>
+    );
+  };
 
   return (
     <>
       <div className={`${className} w-full`} {...props}>
-        {/* Title Row */}
-        <div className={theme.components.experiences.titleRow}>
-          <h2 className={theme.typography.heading}>{title}</h2>
-          {titleFootnote ? (
-            // If titleFootnote exists (academics), show it on the same row
-            <span className={theme.components.experiences.titleFootnote}>
-              {titleFootnote}
-            </span>
-          ) : !isStandalone ? (
-            // If inline layout and no titleFootnote, show time/location/links on the same row
-            <span className={theme.components.experiences.timeText}>
-              {showHighlight && highlight && (
-                <span className={`${theme.components.experiences.highlight} mr-3`}>
-                  {highlight}
-                </span>
-              )}
-              {time}
-              {location && <> • {location}</>}
-              {showLinks && link && link.length > 0 && (
-                <>
-                  {' • '}
-                  {link.map(({ text, url }, idx) => (
-                    <React.Fragment key={idx}>
-                      <Link href={url} variant="underline">
-                        {text}
-                      </Link>
-                      {idx < link.length - 1 && <>, </>}
-                    </React.Fragment>
-                  ))}
-                </>
-              )}
-            </span>
-          ) : null}
-        </div>
-
-        {/* Time/Location/Links Row - Show for standalone layout or titleFootnote */}
-        {(isStandalone || titleFootnote) && (
-          <div className="mb-2">
-            {showHighlight && highlight && (
-              <span className={`${theme.components.experiences.highlight} mr-3`}>
-                {highlight}
+        {needsTwoRows ? (
+          <>
+            {/* Row 1: Title (left) and Location/Footnote (right) */}
+            <div className={theme.components.experiences.titleRow}>
+              <h2 className={theme.typography.heading}>{title}</h2>
+              <span className={theme.components.experiences.titleFootnote}>
+                {rightInfo}
               </span>
-            )}
+            </div>
+
+            {/* Row 2: Role/Highlight (left) and Time (right) */}
+            <div className={`${theme.components.experiences.titleRow} mb-2`}>
+              <span className={theme.components.experiences.highlight}>
+                {leftSubInfo}
+              </span>
+              <span className={theme.components.experiences.timeText}>
+                {time}
+                {renderLinks()}
+              </span>
+            </div>
+          </>
+        ) : (
+          /* Single Row: Title (left) and Time (right) */
+          <div className={`${theme.components.experiences.titleRow} mb-2`}>
+            <h2 className={theme.typography.heading}>{title}</h2>
             <span className={theme.components.experiences.timeText}>
               {time}
-              {location && <> • {location}</>}
-              {showLinks && link && link.length > 0 && (
-                <>
-                  {' • '}
-                  {link.map(({ text, url }, idx) => (
-                    <React.Fragment key={idx}>
-                      <Link href={url} variant="underline">
-                        {text}
-                      </Link>
-                      {idx < link.length - 1 && <>, </>}
-                    </React.Fragment>
-                  ))}
-                </>
-              )}
+              {renderLinks()}
             </span>
           </div>
         )}

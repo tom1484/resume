@@ -29,8 +29,8 @@ export default {
   typography: {
     mainTitle: 'font-bold font-serif text-4xl',
     sectionTitle: 'font-bold font-serif text-xl text-black-700',
-    heading: 'font-serif text-lg',
-    subheading: 'font-serif text-sm font-semibold',
+    heading: 'font-bold font-serif text-lg',
+    subheading: 'font-bold font-serif text-sm font-semibold',
     bodyText: 'font-serif text-sm',
     caption: 'text-xs',
     fontFamily: 'font-serif'
@@ -84,11 +84,11 @@ export default {
       timeSection: 'flex flex-col mt-1',
       contentSection: 'flex flex-col justify-between',
       list: 'list-disc list-outside mt-1',
-      listItem: 'text-left font-serif text-sm text-neutral-800 break-words overflow-wrap-anywhere',
-      tags: 'text-left font-serif text-sm text-neutral-500 mt-1',
-      highlight: 'text-left align-center font-serif text-sm text-cyan-800',
-      timeText: 'text-left align-center font-serif text-sm font-semibold text-neutral-500 pr-2',
-      titleFootnote: 'text-neutral-500 text-sm ml-1'
+      listItem: 'font-serif text-left text-sm text-neutral-800 break-words overflow-wrap-anywhere',
+      tags: 'font-semibold font-serif text-left text-sm text-neutral-500 mt-1',
+      highlight: 'font-semibold font-serif text-left align-center text-sm text-cyan-800',
+      timeText: 'font-semibold font-serif text-left align-center text-sm text-neutral-500',
+      titleFootnote: 'font-semibold font-serif text-neutral-500 text-sm ml-1'
     },
     publications: {
       container: 'flex flex-col items-end justify-center h-fit',
