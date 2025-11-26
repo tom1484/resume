@@ -8,7 +8,7 @@ export const competitions = [
     role: 'Avionics Team Lead',
     time: 'Nov 2023 - Oct 2025',
     link: [
-      { text: 'Official', url: 'https://landerchallenge.space/' },
+      // { text: 'Official', url: 'https://landerchallenge.space/' },
       { text: 'Team', url: 'https://www.facebook.com/p/STAR-Student-Society-of-Taiwan-Advanced-Rocketry-61558308603436/' },
     ],
     content: [
@@ -24,7 +24,7 @@ export const competitions = [
     role: 'Navigation Team Lead',
     time: 'Jun 2022 - Oct 2022',
     link: [
-      { text: 'Video', url: 'https://youtu.be/NjOgNrPMUJs?t=5368' },
+      { text: 'Stream', url: 'https://youtu.be/NjOgNrPMUJs?t=5368' },
     ],
     content: [
       'Designed and implemented a vision-based laser aiming system for the Astrobee robot using OpenCV.',

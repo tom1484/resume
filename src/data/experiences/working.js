@@ -1,7 +1,5 @@
 // Configuration for this section
-export const workingConfig = {
-  infoLayout: 'inline', // 'inline' or 'standalone'
-};
+export const workingConfig = {};
 
 export const working = [
   {
