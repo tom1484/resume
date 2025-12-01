@@ -69,9 +69,9 @@ export default {
       container: 'flex items-center justify-center h-fit',
       table: 'w-[30%]',
       nameSection: 'flex flex-col items-center justify-center w-[40%]',
-      qrSection: 'flex flex-row items-center justify-end w-[30%]',
-      qrItem: 'mb-2 flex flex-col items-center ml-5',
-      qrImage: 'w-15 h-10',
+      linkSection: 'flex flex-row items-center justify-end w-[30%]',
+      qrItem: 'flex flex-col items-center',
+      qrImage: 'w-10 h-10',
       qrLabel: 'text-xs text-neutral-500 mt-0',
       tableKey: 'text-left font-serif text-sm font-semibold text-neutral-500 pr-2',
       tableValue: 'text-left font-serif text-sm text-neutral-500',
@@ -83,7 +83,7 @@ export default {
       infoRow: 'flex items-center justify-between h-fit w-full mb-1',
       infoRowLeft: 'flex items-center justify-start h-fit',
       infoSplit: 'font-bold font-serif text-left align-center text-sm text-neutral-500 mx-1',
-      highlight: 'font-semibold font-serif text-left align-center text-sm text-cyan-800',
+      highlight: 'font-semibold font-serif text-left align-center text-sm text-orange-800',
       role: 'font-semibold font-serif text-left align-center text-sm text-neutral-500',
       footnote: 'font-semibold font-serif text-neutral-500 text-sm ml-1',
       location: 'font-semibold font-serif text-neutral-500 text-sm ml-1',
@@ -116,8 +116,8 @@ export default {
       section: 'h-1 bg-gray-600 border-0'
     },
     link: {
-      default: 'font-bold font-serif text-sm underline text-neutral-500',
-      block: 'font-bold font-serif text-sm underline text-neutral-500'
+      default: 'font-bold font-serif text-sm underline text-cyan-800',
+      block: 'font-bold font-serif text-sm underline text-cyan-800'
     }
   }
 };

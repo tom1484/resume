@@ -6,7 +6,7 @@ export const competitions = [
     title: 'CPLC Lander Challenge - Student Self-landing Rocket',
     location: 'Taipei & Hsinchu, Taiwan',
     role: 'Avionics Team Lead',
-    time: 'Nov 2023 - Oct 2025',
+    time: 'Nov 2023 - Present',
     link: [
       { text: 'Team', url: 'https://www.facebook.com/p/STAR-Student-Society-of-Taiwan-Advanced-Rocketry-61558308603436/' },
     ],

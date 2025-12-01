@@ -8,7 +8,7 @@ export const extracurriculars = [
     role: 'Minister of Academic Department',
     time: 'Jul 2023 - Jul 2024',
     content: [
-      'Directed the academic division in curating technical workshops, including embedded systems tutorials, PCB design, and career development seminars for the EE student body.',
+      'Directed the academic division in curating technical workshops, including embedded systems tutorials, PCB design, and career seminars for the EE student body.',
       'Oversaw the operations of the department MakerSpace, managing equipment maintenance and resource allocation to support student innovation projects.',
     ]
   },
@@ -18,7 +18,7 @@ export const extracurriculars = [
     role: 'Teaching Team Lead',
     time: 'Jun 2023 - Jul 2023',
     content: [
-      'Led a 20-member teaching team to architect a comprehensive engineering curriculum, designing hands-on software (Python) and hardware (Arduino) projects for high school students.',
+      'Led a 20-member teaching team to architect a comprehensive engineering curriculum, designing hands-on software (Python) and hardware (Arduino) projects for 120+ high school students from every corner of Taiwan.',
     ]
   },
   {

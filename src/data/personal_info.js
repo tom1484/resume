@@ -8,7 +8,6 @@ export const personalInfo = {
     ['LinkedIn', 'https://www.linkedin.com/in/chu-rong-chen-17a96a262']
   ],
   qrcodes: [
-    ["GitHub", "github.svg"],
-    ["LinkedIn", "linkedin.svg"],
+    ["Links", "links.svg"],
   ]
 }
