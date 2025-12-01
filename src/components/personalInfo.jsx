@@ -7,6 +7,7 @@ export default function PersonalInfo({ data }) {
   
   const info = data.info;
   const link = data.link;
+  const qrcodes = data.qrcodes || [];
   
   const renderInfoTable = () => (
     <table className={theme.components.personalInfo.table}>
@@ -49,8 +50,8 @@ export default function PersonalInfo({ data }) {
     </div>
   );
 
-  const renderQRSection = () => (
-    <div className={theme.components.personalInfo.qrSection}>
+  const renderLinks = () => (
+    <div className={theme.components.personalInfo.linkSection}>
       {link.map(([key, value]) => (
         <Link
           key={key}
@@ -60,6 +61,16 @@ export default function PersonalInfo({ data }) {
           {key}
         </Link>
       ))}
+      {qrcodes.map(([label, src]) => (
+        <div key={label} className={theme.components.personalInfo.qrItem}>
+          <Image
+            src={src}
+            alt={label}
+            size="qr"
+          />
+          {/* <span className={theme.components.personalInfo.qrLabel}>{label}</span> */}
+        </div>
+      ))}
     </div>
   );
 
@@ -67,7 +78,7 @@ export default function PersonalInfo({ data }) {
     <div className={`${theme.components.personalInfo.container} ${theme.layout.containerWidth} ${theme.layout.margins.section}`}>
       {renderInfoTable()}
       {renderNameSection()}
-      {renderQRSection()}
+      {renderLinks()}
     </div>
   );
 }
