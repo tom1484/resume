@@ -1,10 +1,10 @@
 import React from 'react';
-import { filterDataByTitles } from '@utils';
 import { useTheme } from '@contexts/themeContext';
-import Container from '@components/layout/container';
+import LinkGroup from '@components/common/linkGroup';
 import List from '@components/common/list';
-import Link from '@components/common/link';
+import SectionList from '@components/common/sectionList';
 import SplitLine from '@components/common/splitLine';
+import TagList from '@components/common/tagList';
 
 function PublicationItem({
   title,
@@ -22,10 +22,6 @@ function PublicationItem({
   ...props
 }) {
   const { theme } = useTheme();
-
-  // Determine layout: use config if available, default to 'inline'
-  const infoLayout = config.infoLayout || 'inline';
-  const isStandalone = infoLayout === 'standalone';
 
   const renderAuthors = () => (
     <span className={theme.components.publications.author}>
@@ -62,16 +58,7 @@ function PublicationItem({
         {/* Authors Row */}
         <div className={theme.components.publications.authorRow}>
           {renderAuthors()}
-          {
-            link.length > 0 ? link.map(({ text, url }, idx) => (
-                <React.Fragment key={idx}>
-                  <Link href={url} variant="block">
-                    {text}
-                  </Link>
-                  {idx !== link.length - 1 && <div className='mr-1' />}
-                </React.Fragment>
-              )) : null
-          }
+          {link.length > 0 ? <LinkGroup links={link} /> : null}
         </div>
 
         {/* Content Section */}
@@ -83,15 +70,7 @@ function PublicationItem({
         )}
 
         {/* Tags Section */}
-        {showTags && tags && tags.length > 0 && (
-          <div className={theme.components.experiences.tags}>
-            <List
-              items={tags}
-              variant="inline"
-              separator=" | "
-            />
-          </div>
-        )}
+        <TagList tags={tags} show={showTags} />
       </div>
 
       {/* Splitline - only show if not the last item */}
@@ -102,22 +81,19 @@ function PublicationItem({
   );
 }
 
-
 export default function Publications({ title: sectionTitle, data, selectedTitles, config = {} }) {
-  if (selectedTitles && selectedTitles.length > 0) {
-    data = filterDataByTitles(data, selectedTitles);
-  }
-
   return (
-    <Container variant="section" width="section">
-      {data.map((item, idx) => (
+    <SectionList
+      data={data}
+      selectedTitles={selectedTitles}
+      renderItem={(item, idx, isLast) => (
         <PublicationItem
           key={idx}
           {...item}
           config={config}
-          isLast={idx === data.length - 1}
+          isLast={isLast}
         />
-      ))}
-    </Container>
+      )}
+    />
   );
 }

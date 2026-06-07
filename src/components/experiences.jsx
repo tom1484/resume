@@ -1,10 +1,9 @@
-import React from 'react';
-import { filterDataByTitles } from '@utils';
 import { useTheme } from '@contexts/themeContext';
-import Container from '@components/layout/container';
+import LinkGroup from '@components/common/linkGroup';
 import List from '@components/common/list';
-import Link from '@components/common/link';
+import SectionList from '@components/common/sectionList';
 import SplitLine from '@components/common/splitLine';
+import TagList from '@components/common/tagList';
 
 function ExperienceItem({
   title,
@@ -41,14 +40,7 @@ function ExperienceItem({
     </span>
   ) : null;
 
-  const linkItem = link.length > 0 ? link.map(({ text, url }, idx) => (
-    <React.Fragment key={idx}>
-      <Link href={url} variant="block">
-        {text}
-      </Link>
-      {idx !== link.length - 1 && <div className='mr-1' />}
-    </React.Fragment>
-  )) : null;
+  const linkItem = link.length > 0 ? <LinkGroup links={link} /> : null;
 
   const titleRowLeftItem = !needsTwoRows && linkItem ? (
     <span className="flex items-center">
@@ -119,15 +111,7 @@ function ExperienceItem({
         />
 
         {/* Tags Section */}
-        {showTags && tags && tags.length > 0 && (
-          <div className={theme.components.experiences.tags}>
-            <List
-              items={tags}
-              variant="inline"
-              separator=" | "
-            />
-          </div>
-        )}
+        <TagList tags={tags} show={showTags} />
       </div>
 
       {/* Splitline - only show if not the last item */}
@@ -139,20 +123,18 @@ function ExperienceItem({
 }
 
 export default function Experiences({ title: sectionTitle, data, selectedTitles, config = {} }) {
-  if (selectedTitles && selectedTitles.length > 0) {
-    data = filterDataByTitles(data, selectedTitles);
-  }
-
   return (
-    <Container variant="section" width="section">
-      {data.map((item, idx) => (
+    <SectionList
+      data={data}
+      selectedTitles={selectedTitles}
+      renderItem={(item, idx, isLast) => (
         <ExperienceItem
           key={idx}
           {...item}
           {...config}
-          isLast={idx === data.length - 1}
+          isLast={isLast}
         />
-      ))}
-    </Container>
+      )}
+    />
   );
 }

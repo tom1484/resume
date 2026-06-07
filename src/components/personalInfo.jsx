@@ -22,22 +22,6 @@ export default function PersonalInfo({ data }) {
             </td>
           </tr>
         ))}
-        {/* <tr>
-          <td className={theme.components.personalInfo.tableKey}>
-            Links:
-          </td>
-          <td className={theme.components.personalInfo.tableValue}>
-            {link.map(([key, value]) => (
-              <Link
-                key={key}
-                href={value}
-                className={theme.components.personalInfo.link}
-              >
-                {key}
-              </Link>
-            ))}
-          </td>
-        </tr> */}
       </tbody>
     </table>
   );
@@ -45,7 +29,7 @@ export default function PersonalInfo({ data }) {
   const renderNameSection = () => (
     <div className={theme.components.personalInfo.nameSection}>
       <h1 className={`${theme.typography.mainTitle} ${theme.components.container.justifyCenter} ${theme.components.container.itemsCenter}`}>
-        Chu-Rong Chen
+        {data.name}
       </h1>
     </div>
   );
@@ -68,7 +52,6 @@ export default function PersonalInfo({ data }) {
             alt={label}
             size="qr"
           />
-          {/* <span className={theme.components.personalInfo.qrLabel}>{label}</span> */}
         </div>
       ))}
     </div>

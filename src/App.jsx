@@ -4,6 +4,7 @@ import { ConfigProvider, useConfig } from '@contexts/configContext';
 import { ThemeProvider, useTheme } from '@contexts/themeContext';
 import Title from '@components/title';
 import DataValidationDemo from '@components/dataValidation';
+import ErrorBoundary from '@components/common/errorBoundary';
 
 // TODO:
 //   Certifications (TOEFL, GRE, etc.)
@@ -48,7 +49,9 @@ function App() {
   return (
     <ThemeProvider>
       <ConfigProvider>
-        <AppContent />
+        <ErrorBoundary>
+          <AppContent />
+        </ErrorBoundary>
       </ConfigProvider>
     </ThemeProvider>
   );
