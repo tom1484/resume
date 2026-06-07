@@ -9,6 +9,8 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "pg": "^8.16.0"
+    "@anthropic-ai/sdk": "^0.102.0",
+    "pg": "^8.16.0",
+    "zod": "^4.4.3"
   }
 }

@@ -54,6 +54,9 @@ services:
       TELEGRAM_BOT_TOKEN: ${TELEGRAM_BOT_TOKEN}
       TELEGRAM_CHAT_ID: ${TELEGRAM_CHAT_ID}
       REVIEW_BASE_URL: https://jobs.churong.cc
+      DATA_DIR: /data
+    volumes:
+      - ../packages/renderer/src/data:/data:ro
     depends_on:
       db:
         condition: service_healthy
