@@ -54,9 +54,9 @@ Revisit when the bank grows ~10×.
 |---|---|---|---|
 | P2.1 | DB migrations (`jobs`, `events`) + runner in pipeline service | migrations apply idempotently against the live db container | [x] |
 | P2.2 | Discovery service (Python/uv): Greenhouse/Lever/Ashby board fetchers, normalize → dedupe → upsert; config from PREPARE.md drafts (slugs live-verified, 10 boards) | live smoke: 8 real internships inserted; rerun 0 dupes; 10 pytest cases incl. the Internal≠Intern and year≠EAR word-boundary regressions | [x] |
-| P2.3 | JobSpy searches (from searches.yml), conservative throttling, exclude-keyword skip marking | live smoke with one query; excluded titles marked `skipped` with reason | [ ] |
-| P2.4 | Pipeline service (TS): `parse-jd` (Haiku structured) + scoring + poller + events logging | unit tests for scoring math; live parse of ≥3 real JDs reviewed for extraction quality | [ ] |
-| P2.5 | Telegram batch summary | message delivered with top-N list | [ ] |
-| P2.6 | Compose: discovery (nightly cron) + pipeline (poller) wired; deploy | end-to-end: discovery → scored rows → Telegram, on the live stack | [ ] |
+| P2.3 | JobSpy searches (from searches.yml), conservative throttling, exclude-keyword skip marking | live smoke with one query; excluded titles marked `skipped` with reason | [x] |
+| P2.4 | Pipeline service (Node ESM): `parse-jd` (Haiku structured) + scoring + poller + events logging | 16 unit tests (incl. AWS≠CSS fuzzy regression); 30 real JDs parsed+scored live at ~1.1¢/job | [x] |
+| P2.5 | Telegram batch summary | delivered live (events: notify ok) + format unit tests | [x] |
+| P2.6 | Compose: discovery (supercronic nightly, `init: true` — PID-1 fatal fixed) + pipeline poller; review healthcheck fixed (busybox wget → 127.0.0.1) | end-to-end live: discovery --all → 23 inserted → poller drained queue → 30 scored → Telegram | [x] |
 | P2.7 | Eval fixtures (golden JDs) + calibration export | eval script asserts must-have recall; labeled CSV → threshold recommendation (needs Tom's labels) | [ ] |
 | P2.8 | CI: python + pipeline tests; close out | CI green | [ ] |

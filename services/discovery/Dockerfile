@@ -7,4 +7,11 @@ COPY src ./src
 COPY config ./config
 RUN uv sync --frozen --no-dev
 ENV CONFIG_DIR=/app/config
-CMD ["uv", "run", "--no-sync", "python", "-m", "discovery.main", "--all"]
+
+# supercronic: cron for containers (logs to stdout, no daemon assumptions)
+ARG TARGETARCH
+ADD https://github.com/aptible/supercronic/releases/download/v0.2.33/supercronic-linux-${TARGETARCH} /usr/local/bin/supercronic
+RUN chmod +x /usr/local/bin/supercronic
+COPY crontab /app/crontab
+
+CMD ["supercronic", "/app/crontab"]

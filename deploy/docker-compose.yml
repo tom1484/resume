@@ -31,15 +31,16 @@ services:
       timeout: 5s
       retries: 5
 
-  # Runs once per invocation (cron wiring in P2.6); use
+  # Long-running cron daemon (supercronic, nightly --all). Manual run:
   #   docker compose run --rm discovery uv run --no-sync python -m discovery.main --boards
-  # for manual runs.
   discovery:
     build: ../services/discovery
-    profiles: [manual]
+    restart: unless-stopped
+    init: true   # supercronic's reaper fatals as PID 1; let tini own PID 1
     networks: [internal]
     environment:
       DATABASE_URL: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
+      TZ: Asia/Taipei
     depends_on:
       db:
         condition: service_healthy
@@ -72,7 +73,8 @@ services:
       - ../apps/site/build:/usr/share/nginx/html:ro
       - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
     healthcheck:
-      test: ['CMD', 'wget', '-q', '-O', '/dev/null', 'http://localhost:8080/']
+      # 127.0.0.1, not localhost: busybox wget prefers ::1 and nginx binds IPv4
+      test: ['CMD', 'wget', '-q', '-O', '/dev/null', 'http://127.0.0.1:8080/healthz']
       interval: 15s
       timeout: 5s
       retries: 3
