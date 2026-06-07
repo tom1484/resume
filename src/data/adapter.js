@@ -32,6 +32,9 @@ export function buildViewModels(resume) {
     info: [
       ['Email', basics.email],
       ['Phone', basics.phone],
+      ...(basics.location
+        ? [['Location', [basics.location.city, basics.location.region].filter(Boolean).join(', ')]]
+        : []),
     ],
     link: basics.profiles.map((p) => [p.network, p.url]),
     qrcodes: (basics['x-qrcodes'] ?? []).map((q) => [q.label, q.src]),
