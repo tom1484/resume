@@ -1,23 +1,24 @@
 // Golden-reference capture for render-regression checks.
-// Usage: node scripts/capture.mjs <build-dir> <out-prefix>
+// Usage: node scripts/capture.mjs <build-dir> <out-prefix> [query]
 // Serves <build-dir> statically, renders in headless Chromium, and writes:
 //   <out-prefix>.dom.html  — #root outerHTML (fast diff)
 //   <out-prefix>.pdf       — print-to-PDF, A4, no margins/header/footer
 //   <out-prefix>.png       — full-page screenshot
+// [query] is an optional URL query string, e.g. "profile=academic".
 import { writeFileSync } from 'node:fs';
 import { chromium } from 'playwright';
 import { serveStatic } from './lib/server.mjs';
 
-const [buildDir, outPrefix] = process.argv.slice(2);
+const [buildDir, outPrefix, query] = process.argv.slice(2);
 if (!buildDir || !outPrefix) {
-  console.error('usage: node scripts/capture.mjs <build-dir> <out-prefix>');
+  console.error('usage: node scripts/capture.mjs <build-dir> <out-prefix> [query]');
   process.exit(1);
 }
 
 const { port, close } = await serveStatic(buildDir);
 const browser = await chromium.launch();
 const page = await browser.newPage({ viewport: { width: 1280, height: 1024 } });
-await page.goto(`http://localhost:${port}/`, { waitUntil: 'networkidle' });
+await page.goto(`http://localhost:${port}/${query ? `?${query}` : ''}`, { waitUntil: 'networkidle' });
 await page.evaluate(() => document.fonts.ready);
 
 const dom = await page.evaluate(() => document.getElementById('root').outerHTML);

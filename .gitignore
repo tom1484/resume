@@ -22,3 +22,10 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 /out
+
+# render-regression artifacts (render-check skill)
+/.render-baseline
+/.render-current
+
+# pipeline secrets
+/deploy/.env
