@@ -163,12 +163,12 @@ export default function DataValidationDemo() {
   }
 
   return (
-    <div style={{ 
-      position: 'fixed', 
-      top: '10px', 
-      right: '10px', 
-      background: '#f5f5f5', 
-      padding: '15px', 
+    <div className="print:hidden" style={{
+      position: 'fixed',
+      top: '10px',
+      right: '10px',
+      background: '#f5f5f5',
+      padding: '15px',
       borderRadius: '8px',
       boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
       maxWidth: '300px',

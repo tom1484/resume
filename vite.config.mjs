@@ -6,6 +6,8 @@ import { fileURLToPath } from 'node:url';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 export default defineConfig({
+  // Set VITE_BASE=/<repo>/ when deploying under a subpath (e.g. GitHub Pages)
+  base: process.env.VITE_BASE ?? '/',
   plugins: [react()],
   resolve: {
     alias: {

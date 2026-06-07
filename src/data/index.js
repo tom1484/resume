@@ -15,8 +15,17 @@ export const experienceConfigs = {
 
 export const publicationsConfig = {};
 
-// Current active profile
-let currentProfileId = DEFAULT_PROFILE;
+// Current active profile; can be preselected via ?profile=<id> in the URL
+// (used by scripts/print-pdf.mjs to render per-profile PDFs)
+let currentProfileId = (() => {
+  if (typeof window !== 'undefined') {
+    const requested = new URLSearchParams(window.location.search).get('profile');
+    if (requested && getProfileList().some((p) => p.id === requested)) {
+      return requested;
+    }
+  }
+  return DEFAULT_PROFILE;
+})();
 
 // Get current resume data (view models) based on active profile
 export const getResumeData = () => {

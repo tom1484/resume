@@ -10,9 +10,11 @@
   "scripts": {
     "dev": "vite",
     "start": "vite",
-    "build": "vite build",
+    "build": "node scripts/validate.mjs && vite build",
     "preview": "vite preview",
-    "validate": "node scripts/validate.mjs"
+    "validate": "node scripts/validate.mjs",
+    "test": "vitest run",
+    "pdf": "node scripts/print-pdf.mjs"
   },
   "browserslist": {
     "production": [
@@ -39,7 +41,8 @@
     "playwright": "^1.60.0",
     "postcss": "^8.5.6",
     "tailwindcss": "^3.4.17",
-    "vite": "^6.3.5"
+    "vite": "^6.3.5",
+    "vitest": "^4.1.8"
   },
   "packageManager": "pnpm@9.12.0+sha1.87cb0f58b64bfb9103677375d7e99e12a3ddbf23"
 }
