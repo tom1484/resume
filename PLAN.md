@@ -12,9 +12,9 @@ Legend: `[ ]` pending · `[~]` in progress · `[x]` done (verified)
 
 | Phase | Scope (details in PROPOSALS.md §8) | Status |
 |---|---|---|
-| 1 | Workspace split, overlay contract, master bank draft, compose skeleton | **in progress** |
-| 2 | Discovery (JobSpy + boards) + scoring + calibration | pending |
-| 3 | Tailoring + verify + review app + notifier | pending |
+| 1 | Workspace split, overlay contract, master bank draft, compose skeleton | done |
+| 2 | Discovery (JobSpy + boards) + scoring + calibration | done (threshold calibration pending labels) |
+| 3 | Tailoring + verify + review app + notifier | **in progress** |
 | 4 | Apply agent (local machine, HITL) | pending |
 | 5 | Hardening: eval harness in CI, stats, cost guardrails | pending |
 
@@ -33,7 +33,7 @@ Checkpoint: a hand-written overlay renders as a tailored resume at
 | T5 | `master.json` bullet bank: schema + initial draft (stable ids) | `pnpm validate` green; id-uniqueness + source-pointer-resolution + highlight-coverage tests | [x] |
 | T6 | CI workflow: no YAML changes needed (workflow only calls root pnpm scripts; script paths updated in T2) | push → CI green (GitHub API check) | [x] |
 | T7 | `deploy/docker-compose.yml`: `db` (pgvector) + `review` (nginx static stub) on `nginx` network; deploy | compose healthy; `http://review:8080` + overlay JSON served from inside `nginx` network; **checkpoint verified: `https://jobs.churong.cc/?application=test` renders patched highlight, filtered sections** | [x] |
-| T8 | Close out: PLAN/CLAUDE/PREPARE/memory updated | final push, CI green | [~] |
+| T8 | Close out: PLAN/CLAUDE/PREPARE/memory updated | final push, CI green | [x] |
 
 Post-checkpoint (Tom): request Let's Encrypt cert + enable NPM access list
 (PREPARE.md item 3).
@@ -60,3 +60,19 @@ Revisit when the bank grows ~10×.
 | P2.6 | Compose: discovery (supercronic nightly, `init: true` — PID-1 fatal fixed) + pipeline poller; review healthcheck fixed (busybox wget → 127.0.0.1) | end-to-end live: discovery --all → 23 inserted → poller drained queue → 30 scored → Telegram | [x] |
 | P2.7 | Golden JD evals (6 frozen real JDs, live recall assertion — gates prompt changes per CLAUDE.md) + calibration CSV exported & sent to Tom | parse eval 6/6 recall=1.0; threshold recommender unit-tested; **SCORE_THRESHOLD update pending Tom's labels (not blocking)** | [x] |
 | P2.8 | CI: discovery job (uv + ruff + pytest); pipeline tests already in root vitest | CI green | [x] |
+
+## Phase 3 tasks
+
+Checkpoint: approve a tailored application entirely from a phone —
+tailored resume + diff + cover letter reviewed at jobs.churong.cc,
+approve flips status, artifacts (PDF) ready for the apply agent.
+
+| # | Task | Verification | Status |
+|---|---|---|---|
+| P3.1 | Tailor stage: overlay generation (Sonnet default, Opus for `dream` flag), RAG-grounded on master bank, structured output = overlay schema | overlay validates + patches dry-run cleanly on ≥3 real scored jobs; identity invariants hold | [ ] |
+| P3.2 | Verify-claims stage: every patch traced to master bullets; `audit.unsupported` must be `[]` | **adversarial fabrication test**: fixture overlay with invented metric MUST be flagged; clean overlay passes | [ ] |
+| P3.3 | Per-application artifacts: overlay served from DB, PDF rendered via existing print pipeline | PDF text-extract contains patched content (ATS re-parse check) | [ ] |
+| P3.4 | Review API + review UI (`apps/review` importing @resume/renderer): /inbox, /app/:id (JD ⇄ tailored resume ⇄ diff ⇄ cover letter), approve/edit/reject | Playwright E2E through jobs.churong.cc; approve flips DB status | [ ] |
+| P3.5 | Pipeline wiring: scored ≥ gate → tailor → verify → in_review → Telegram with review link | live: a real job flows scored → in_review with notification | [ ] |
+| P3.6 | Answers bank: table + seed (F-1/CPT etc.) + editing in review UI | seed visible/editable; agent API returns answers | [ ] |
+| P3.7 | Deploy + checkpoint + **NPM access list enabled (Tom)** | phone approval demo; UI behind auth | [ ] |
