@@ -108,3 +108,28 @@ def test_finalize_sets_status_and_flags():
     out = finalize(dict(record), flags=[], exclude_title=EXCLUDE_TITLE, exclude_jd=EXCLUDE_JD)
     assert out["status"] == "new"
     assert out["skip_reason"] is None
+
+
+def test_jobspy_row_nan_handling():
+    """pandas rows carry NaN for missing fields; mapping must not crash."""
+    from discovery.jobspy_search import _row_to_record
+
+    nan = float("nan")
+    record = _row_to_record(
+        {
+            "site": "indeed",
+            "id": "abc",
+            "company": nan,
+            "title": "Robotics Intern",
+            "location": nan,
+            "is_remote": nan,
+            "job_url": "https://x",
+            "date_posted": nan,
+            "description": nan,
+        }
+    )
+    assert record["company"] == "Unknown"
+    assert record["location"] is None
+    assert record["remote"] is False
+    assert record["posted_at"] is None
+    assert record["jd_text"] is None

@@ -62,9 +62,14 @@ def run_boards(searches_cfg: dict, companies_cfg: dict) -> list[dict]:
     return records
 
 
-def run_jobspy(searches_cfg: dict) -> list[dict]:
+def run_jobspy(searches_cfg: dict, companies_cfg: dict) -> list[dict]:
     from discovery.jobspy_search import run_searches  # heavy import, lazy
+    from discovery.normalize import norm
 
+    # JobSpy results matching a target company inherit its flags
+    searches_cfg["_flags_by_company"] = {
+        norm(c["name"]): c.get("flags", []) for c in companies_cfg["companies"]
+    }
     return run_searches(searches_cfg)
 
 
@@ -88,7 +93,7 @@ def main() -> int:
         records += run_boards(searches_cfg, companies_cfg)
     if do_jobspy:
         print("== jobspy ==")
-        records += run_jobspy(searches_cfg)
+        records += run_jobspy(searches_cfg, companies_cfg)
 
     fresh = sum(1 for r in records if r["status"] == "new")
     skipped = len(records) - fresh
