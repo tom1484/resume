@@ -87,6 +87,9 @@ importers:
       '@anthropic-ai/sdk':
         specifier: ^0.102.0
         version: 0.102.0(zod@4.4.3)
+      ajv:
+        specifier: ^8.20.0
+        version: 8.20.0
       pg:
         specifier: ^8.16.0
         version: 8.21.0

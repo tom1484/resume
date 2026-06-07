@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.102.0",
+    "ajv": "^8.20.0",
     "pg": "^8.16.0",
     "zod": "^4.4.3"
   }
