@@ -2,9 +2,14 @@
 
 Personal resume site (React + Vite + Tailwind) being extended into a
 self-hosted job application pipeline. Plan of record: `PROPOSALS.md`.
-**Current phase: 1 done (workspace split, overlay contract, master bank,
-compose skeleton live at jobs.churong.cc) — Phase 2 (discovery + scoring)
-next.** Update this line as phases complete.
+**Current phase: 2 done (discovery cron + scoring pipeline live; nightly
+jobs → scored → Telegram) — Phase 3 (tailoring + review app) next.**
+Update this line as phases complete.
+
+LLM stages run on Haiku (`claude-haiku-4-5`) per the approved cost plan;
+golden-set eval: `services/pipeline/eval/run-parse-eval.js` (live API,
+~2¢ — run before landing any prompt change). SCORE_THRESHOLD calibration
+pending Tom's labels in `out/calibration.csv`.
 
 ## Layout
 

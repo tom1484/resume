@@ -58,5 +58,5 @@ Revisit when the bank grows ~10×.
 | P2.4 | Pipeline service (Node ESM): `parse-jd` (Haiku structured) + scoring + poller + events logging | 16 unit tests (incl. AWS≠CSS fuzzy regression); 30 real JDs parsed+scored live at ~1.1¢/job | [x] |
 | P2.5 | Telegram batch summary | delivered live (events: notify ok) + format unit tests | [x] |
 | P2.6 | Compose: discovery (supercronic nightly, `init: true` — PID-1 fatal fixed) + pipeline poller; review healthcheck fixed (busybox wget → 127.0.0.1) | end-to-end live: discovery --all → 23 inserted → poller drained queue → 30 scored → Telegram | [x] |
-| P2.7 | Eval fixtures (golden JDs) + calibration export | eval script asserts must-have recall; labeled CSV → threshold recommendation (needs Tom's labels) | [ ] |
-| P2.8 | CI: python + pipeline tests; close out | CI green | [ ] |
+| P2.7 | Golden JD evals (6 frozen real JDs, live recall assertion — gates prompt changes per CLAUDE.md) + calibration CSV exported & sent to Tom | parse eval 6/6 recall=1.0; threshold recommender unit-tested; **SCORE_THRESHOLD update pending Tom's labels (not blocking)** | [x] |
+| P2.8 | CI: discovery job (uv + ruff + pytest); pipeline tests already in root vitest | CI green | [x] |

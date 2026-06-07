@@ -44,3 +44,22 @@ jobs:
         with:
           name: resume-pdfs
           path: out/*.pdf
+
+  discovery:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: services/discovery
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: astral-sh/setup-uv@v5
+
+      - name: Install dependencies
+        run: uv sync --all-groups
+
+      - name: Lint
+        run: uv run ruff check .
+
+      - name: Run tests
+        run: uv run pytest -q
