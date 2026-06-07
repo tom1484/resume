@@ -1,0 +1,22 @@
+{
+  "jobId": "test",
+  "profile": {
+    "name": "Test Application (fixture)",
+    "description": "Hand-written Phase-1 checkpoint fixture: section subset + filter + one visible patched highlight",
+    "sections": ["personalInfo", "education", "working", "projects", "skills"],
+    "filters": {
+      "projects": {
+        "tagsAnyOf": ["Embedded Systems", "FPGA"],
+        "limit": 2
+      }
+    }
+  },
+  "patches": [
+    {
+      "op": "replace",
+      "path": "/work/0/highlights/2",
+      "value": "[TAILORED-FOR-TEST] Stabilized model convergence, reducing evaluation loss variance by 90% across diverse camera settings"
+    }
+  ],
+  "coverLetter": "This is a fixture overlay used to verify the overlay rendering path end-to-end. It is not a real application."
+}

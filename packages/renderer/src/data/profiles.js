@@ -21,10 +21,12 @@ function applyFilter(items, filter) {
   return result;
 }
 
-function buildProfile(id, def) {
+// Build a profile from any set of view models (also used by overlay.js
+// with view models rebuilt from a patched resume document)
+export function buildProfileFrom(models, id, def) {
   const data = {};
   for (const sectionKey of def.sections) {
-    const source = viewModels[sectionKey];
+    const source = models[sectionKey];
     const filter = def.filters?.[sectionKey];
     data[sectionKey] = filter && Array.isArray(source) ? applyFilter(source, filter) : source;
   }
@@ -32,7 +34,7 @@ function buildProfile(id, def) {
 }
 
 export const profiles = Object.fromEntries(
-  Object.entries(profileDefs).map(([id, def]) => [id, buildProfile(id, def)])
+  Object.entries(profileDefs).map(([id, def]) => [id, buildProfileFrom(viewModels, id, def)])
 );
 
 export const DEFAULT_PROFILE = 'full';

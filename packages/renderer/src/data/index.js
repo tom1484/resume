@@ -1,6 +1,17 @@
 import { getProfile, getProfileList, DEFAULT_PROFILE } from './profiles';
+import { applyOverlay } from './overlay';
 
 export { getProfileList };
+
+// Active application overlay profile (set via registerApplication before
+// React mounts — see apps/site/src/index.jsx). When set, it pins the
+// rendered profile; ?profile= and the config panel are bypassed.
+let applicationProfile = null;
+
+export const registerApplication = (overlay) => {
+  applicationProfile = applyOverlay(overlay);
+  return applicationProfile;
+};
 
 // Per-section presentation configs (consumed by config/sections.js)
 export const experienceConfigs = {
@@ -29,6 +40,7 @@ let currentProfileId = (() => {
 
 // Get current resume data (view models) based on active profile
 export const getResumeData = () => {
+  if (applicationProfile) return applicationProfile.data;
   return getProfile(currentProfileId).data;
 };
 
@@ -57,6 +69,7 @@ export const switchProfile = (profileId) => {
 
 // Get current profile info
 export const getCurrentProfile = () => {
+  if (applicationProfile) return applicationProfile;
   return getProfile(currentProfileId);
 };
 

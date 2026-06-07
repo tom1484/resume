@@ -1,0 +1,91 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Application overlay",
+  "description": "Per-job tailoring contract: a profile definition (section selection + filters, same shape as meta.x-profiles entries) plus RFC-6902 JSON Patches against the canonical resume.json. Overlays never replace the resume document — they describe a reviewable diff.",
+  "type": "object",
+  "required": ["jobId", "profile"],
+  "additionalProperties": false,
+  "properties": {
+    "jobId": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Normalized job record id this overlay tailors for (e.g. gh-acme-12345, or 'test' for fixtures)"
+    },
+    "profile": {
+      "type": "object",
+      "required": ["sections"],
+      "additionalProperties": false,
+      "properties": {
+        "name": { "type": "string" },
+        "description": { "type": "string" },
+        "sections": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "enum": [
+              "personalInfo",
+              "education",
+              "academics",
+              "working",
+              "publications",
+              "competitions",
+              "projects",
+              "extracurriculars",
+              "skills"
+            ]
+          },
+          "description": "Section keys to render, in order (view-model keys from the adapter)"
+        },
+        "filters": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "tagsAnyOf": { "type": "array", "items": { "type": "string" } },
+              "titleIn": { "type": "array", "items": { "type": "string" } },
+              "limit": { "type": "integer", "minimum": 0 }
+            }
+          }
+        }
+      }
+    },
+    "patches": {
+      "type": "array",
+      "description": "RFC-6902 operations applied to resume.json before rendering. Must apply cleanly (validated by scripts/validate.mjs).",
+      "items": {
+        "type": "object",
+        "required": ["op", "path"],
+        "additionalProperties": false,
+        "properties": {
+          "op": { "enum": ["add", "remove", "replace", "move", "copy", "test"] },
+          "path": { "type": "string", "pattern": "^(/|$)" },
+          "from": { "type": "string", "pattern": "^(/|$)" },
+          "value": {}
+        }
+      }
+    },
+    "coverLetter": { "type": "string" },
+    "audit": {
+      "type": "object",
+      "description": "Verification-pass output: every changed claim traced to the master bullet bank. unsupported must be empty to enter review.",
+      "additionalProperties": false,
+      "properties": {
+        "claims": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["patchIndex", "verdict"],
+            "additionalProperties": false,
+            "properties": {
+              "patchIndex": { "type": "integer", "minimum": 0 },
+              "groundedIn": { "type": "array", "items": { "type": "string" } },
+              "verdict": { "enum": ["supported", "unsupported"] }
+            }
+          }
+        },
+        "unsupported": { "type": "array", "items": { "type": "integer" } }
+      }
+    }
+  }
+}
