@@ -2,8 +2,9 @@
 
 Personal resume site (React + Vite + Tailwind) being extended into a
 self-hosted job application pipeline. Plan of record: `PROPOSALS.md`.
-**Current phase: 0 — planning done, Phase 1 (workspace restructure +
-overlay schema) not started.** Update this line as phases complete.
+**Current phase: 1 done (workspace split, overlay contract, master bank,
+compose skeleton live at jobs.churong.cc) — Phase 2 (discovery + scoring)
+next.** Update this line as phases complete.
 
 ## Layout
 
