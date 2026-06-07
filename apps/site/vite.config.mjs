@@ -4,20 +4,21 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const renderer = path.resolve(__dirname, '../../packages/renderer/src');
 
 export default defineConfig({
-  // Set VITE_BASE=/<repo>/ when deploying under a subpath (e.g. GitHub Pages)
+  // Set VITE_BASE=/<subpath>/ when deploying under a subpath
   base: process.env.VITE_BASE ?? '/',
   plugins: [react()],
   resolve: {
     alias: {
       '@css': path.resolve(__dirname, 'src/css'),
-      '@components': path.resolve(__dirname, 'src/components'),
-      '@config': path.resolve(__dirname, 'src/config'),
-      '@contexts': path.resolve(__dirname, 'src/contexts'),
-      '@hooks': path.resolve(__dirname, 'src/hooks'),
-      '@data': path.resolve(__dirname, 'src/data'),
-      '@utils': path.resolve(__dirname, 'src/utils'),
+      '@components': path.join(renderer, 'components'),
+      '@config': path.join(renderer, 'config'),
+      '@contexts': path.join(renderer, 'contexts'),
+      '@hooks': path.join(renderer, 'hooks'),
+      '@data': path.join(renderer, 'data'),
+      '@utils': path.join(renderer, 'utils'),
     },
   },
   build: {

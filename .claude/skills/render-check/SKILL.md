@@ -15,10 +15,10 @@ timestamps) — never byte-compare PDFs. PNGs are for human eyeballing only.
 ## 1. Capture baseline (before the change)
 
 ```sh
-pnpm build
+pnpm build   # output: apps/site/build
 mkdir -p .render-baseline
-for p in $(node -e "console.log(Object.keys(require('./src/data/resume.json').meta['x-profiles']).join(' '))"); do
-  node scripts/capture.mjs build .render-baseline/$p profile=$p
+for p in $(node -e "console.log(Object.keys(require('./packages/renderer/src/data/resume.json').meta['x-profiles']).join(' '))"); do
+  node scripts/capture.mjs apps/site/build .render-baseline/$p profile=$p
 done
 ```
 
@@ -33,7 +33,7 @@ Same loop into `.render-current/`.
 ## 3. Diff
 
 ```sh
-for p in $(node -e "console.log(Object.keys(require('./src/data/resume.json').meta['x-profiles']).join(' '))"); do
+for p in $(node -e "console.log(Object.keys(require('./packages/renderer/src/data/resume.json').meta['x-profiles']).join(' '))"); do
   diff -q .render-baseline/$p.dom.html .render-current/$p.dom.html \
     && echo "$p: clean" || echo "$p: DRIFT"
 done

@@ -5,14 +5,23 @@ self-hosted job application pipeline. Plan of record: `PROPOSALS.md`.
 **Current phase: 0 — planning done, Phase 1 (workspace restructure +
 overlay schema) not started.** Update this line as phases complete.
 
+## Layout
+
+pnpm workspace: `apps/site` (Vite app: bootstrap, css, public assets),
+`packages/renderer` (components, config, contexts, hooks, data — consumed
+via Vite aliases `@components/@config/@contexts/@hooks/@data/@utils`),
+`services/*` (pipeline services, added per phase), `scripts/` (root tooling),
+`deploy/` (compose + secrets). Build output: `apps/site/build`.
+
 ## Data invariants
 
-- `src/data/resume.json` is canonical and is NEVER mutated by tooling or
-  pipeline code. All tailoring goes through overlays: profile selection
-  (same shape as `meta.x-profiles`) + RFC-6902 JSON Patches.
-- The adapter (`src/data/adapter.js`) must emit exactly the known
-  view-model keys — components spread items onto DOM elements.
-  `src/data/adapter.test.js` enforces this; don't add keys casually.
+- `packages/renderer/src/data/resume.json` is canonical and is NEVER
+  mutated by tooling or pipeline code. All tailoring goes through overlays:
+  profile selection (same shape as `meta.x-profiles`) + RFC-6902 JSON
+  Patches.
+- The adapter (`packages/renderer/src/data/adapter.js`) must emit exactly
+  the known view-model keys — components spread items onto DOM elements.
+  `adapter.test.js` enforces this; don't add keys casually.
 - Every JSON artifact (resume, overlays, job records, master bank) must
   pass Ajv validation (`pnpm validate`) before commit.
 
@@ -46,9 +55,9 @@ overlay schema) not started.** Update this line as phases complete.
 ## Commands
 
 ```sh
-pnpm validate   # Ajv: JSON Resume schema + extension schema
-pnpm test       # vitest (adapter contract tests)
-pnpm build      # validate + production build into build/
+pnpm validate   # Ajv: JSON Resume schema + extension schema (+ overlays)
+pnpm test       # vitest across workspace packages
+pnpm build      # validate + production build into apps/site/build/
 pnpm pdf        # per-profile PDFs into out/
 node scripts/capture.mjs <build-dir> <out-prefix> [query]  # render capture
 ```

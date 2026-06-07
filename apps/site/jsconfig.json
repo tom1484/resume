@@ -1,0 +1,18 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "target": "ES6",
+    "module": "ESNext",
+    "lib": ["ES6", "DOM", "DOM.Iterable"],
+    "paths": {
+      "@css/*": ["src/css/*"],
+      "@components/*": ["../../packages/renderer/src/components/*"],
+      "@config/*": ["../../packages/renderer/src/config/*"],
+      "@contexts/*": ["../../packages/renderer/src/contexts/*"],
+      "@hooks/*": ["../../packages/renderer/src/hooks/*"],
+      "@data/*": ["../../packages/renderer/src/data/*"],
+      "@utils/*": ["../../packages/renderer/src/utils/*"]
+    }
+  },
+  "include": ["src", "../../packages/renderer/src"]
+}

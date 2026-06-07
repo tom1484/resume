@@ -8,11 +8,13 @@ import { chromium } from 'playwright';
 import { serveStatic } from './lib/server.mjs';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
-const buildDir = join(root, 'build');
+const buildDir = join(root, 'apps/site/build');
 const outDir = join(root, 'out');
 mkdirSync(outDir, { recursive: true });
 
-const resume = JSON.parse(readFileSync(join(root, 'src/data/resume.json'), 'utf8'));
+const resume = JSON.parse(
+  readFileSync(join(root, 'packages/renderer/src/data/resume.json'), 'utf8')
+);
 const profileIds = Object.keys(resume.meta['x-profiles']);
 
 const { port, close } = await serveStatic(buildDir);

@@ -25,9 +25,9 @@ Checkpoint: a hand-written overlay renders as a tailored resume at
 
 | # | Task | Verification | Status |
 |---|---|---|---|
-| T0 | PLAN.md tracker | committed | [~] |
-| T1 | Render baseline (pre-split) | all profiles captured to `.render-baseline/` | [ ] |
-| T2 | Workspace split: `apps/site` + `packages/renderer`, root scripts delegate | `pnpm validate/test/build/pdf` green from root; **DOM diff vs baseline empty** for every profile | [ ] |
+| T0 | PLAN.md tracker | committed | [x] |
+| T1 | Render baseline (pre-split) | all profiles captured to `.render-baseline/` | [x] |
+| T2 | Workspace split: `apps/site` + `packages/renderer`, root scripts delegate | `pnpm validate/test/build/pdf` green from root; **DOM diff vs baseline empty** for every profile (PNG pixel-identical too) | [x] |
 | T3 | `overlay.schema.json` + validate.mjs covers `applications/*/overlay.json` incl. patch dry-run | valid/invalid fixtures behave as expected in vitest; `pnpm validate` green | [ ] |
 | T4 | Overlay engine (`applyOverlay`), `buildProfileFrom` refactor, async bootstrap `?application=<id>`, visible error on failure, `test` fixture | identity property test; capture `application=test` shows patched content + excluded sections absent; plain profiles still match baseline | [ ] |
 | T5 | `master.json` bullet bank: schema + initial draft (stable ids) | `pnpm validate` green; id-uniqueness test | [ ] |

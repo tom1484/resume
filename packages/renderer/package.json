@@ -1,0 +1,11 @@
+{
+  "name": "@resume/renderer",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Resume renderer: components, themes, adapter, profiles, and canonical data (source package, consumed via Vite aliases)",
+  "main": "src/index.js",
+  "dependencies": {
+    "clsx": "^2.1.1",
+    "react": "^18.3.1"
+  }
+}

@@ -14,9 +14,10 @@ import addFormats from 'ajv-formats';
 const require = createRequire(import.meta.url);
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 
-const resume = JSON.parse(readFileSync(join(root, 'src/data/resume.json'), 'utf8'));
+const dataDir = join(root, 'packages/renderer/src/data');
+const resume = JSON.parse(readFileSync(join(dataDir, 'resume.json'), 'utf8'));
 const extensionsSchema = JSON.parse(
-  readFileSync(join(root, 'src/data/extensions.schema.json'), 'utf8')
+  readFileSync(join(dataDir, 'extensions.schema.json'), 'utf8')
 );
 const officialSchema = require('@jsonresume/schema/schema.json');
 
