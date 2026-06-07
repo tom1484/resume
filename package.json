@@ -3,20 +3,15 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@testing-library/jest-dom": "^5.17.0",
-    "@testing-library/react": "^13.4.0",
-    "@testing-library/user-event": "^13.5.0",
     "clsx": "^2.1.1",
     "react": "^18.3.1",
-    "react-dom": "^18.3.1",
-    "react-scripts": "5.0.1",
-    "web-vitals": "^2.1.4"
+    "react-dom": "^18.3.1"
   },
   "scripts": {
-    "start": "craco start",
-    "build": "craco build",
-    "test": "craco test",
-    "eject": "react-scripts eject"
+    "dev": "vite",
+    "start": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
   },
   "browserslist": {
     "production": [
@@ -31,15 +26,16 @@
     ]
   },
   "devDependencies": {
-    "@craco/craco": "^7.1.0",
     "@eslint/js": "^9.22.0",
+    "@vitejs/plugin-react": "^4.3.4",
     "autoprefixer": "^10.4.22",
     "eslint": "^8.57.1",
     "eslint-plugin-react": "^7.37.4",
     "globals": "^15.15.0",
     "playwright": "^1.60.0",
     "postcss": "^8.5.6",
-    "tailwindcss": "^3.4.17"
+    "tailwindcss": "^3.4.17",
+    "vite": "^6.3.5"
   },
   "packageManager": "pnpm@9.12.0+sha1.87cb0f58b64bfb9103677375d7e99e12a3ddbf23"
 }
