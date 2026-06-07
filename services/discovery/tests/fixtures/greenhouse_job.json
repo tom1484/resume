@@ -1,0 +1,44 @@
+{
+ "absolute_url": "https://job-boards.greenhouse.io/figureai/jobs/4676467006",
+ "data_compliance": [
+  {
+   "type": "gdpr",
+   "requires_consent": false,
+   "requires_processing_consent": false,
+   "requires_retention_consent": false,
+   "retention_period": null,
+   "demographic_data_consent_applies": false
+  }
+ ],
+ "internal_job_id": 4545236006,
+ "location": {
+  "name": "San Jose, CA"
+ },
+ "metadata": null,
+ "id": 4676467006,
+ "updated_at": "2026-04-25T09:37:55-04:00",
+ "requisition_id": "432",
+ "title": "Electrical Engineering Intern [Fall 2026]",
+ "company_name": "Figure",
+ "first_published": "2026-04-25T09:37:55-04:00",
+ "language": "en",
+ "application_deadline": null,
+ "content": "&lt;p&gt;Figure is an AI robotics company developing autonomous general-purpose humanoid robots. The goal of the company is to ship humanoid robots with human level intelligence. Its robots are engineered to perform a variety of tasks in the home and commercial markets. Figure is headquartered in San Jose, CA.&lt;/p&gt;\n&lt;p&gt;We are looking for an &lt;strong&gt;Electrical Engineering Intern&lt;/strong&gt; to support the design and test of critical hardware components during&lt;strong&gt; Fall 2026.&amp;nbsp;&lt;/strong&gt;&lt;/p&gt;\n&lt;p&gt;&lt;strong&gt;Responsibilities:&lt;/strong&gt;&lt;/p&gt;\n&lt;ul&gt;\n&lt;li&gt;Design and test full or sub sections of PCBAs on the Humanoid like power distribution boards, battery management systems, sensing boards, motor controllers, or computer boards.&lt;/li&gt;\n&lt;li&gt;Support the review of design artifacts (schematics, layouts, bill of materials\u2026) from your peers or external suppliers.&lt;/li&gt;\n&lt;li&gt;Support system integration and test activities by contributing to test execution and problem diagnostics and resolution.&lt;/li&gt;\n&lt;/ul&gt;\n&lt;p&gt;&lt;strong&gt;Requirements:&amp;nbsp;&lt;/strong&gt;&lt;/p&gt;\n&lt;ul&gt;\n&lt;li&gt;Undergraduate student (Senior) or recent graduate in Electrical Engineering or related field.&lt;/li&gt;\n&lt;li&gt;Minimum 10 weeks internship, 1 to 2 terms preferred.&lt;/li&gt;\n&lt;li&gt;Solid EE fundamentals with hands-on experience designing, building, and testing PCBAs.&lt;/li&gt;\n&lt;li&g",
+ "departments": [
+  {
+   "id": 4019968006,
+   "name": "Electrical",
+   "child_ids": [],
+   "parent_id": null
+  }
+ ],
+ "offices": [
+  {
+   "id": 4000271006,
+   "name": "HQ",
+   "location": "San Jose, California, United States",
+   "child_ids": [],
+   "parent_id": null
+  }
+ ]
+}

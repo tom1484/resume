@@ -1,0 +1,40 @@
+# Target companies (PREPARE.md item 7) with VERIFIED board slugs
+# (probed 2026-06-08 via discovery.boards.probe_slug).
+# flags: dream (high-effort tier) | startup (early-stage) | return-path
+# Companies without a public board (Boston Dynamics, 1X, Applied Intuition,
+# NVIDIA, Qualcomm, Ambarella) are reached through JobSpy searches instead.
+companies:
+  - name: Agility Robotics
+    flags: [startup]
+    board: { provider: greenhouse, slug: agilityrobotics }
+  - name: Figure
+    flags: [dream, startup]
+    board: { provider: greenhouse, slug: figureai }
+  - name: Dexterity
+    flags: [startup]
+    board: { provider: lever, slug: dexterity }
+  - name: Nuro
+    flags: []
+    board: { provider: greenhouse, slug: nuro }
+  - name: Zoox
+    flags: [dream]
+    board: { provider: lever, slug: zoox }
+  - name: Aurora
+    flags: []
+    board: { provider: greenhouse, slug: aurorainnovation }
+  - name: Waymo
+    flags: [dream]
+    board: { provider: greenhouse, slug: waymo }
+  - name: Scale AI
+    flags: []
+    board: { provider: greenhouse, slug: scaleai }
+  - name: Anthropic
+    flags: [dream]
+    board: { provider: greenhouse, slug: anthropic }
+  - name: DeepMind
+    flags: [dream]
+    board: { provider: greenhouse, slug: deepmind }
+
+# Board postings are filtered to internship-shaped titles before upsert
+# (boards list ALL roles; we only want intern/co-op postings).
+title_include: [intern, internship, co-op, coop]

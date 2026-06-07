@@ -29,3 +29,8 @@ yarn-error.log*
 
 # pipeline secrets
 /deploy/.env
+
+# python
+__pycache__/
+*.pyc
+.venv/

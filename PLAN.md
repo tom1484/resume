@@ -38,7 +38,25 @@ Checkpoint: a hand-written overlay renders as a tailored resume at
 Post-checkpoint (Tom): request Let's Encrypt cert + enable NPM access list
 (PREPARE.md item 3).
 
-## Phase 2+ (not yet planned in detail)
+## Phase 2 tasks
 
-Planned per PROPOSALS.md §8; task breakdown will be added here when each
-phase starts.
+Checkpoint: discovery runs nightly, new jobs land scored in Postgres, and a
+Telegram summary arrives with the top matches.
+
+Design note (deviation from PROPOSALS §5): pgvector bullet retrieval is
+**deferred** — the master bank (~40 bullets) fits whole in any prompt, so
+RAG retrieval adds latency without value at this scale, and embeddings
+would require a second LLM vendor (Anthropic has no embeddings API).
+Scoring = 0.5·keyword (code, fuzzy) + 0.3·LLM fit (Haiku) + 0.2·structural.
+Revisit when the bank grows ~10×.
+
+| # | Task | Verification | Status |
+|---|---|---|---|
+| P2.1 | DB migrations (`jobs`, `events`) + runner in pipeline service | migrations apply idempotently against the live db container | [x] |
+| P2.2 | Discovery service (Python/uv): Greenhouse/Lever/Ashby board fetchers, normalize → dedupe → upsert; config from PREPARE.md drafts (slugs live-verified, 10 boards) | live smoke: 8 real internships inserted; rerun 0 dupes; 10 pytest cases incl. the Internal≠Intern and year≠EAR word-boundary regressions | [x] |
+| P2.3 | JobSpy searches (from searches.yml), conservative throttling, exclude-keyword skip marking | live smoke with one query; excluded titles marked `skipped` with reason | [ ] |
+| P2.4 | Pipeline service (TS): `parse-jd` (Haiku structured) + scoring + poller + events logging | unit tests for scoring math; live parse of ≥3 real JDs reviewed for extraction quality | [ ] |
+| P2.5 | Telegram batch summary | message delivered with top-N list | [ ] |
+| P2.6 | Compose: discovery (nightly cron) + pipeline (poller) wired; deploy | end-to-end: discovery → scored rows → Telegram, on the live stack | [ ] |
+| P2.7 | Eval fixtures (golden JDs) + calibration export | eval script asserts must-have recall; labeled CSV → threshold recommendation (needs Tom's labels) | [ ] |
+| P2.8 | CI: python + pipeline tests; close out | CI green | [ ] |

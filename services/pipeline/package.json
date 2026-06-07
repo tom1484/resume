@@ -1,0 +1,14 @@
+{
+  "name": "@resume/pipeline",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Job pipeline worker: migrations, parse-jd, scoring, notifications",
+  "scripts": {
+    "migrate": "node src/migrate.js",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "pg": "^8.16.0"
+  }
+}

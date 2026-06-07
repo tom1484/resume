@@ -1,0 +1,38 @@
+# Saved searches (PREPARE.md item 6, confirmed by Tom 2026-06-07).
+# Target: Summer 2027 US internships.
+defaults:
+  job_type: internship
+  results_wanted: 25
+  country: USA
+  hours_old: 72            # only fresh postings on nightly runs
+  sites: [indeed, linkedin]
+
+locations:
+  - Atlanta, GA
+  - San Francisco Bay Area, CA
+  - Seattle, WA
+  - Boston, MA
+  - Pittsburgh, PA
+  - Austin, TX
+  - Remote, US
+
+searches:
+  - name: robotics-software
+    term: robotics software engineer intern
+    keywords: [ROS 2, C++, motion planning, controls]
+  - name: embedded-edge-ai
+    term: embedded software intern
+    keywords: [C/C++, RTOS, STM32, edge AI]
+  - name: autonomy-controls
+    term: autonomy intern
+    keywords: [autonomy, controls]
+  - name: systems-swe
+    term: software engineer intern
+    keywords: [Rust, C++]
+
+# Title-level excludes drop early; JD-level excludes mark status=skipped
+# with a reason (F-1: ITAR/clearance/citizenship roles are unusable).
+# All terms are whole-word matched (EAR must not match "year"/"wear").
+exclude:
+  title: [senior, staff, principal, manager, director, phd]
+  jd: [US citizenship, US citizen, security clearance, ITAR, EAR99, export control, unpaid]

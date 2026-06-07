@@ -31,6 +31,33 @@ services:
       timeout: 5s
       retries: 5
 
+  # Runs once per invocation (cron wiring in P2.6); use
+  #   docker compose run --rm discovery uv run --no-sync python -m discovery.main --boards
+  # for manual runs.
+  discovery:
+    build: ../services/discovery
+    profiles: [manual]
+    networks: [internal]
+    environment:
+      DATABASE_URL: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
+    depends_on:
+      db:
+        condition: service_healthy
+
+  pipeline:
+    build: ../services/pipeline
+    restart: unless-stopped
+    networks: [internal]
+    environment:
+      DATABASE_URL: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY}
+      TELEGRAM_BOT_TOKEN: ${TELEGRAM_BOT_TOKEN}
+      TELEGRAM_CHAT_ID: ${TELEGRAM_CHAT_ID}
+      REVIEW_BASE_URL: https://jobs.churong.cc
+    depends_on:
+      db:
+        condition: service_healthy
+
   # Phase 1 stub: serves the built resume site (incl. /applications/*
   # overlays baked into the build). Replaced by the review app in Phase 3.
   review:
