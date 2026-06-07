@@ -90,6 +90,5 @@ this.
 
 ## CI
 
-`.github/workflows/ci.yml` validates the data, runs tests, builds, uploads
-per-profile PDFs as artifacts, and deploys to GitHub Pages (requires Pages
-source set to "GitHub Actions" in the repo settings).
+`.github/workflows/ci.yml` validates the data, runs tests, builds, and
+uploads per-profile PDFs as artifacts.
