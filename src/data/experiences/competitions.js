@@ -2,18 +2,35 @@
 export const competitionsConfig = {};
 
 export const competitions = [
+  // {
+  //   title: 'CPLC Lander Challenge - Student Self-landing Rocket',
+  //   location: 'Taipei & Hsinchu, Taiwan',
+  //   role: 'Avionics Team Lead',
+  //   time: 'Nov 2023 - Present',
+  //   link: [
+  //     { text: 'Team', url: 'https://www.facebook.com/p/STAR-Student-Society-of-Taiwan-Advanced-Rocketry-61558308603436/' },
+  //   ],
+  //   content: [
+  //     'Spearheaded the avionics division for a VTVL (Vertical Takeoff, Vertical Landing) rocket, overseeing system integration and safety-critical control logic.',
+  //     'Engineered a high-precision closed-loop control system for the Main Thrust Valve (MTV) to dynamically regulate propellant flow and thrust output.',
+  //     'Architected the Thrust Vector Control (TVC) algorithm for stabilizing and targeting a 2,500N engine.',
+  //   ],
+  //   tags: ['Rocketry', 'Avionics', 'Embedded Systems', 'Control', 'System Engineering']
+  // },
   {
     title: 'CPLC Lander Challenge - Student Self-landing Rocket',
     location: 'Taipei & Hsinchu, Taiwan',
-    role: 'Avionics Team Lead',
-    time: 'Nov 2023 - Present',
+    role: 'Avionics Team',
+    time: 'Nov 2023 - Oct 2025',
     link: [
       { text: 'Team', url: 'https://www.facebook.com/p/STAR-Student-Society-of-Taiwan-Advanced-Rocketry-61558308603436/' },
     ],
     content: [
-      'Spearheaded the avionics division for a VTVL (Vertical Takeoff, Vertical Landing) rocket, overseeing system integration and safety-critical control logic.',
-      'Engineered a high-precision closed-loop control system for the Main Thrust Valve (MTV) to dynamically regulate propellant flow and thrust output.',
-      'Architected the Thrust Vector Control (TVC) algorithm for stabilizing and targeting a 2,500N engine.',
+      // 'Spearheaded the avionics division for a VTVL (Vertical Takeoff, Vertical Landing) rocket, overseeing system integration and safety-critical control logic.',
+      // 'Engineered a high-precision closed-loop control system for the Main Thrust Valve (MTV) to dynamically regulate propellant flow and thrust output.',
+      // 'Architected the Thrust Vector Control (TVC) algorithm for stabilizing and targeting a 2,500N engine.',
+      'Contributed to the avionics team for a VTVL (Vertical Takeoff, Vertical Landing) rocket, assisting in system design and specification.',
+      'Designed the universal prototype controller board to interface with various sensors and actuators used in the rocket.',
     ],
     tags: ['Rocketry', 'Avionics', 'Embedded Systems', 'Control', 'System Engineering']
   },
@@ -27,7 +44,7 @@ export const competitions = [
     ],
     content: [
       'Secured the World Championship representing Taiwan, with code successfully deployed on JAXA\'s Astrobee robot aboard the International Space Station.',
-      'Developed a vision-based laser aiming system and an trajectory planning engine to autonomously navigate obstacle-filled "Keep-Out Zones" with high accuracy and safety.',
+      'Developed a vision-based laser aiming system and a trajectory planning engine to autonomously navigate obstacle-filled "Keep-Out Zones" with high accuracy and safety.',
     ],
     // content: [
     //   'Designed and implemented a vision-based laser aiming system for the Astrobee robot using OpenCV.',

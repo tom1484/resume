@@ -20,9 +20,9 @@ export const publications = [
     publication: {
       conference: "ICML 2025 Workshop WM",
     },
-    link: [
-      { text: "Paper", url: "https://openreview.net/pdf?id=7Udx16p9Rz" },
-    ]
+    // link: [
+    //   { text: "Paper", url: "https://openreview.net/pdf?id=7Udx16p9Rz" },
+    // ]
     // link: [
     //   { text: "Paper", url: "" },
     // ],

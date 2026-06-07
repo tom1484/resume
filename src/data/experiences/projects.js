@@ -35,6 +35,9 @@ export const projects = [
   {
     title: 'Automatic Frisbee Shooter',
     time: 'Sep 2023 - Dec 2023',
+    link: [
+      { text: 'Demo', url: 'https://www.youtube.com/watch?v=paJnYjrRtNI' },
+    ],
     content: [
       'Prototyped a fully automated 4-Wheel-Drive robot using ROS on Raspberry Pi, integrating navigation and actuation sub-systems with PID control loop.',
       'Engineered a computer vision tracking system to calculate frisbee angle and velocity based on real-time target data.',
