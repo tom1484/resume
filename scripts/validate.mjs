@@ -59,6 +59,21 @@ function check(label, schema, data) {
 check('JSON Resume v1.0.0 (official schema, x-* stripped)', officialSchema, stripExtensions(resume));
 check('x- extensions (extensions.schema.json)', extensionsSchema, resume);
 
+// Master bullet bank: schema + id uniqueness
+const masterSchema = JSON.parse(readFileSync(join(dataDir, 'master.schema.json'), 'utf8'));
+const master = JSON.parse(readFileSync(join(dataDir, 'master.json'), 'utf8'));
+check('master.json (master.schema.json)', masterSchema, master);
+{
+  const ids = master.bullets.map((b) => b.id);
+  const dupes = ids.filter((id, i) => ids.indexOf(id) !== i);
+  if (dupes.length) {
+    failed = true;
+    console.error(`✗ master.json: duplicate bullet ids: ${[...new Set(dupes)].join(', ')}`);
+  } else {
+    console.log('✓ master.json (bullet ids unique)');
+  }
+}
+
 // Application overlays: schema + patch dry-run against resume.json
 const overlaySchema = JSON.parse(readFileSync(join(dataDir, 'overlay.schema.json'), 'utf8'));
 const applicationsDir = join(root, 'apps/site/public/applications');

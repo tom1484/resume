@@ -30,7 +30,7 @@ Checkpoint: a hand-written overlay renders as a tailored resume at
 | T2 | Workspace split: `apps/site` + `packages/renderer`, root scripts delegate | `pnpm validate/test/build/pdf` green from root; **DOM diff vs baseline empty** for every profile (PNG pixel-identical too) | [x] |
 | T3 | `overlay.schema.json` + validate.mjs covers `applications/*/overlay.json` incl. patch dry-run | valid/invalid fixtures behave as expected in vitest; `pnpm validate` green | [x] |
 | T4 | Overlay engine (`applyOverlay`), `buildProfileFrom` refactor, async bootstrap `?application=<id>`, visible error on failure, `test` fixture | identity property test; capture `application=test` shows patched content + excluded sections absent; plain profiles still match baseline; missing overlay → error box, zero resume content | [x] |
-| T5 | `master.json` bullet bank: schema + initial draft (stable ids) | `pnpm validate` green; id-uniqueness test | [ ] |
+| T5 | `master.json` bullet bank: schema + initial draft (stable ids) | `pnpm validate` green; id-uniqueness + source-pointer-resolution + highlight-coverage tests | [x] |
 | T6 | CI workflow updated for workspace | push → CI green (GitHub API check) | [ ] |
 | T7 | `deploy/docker-compose.yml`: `db` (pgvector) + `review` (nginx static stub) on `nginx` network; deploy | compose healthy; `http://review:8080` serves app from inside `nginx` network; checkpoint URL renders tailored resume | [ ] |
 | T8 | Close out: PLAN/CLAUDE/PREPARE/memory updated | final push, CI green | [ ] |

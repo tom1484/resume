@@ -1,0 +1,418 @@
+{
+  "updatedAt": "2026-06-07",
+  "bullets": [
+    {
+      "id": "ambarella-inc-0",
+      "text": "Built a dynamic weight adaptation mechanism for motion detection CNNs, designing convolutional LoRA adapters conditioned on ISP metadata.",
+      "source": "/work/0/highlights/0",
+      "context": "Ambarella Inc. — Software Engineering Intern - Embedded AI, Algorithm, Tools",
+      "tags": [
+        "Embedded Systems",
+        "Edge Computer Vision"
+      ]
+    },
+    {
+      "id": "ambarella-inc-1",
+      "text": "Optimized the model training pipeline to generalize across varying camera settings, cutting training time by ~20% while maintaining high accuracy.",
+      "source": "/work/0/highlights/1",
+      "context": "Ambarella Inc. — Software Engineering Intern - Embedded AI, Algorithm, Tools",
+      "tags": [
+        "Embedded Systems",
+        "Edge Computer Vision"
+      ],
+      "metrics": [
+        "20%"
+      ]
+    },
+    {
+      "id": "ambarella-inc-2",
+      "text": "Stabilized model convergence, reducing evaluation loss variance by 90% across diverse camera settings.",
+      "source": "/work/0/highlights/2",
+      "context": "Ambarella Inc. — Software Engineering Intern - Embedded AI, Algorithm, Tools",
+      "tags": [
+        "Embedded Systems",
+        "Edge Computer Vision"
+      ],
+      "metrics": [
+        "90%"
+      ]
+    },
+    {
+      "id": "institute-of-information-science-0",
+      "text": "Accelerated a Post-Quantum Cryptography (PQC) signature scheme by implementing vectorized AVX2 instruction sets (SIMD) on x86-64 architecture.",
+      "source": "/work/1/highlights/0",
+      "context": "Institute of Information Science, Academia Sinica — Algorithm Summer Intern",
+      "tags": [
+        "C++",
+        "SIMD",
+        "Post-Quantum Cryptography",
+        "Cybersecurity"
+      ]
+    },
+    {
+      "id": "institute-of-information-science-1",
+      "text": "Achieved a 5× speedup while enforcing constant-time execution to mitigate timing-based side-channel attacks.",
+      "source": "/work/1/highlights/1",
+      "context": "Institute of Information Science, Academia Sinica — Algorithm Summer Intern",
+      "tags": [
+        "C++",
+        "SIMD",
+        "Post-Quantum Cryptography",
+        "Cybersecurity"
+      ]
+    },
+    {
+      "id": "vision-learning-lab-ntuee-0",
+      "text": "Engineered a geometric initialization scheme utilizing monocular depth estimation to enhance the surface reconstruction fidelity of sparse voxel octrees.",
+      "source": "/work/2/highlights/0",
+      "context": "Vision & Learning Lab, NTUEE — Undergraduate Researcher",
+      "tags": [
+        "Computer Vision",
+        "Scene Reconstruction",
+        "Gaussian Splatting"
+      ]
+    },
+    {
+      "id": "robot-learning-lab-ntuee-0",
+      "text": "Architected a sim-to-real transfer pipeline using differentiable simulation for online physical parameter estimation in contact-rich robotic tasks.",
+      "source": "/work/3/highlights/0",
+      "context": "Robot Learning Lab, NTUEE — Undergraduate Researcher",
+      "tags": [
+        "Reinforcement Learning",
+        "Robotics",
+        "Sim-to-Real",
+        "Imitation Learning",
+        "Mobile ALOHA"
+      ]
+    },
+    {
+      "id": "robot-learning-lab-ntuee-1",
+      "text": "Designed a framework leveraging optical flow as action primitives to learn policies from action-free videos, enabling zero-shot cross-embodiment transfer; deployed the algorithm on the Mobile ALOHA bi-manual manipulator and established a robust real-world data collection pipeline.",
+      "source": "/work/3/highlights/1",
+      "context": "Robot Learning Lab, NTUEE — Undergraduate Researcher",
+      "tags": [
+        "Reinforcement Learning",
+        "Robotics",
+        "Sim-to-Real",
+        "Imitation Learning",
+        "Mobile ALOHA"
+      ]
+    },
+    {
+      "id": "teaching-assistant-ntuee-0",
+      "text": "Cornerstone EECS Design and Implementation (Spring 2023 - 2024): Mentored freshman students in system engineering projects, integrating the hardware (Arduino) and software (Python) for autonomous mechatronics.",
+      "source": "/work/4/highlights/0",
+      "context": "Teaching Assistant, NTUEE"
+    },
+    {
+      "id": "teaching-assistant-ntuee-1",
+      "text": "Signals and Systems (Spring 2024): Facilitated student learning in signal processing fundamentals, Fourier analysis, and linear system theory through tutorial sessions and technical support.",
+      "source": "/work/4/highlights/1",
+      "context": "Teaching Assistant, NTUEE"
+    },
+    {
+      "id": "multimodal-perception-of-corner-0",
+      "text": "Created a multimodal pipeline for autonomous driving using the CODA-LM dataset, targeting global scene understanding and local area reasoning.",
+      "source": "/projects/0/highlights/0",
+      "context": "Multimodal Perception of Corner Cases in Autonomous Driving"
+    },
+    {
+      "id": "multimodal-perception-of-corner-1",
+      "text": "Fine-tuned LLaVA-1.5 7B via LoRA, integrating custom modules to resolve edge cases such as small object detection and complex traffic scenarios.",
+      "source": "/projects/0/highlights/1",
+      "context": "Multimodal Perception of Corner Cases in Autonomous Driving"
+    },
+    {
+      "id": "ntuee-lightdance-0",
+      "text": "Led a 10-member team to build a full-stack light effect editor, delivering ~5× the performance of the legacy JavaScript system.",
+      "source": "/projects/1/highlights/0",
+      "context": "NTUEE LightDance",
+      "tags": [
+        "Rust",
+        "Python",
+        "MySQL",
+        "GraphQL",
+        "Async Programming",
+        "Blender Add-on"
+      ]
+    },
+    {
+      "id": "ntuee-lightdance-1",
+      "text": "Built a high-concurrency Rust backend managing complex SQL operations, supporting simultaneous editing across 5,000+ LEDs and 1,000+ keyframes.",
+      "source": "/projects/1/highlights/1",
+      "context": "NTUEE LightDance",
+      "tags": [
+        "Rust",
+        "Python",
+        "MySQL",
+        "GraphQL",
+        "Async Programming",
+        "Blender Add-on"
+      ]
+    },
+    {
+      "id": "ntuee-lightdance-2",
+      "text": "Developed a custom Blender add-on for real-time 3D visualization, enabling designers to preview light effects in a physically accurate environment.",
+      "source": "/projects/1/highlights/2",
+      "context": "NTUEE LightDance",
+      "tags": [
+        "Rust",
+        "Python",
+        "MySQL",
+        "GraphQL",
+        "Async Programming",
+        "Blender Add-on"
+      ]
+    },
+    {
+      "id": "automatic-frisbee-shooter-0",
+      "text": "Prototyped a fully automated 4-Wheel-Drive robot using ROS 2 on Raspberry Pi, integrating navigation and actuation sub-systems with a PID control loop.",
+      "source": "/projects/2/highlights/0",
+      "context": "Automatic Frisbee Shooter",
+      "tags": [
+        "Embedded Systems",
+        "OpenCV",
+        "PID Control"
+      ]
+    },
+    {
+      "id": "automatic-frisbee-shooter-1",
+      "text": "Engineered a computer vision tracking system to calculate frisbee angle and velocity based on real-time target data.",
+      "source": "/projects/2/highlights/1",
+      "context": "Automatic Frisbee Shooter",
+      "tags": [
+        "Embedded Systems",
+        "OpenCV",
+        "PID Control"
+      ]
+    },
+    {
+      "id": "fpga-laser-shooter-0",
+      "text": "Designed a hardware-accelerated laser shooting system in Verilog, achieving low-latency target acquisition and firing control.",
+      "source": "/projects/3/highlights/0",
+      "context": "FPGA Laser Shooter",
+      "tags": [
+        "FPGA",
+        "Verilog",
+        "Image Processing"
+      ]
+    },
+    {
+      "id": "fpga-laser-shooter-1",
+      "text": "Implemented a pipelined Hough Circle Transform architecture on FPGA for real-time target detection at high frame rates.",
+      "source": "/projects/3/highlights/1",
+      "context": "FPGA Laser Shooter",
+      "tags": [
+        "FPGA",
+        "Verilog",
+        "Image Processing"
+      ]
+    },
+    {
+      "id": "musictracker-automatic-music-sheet-0",
+      "text": "Developed a real-time audio processing system on STM32 using DMA and I2S, leveraging the CMSIS DSP library for Mel spectrogram analysis.",
+      "source": "/projects/4/highlights/0",
+      "context": "MusicTracker - Automatic Music Sheet Page Turner",
+      "tags": [
+        "Embedded Systems",
+        "Real-Time Audio Processing"
+      ],
+      "metrics": [
+        "2S"
+      ]
+    },
+    {
+      "id": "musictracker-automatic-music-sheet-1",
+      "text": "Implemented a Dynamic Time Warping (DTW) algorithm to synchronize live audio with sheet music, triggering a servo-actuated page turner.",
+      "source": "/projects/4/highlights/1",
+      "context": "MusicTracker - Automatic Music Sheet Page Turner",
+      "tags": [
+        "Embedded Systems",
+        "Real-Time Audio Processing"
+      ]
+    },
+    {
+      "id": "moneymanager-personal-finance-tracker-0",
+      "text": "Built a cross-platform mobile application for finance tracking using React Native, featuring intuitive data visualization for income and expenses.",
+      "source": "/projects/5/highlights/0",
+      "context": "MoneyManager - Personal Finance Tracker",
+      "tags": [
+        "React Native",
+        "Android",
+        "Fullstack"
+      ]
+    },
+    {
+      "id": "moneymanager-personal-finance-tracker-1",
+      "text": "Implemented a RESTful backend with Express.js and MongoDB to handle user authentication and secure data persistence.",
+      "source": "/projects/5/highlights/1",
+      "context": "MoneyManager - Personal Finance Tracker",
+      "tags": [
+        "React Native",
+        "Android",
+        "Fullstack"
+      ]
+    },
+    {
+      "id": "mks-access-system-entrance-0",
+      "text": "Engineered an IoT access control system using C++ for peripheral management (ID scanner, LCD) on a Raspberry Pi.",
+      "source": "/projects/6/highlights/0",
+      "context": "MKS Access System - Entrance Recording System",
+      "tags": [
+        "Raspberry Pi",
+        "C++",
+        "Peripheral Control"
+      ]
+    },
+    {
+      "id": "mks-access-system-entrance-1",
+      "text": "Integrated a server-side backend to log student entry data and display real-time usage instructions.",
+      "source": "/projects/6/highlights/1",
+      "context": "MKS Access System - Entrance Recording System",
+      "tags": [
+        "Raspberry Pi",
+        "C++",
+        "Peripheral Control"
+      ]
+    },
+    {
+      "id": "furuta-pendulum-digital-controller-0",
+      "text": "Modeled and linearized the dynamics of a Furuta pendulum to design an optimal LQR controller in Simulink.",
+      "source": "/projects/7/highlights/0",
+      "context": "Furuta Pendulum - Digital Controller Design",
+      "tags": [
+        "Control System Design",
+        "Simulink"
+      ]
+    },
+    {
+      "id": "furuta-pendulum-digital-controller-1",
+      "text": "Deployed the control algorithm to physical hardware, achieving stable equilibrium and robust disturbance rejection.",
+      "source": "/projects/7/highlights/1",
+      "context": "Furuta Pendulum - Digital Controller Design",
+      "tags": [
+        "Control System Design",
+        "Simulink"
+      ]
+    },
+    {
+      "id": "ear-detection-gate-ear-0",
+      "text": "Developed a contactless biometric scanning system using YOLO object detection to identify individuals by ear shape.",
+      "source": "/projects/8/highlights/0",
+      "context": "Ear Detection Gate - Ear Shape Identification System",
+      "tags": [
+        "Object Detection",
+        "YOLO"
+      ]
+    },
+    {
+      "id": "ear-detection-gate-ear-1",
+      "text": "Designed the system to function effectively without mask removal, addressing specific security challenges during the COVID-19 pandemic.",
+      "source": "/projects/8/highlights/1",
+      "context": "Ear Detection Gate - Ear Shape Identification System",
+      "tags": [
+        "Object Detection",
+        "YOLO"
+      ]
+    },
+    {
+      "id": "intelligent-shopping-cart-indoor-0",
+      "text": "Created a shopping cart system featuring BLE-based indoor localization and product guidance; awarded Taiwan Utility Model Patent.",
+      "source": "/projects/9/highlights/0",
+      "context": "Intelligent Shopping Cart - Indoor Navigation and Checkout System — Patent",
+      "tags": [
+        "Mobile App",
+        "Indoor Navigation",
+        "BLE"
+      ]
+    },
+    {
+      "id": "cplc-lander-challenge-student-0",
+      "text": "Contributed to the avionics team for a VTVL (Vertical Takeoff, Vertical Landing) rocket, assisting in system design and specification.",
+      "source": "/projects/10/highlights/0",
+      "context": "CPLC Lander Challenge - Student Self-landing Rocket",
+      "tags": [
+        "Rocketry",
+        "Avionics",
+        "Embedded Systems",
+        "Control",
+        "System Engineering"
+      ]
+    },
+    {
+      "id": "cplc-lander-challenge-student-1",
+      "text": "Designed the universal prototype controller board to interface with various sensors and actuators used in the rocket.",
+      "source": "/projects/10/highlights/1",
+      "context": "CPLC Lander Challenge - Student Self-landing Rocket",
+      "tags": [
+        "Rocketry",
+        "Avionics",
+        "Embedded Systems",
+        "Control",
+        "System Engineering"
+      ]
+    },
+    {
+      "id": "kibo-rpc-international-space-0",
+      "text": "Secured the World Championship representing Taiwan, with code successfully deployed on JAXA's Astrobee robot aboard the International Space Station.",
+      "source": "/projects/11/highlights/0",
+      "context": "Kibo RPC - International Space Robotics Challenge — World Champion",
+      "tags": [
+        "Android",
+        "OpenCV",
+        "Trajectory Planning",
+        "Space Robotics",
+        "Visual Servoing"
+      ]
+    },
+    {
+      "id": "kibo-rpc-international-space-1",
+      "text": "Developed a vision-based laser aiming system and a trajectory planning engine to autonomously navigate obstacle-filled \"Keep-Out Zones\" with high accuracy and safety.",
+      "source": "/projects/11/highlights/1",
+      "context": "Kibo RPC - International Space Robotics Challenge — World Champion",
+      "tags": [
+        "Android",
+        "OpenCV",
+        "Trajectory Planning",
+        "Space Robotics",
+        "Visual Servoing"
+      ]
+    },
+    {
+      "id": "ntuee-student-association-0",
+      "text": "Directed the academic division in curating technical workshops, including embedded systems tutorials, PCB design, and career seminars for the EE student body.",
+      "source": "/volunteer/0/highlights/0",
+      "context": "NTUEE Student Association — Director, Academic Department"
+    },
+    {
+      "id": "ntuee-student-association-1",
+      "text": "Oversaw the operations of the department MakerSpace, managing equipment maintenance and resource allocation to support student innovation projects.",
+      "source": "/volunteer/0/highlights/1",
+      "context": "NTUEE Student Association — Director, Academic Department"
+    },
+    {
+      "id": "ntuee-camp-summer-camp-0",
+      "text": "Led a 20-member teaching team to develop a comprehensive engineering curriculum, designing hands-on software (Python) and hardware (Arduino) projects for 120+ high school students across Taiwan.",
+      "source": "/volunteer/1/highlights/0",
+      "context": "NTUEE Camp - Summer Camp for High School Students — Teaching Team Lead"
+    },
+    {
+      "id": "robot-club-0",
+      "text": "Constructed custom bipedal combat robots for regional competitions, focusing on structural stability and actuator control.",
+      "source": "/volunteer/2/highlights/0",
+      "context": "Robot Club"
+    },
+    {
+      "id": "robot-club-1",
+      "text": "Co-founded the high school's inaugural robotics competition team, establishing a framework for future participation in national contests.",
+      "source": "/volunteer/2/highlights/1",
+      "context": "Robot Club"
+    },
+    {
+      "id": "pub-learning-skill-abstraction-from",
+      "text": "Published \"Learning Skill Abstraction from Action-Free Videos via Optical Flow\" (ICML 2025 Workshop on Building Physically Plausible World Models)",
+      "source": "/publications/0",
+      "context": "Publications"
+    }
+  ]
+}
