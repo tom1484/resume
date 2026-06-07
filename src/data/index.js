@@ -1,53 +1,37 @@
-import { getProfile, DEFAULT_PROFILE, experienceConfigs, publicationsConfig } from './profiles';
-import { validateResumeData } from './validation';
-import { DataTransformer } from './transformers';
+import { getProfile, getProfileList, DEFAULT_PROFILE } from './profiles';
 
-// Export experience configs and publications config
-export { experienceConfigs, publicationsConfig };
+export { getProfileList };
+
+// Per-section presentation configs (consumed by config/sections.js)
+export const experienceConfigs = {
+  academics: {},
+  working: {},
+  competitions: {},
+  projects: {
+    showTags: false,
+  },
+  extracurriculars: {},
+};
+
+export const publicationsConfig = {};
 
 // Current active profile
 let currentProfileId = DEFAULT_PROFILE;
 
-// Get current resume data based on active profile
+// Get current resume data (view models) based on active profile
 export const getResumeData = () => {
-  const profile = getProfile(currentProfileId);
-  return profile.data;
+  return getProfile(currentProfileId).data;
 };
 
-// Get data for a specific key with optional transformations
+// Get data for a specific key
 export const getData = (dataKey, options = {}) => {
-  const resumeData = getResumeData();
-  let data = resumeData[dataKey];
-  
+  const data = getResumeData()[dataKey];
+
   if (!data) {
     console.warn(`Data key "${dataKey}" not found in resume data`);
     return null;
   }
-  
-  // Apply transformations if requested
-  if (options.transform) {
-    switch (dataKey) {
-      case 'personalInfo':
-        data = DataTransformer.transformPersonalInfo(data);
-        break;
-      case 'education':
-        data = DataTransformer.transformEducation(data);
-        break;
-      case 'publications':
-        data = data.map(item => DataTransformer.transformPublication(item));
-        break;
-      case 'skills':
-        data = DataTransformer.transformSkills(data);
-        break;
-      default:
-        // For experience-type data
-        if (Array.isArray(data)) {
-          data = data.map(item => DataTransformer.transformExperience(item));
-        }
-        break;
-    }
-  }
-  
+
   return data;
 };
 
@@ -67,70 +51,58 @@ export const getCurrentProfile = () => {
   return getProfile(currentProfileId);
 };
 
-// Validate current resume data
+// Lightweight structural validation of the active profile's view models.
+// Full JSON Resume schema validation runs in Node via `pnpm validate`
+// (scripts/validate.mjs) so Ajv stays out of the browser bundle.
 export const validateCurrentData = () => {
   const resumeData = getResumeData();
-  return validateResumeData(resumeData);
+  const errors = {};
+
+  for (const [key, value] of Object.entries(resumeData)) {
+    const sectionErrors = [];
+    if (Array.isArray(value)) {
+      if (value.length === 0) {
+        sectionErrors.push(`${key} has no items`);
+      }
+      value.forEach((item, index) => {
+        if (!item || typeof item !== 'object') {
+          sectionErrors.push(`${key}[${index}] is not an object`);
+        } else if (!item.title) {
+          sectionErrors.push(`${key}[${index}] is missing a title`);
+        }
+      });
+    } else if (key === 'personalInfo') {
+      if (!Array.isArray(value.info) || value.info.length === 0) {
+        sectionErrors.push('personalInfo.info is missing or empty');
+      }
+      if (!Array.isArray(value.link)) {
+        sectionErrors.push('personalInfo.link is missing');
+      }
+    }
+    if (sectionErrors.length > 0) {
+      errors[key] = sectionErrors;
+    }
+  }
+
+  return {
+    isValid: Object.keys(errors).length === 0,
+    errors,
+  };
 };
 
 // Get data with validation
 export const getValidatedData = (dataKey, options = {}) => {
   const data = getData(dataKey, options);
-  
+
   if (data && options.validate) {
-    try {
-      const validation = validateCurrentData();
-      if (!validation.isValid && validation.errors[dataKey]) {
-        console.warn(`Validation errors for ${dataKey}:`, validation.errors[dataKey]);
-        if (options.throwOnValidationError) {
-          throw new Error(`Invalid data for ${dataKey}: ${validation.errors[dataKey].join(', ')}`);
-        }
-      }
-    } catch (error) {
-      console.error(`Validation failed for ${dataKey}:`, error);
+    const validation = validateCurrentData();
+    if (!validation.isValid && validation.errors[dataKey]) {
+      console.warn(`Validation errors for ${dataKey}:`, validation.errors[dataKey]);
       if (options.throwOnValidationError) {
-        throw error;
+        throw new Error(`Invalid data for ${dataKey}: ${validation.errors[dataKey].join(', ')}`);
       }
     }
   }
-  
+
   return data;
 };
-
-// Load data dynamically (for future async data loading)
-export const loadData = async (dataKey, source = 'default') => {
-  // For now, just return synchronous data
-  // Future: could load from API, local storage, etc.
-  switch (source) {
-    case 'localStorage':
-      try {
-        const stored = localStorage.getItem(`resume-${dataKey}`);
-        return stored ? JSON.parse(stored) : getData(dataKey);
-      } catch {
-        return getData(dataKey);
-      }
-    case 'default':
-    default:
-      return getData(dataKey);
-  }
-};
-
-// Save data to storage (for future persistence)
-export const saveData = async (dataKey, data, destination = 'localStorage') => {
-  switch (destination) {
-    case 'localStorage':
-      try {
-        localStorage.setItem(`resume-${dataKey}`, JSON.stringify(data));
-        return true;
-      } catch (error) {
-        console.error(`Failed to save ${dataKey} to localStorage:`, error);
-        return false;
-      }
-    default:
-      console.warn(`Unknown save destination: ${destination}`);
-      return false;
-  }
-};
-
-// Legacy exports for backward compatibility
-export const resumeData = getResumeData();
