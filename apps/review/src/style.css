@@ -52,3 +52,9 @@ button:disabled { opacity: 0.4; cursor: default; }
 .jd { white-space: pre-wrap; max-height: 400px; overflow: auto; font-size: 13px; color: #444; }
 
 @media (max-width: 760px) { .panes { grid-template-columns: 1fr; } .resume { height: 60vh; } }
+
+.answerslink { font-size: 13px; font-weight: 400; margin-left: 12px; }
+.answer { background: #fff; border: 1px solid #e6e8eb; border-radius: 8px; padding: 12px; margin-bottom: 10px; }
+.answer label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 6px; }
+.answer textarea { width: 100%; min-height: 72px; font: inherit; padding: 8px; border: 1px solid #d0d3d9; border-radius: 6px; resize: vertical; }
+.answer button { margin-top: 6px; }

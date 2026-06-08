@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { approve, getJob, label, listJobs, reject } from './api.js';
+import { approve, getAnswers, getJob, label, listJobs, reject, saveAnswer } from './api.js';
 
 // Hash routing: #/ (inbox) | #/app/<id> (detail). No router dep.
 function useHashRoute() {
@@ -17,7 +17,30 @@ const go = (h) => { window.location.hash = h; };
 export function App() {
   const hash = useHashRoute();
   const m = hash.match(/^#\/app\/(.+)$/);
-  return m ? <Detail id={decodeURIComponent(m[1])} /> : <Inbox />;
+  if (m) return <Detail id={decodeURIComponent(m[1])} />;
+  if (hash === '#/answers') return <Answers />;
+  return <Inbox />;
+}
+
+function Answers() {
+  const [rows, setRows] = useState(null);
+  const [saved, setSaved] = useState(null);
+  useEffect(() => { getAnswers().then(setRows).catch(() => setRows([])); }, []);
+  const save = async (r) => { await saveAnswer(r.key, r.question, r.answer); setSaved(r.key); setTimeout(() => setSaved(null), 1500); };
+  if (!rows) return <Shell><p className="muted">Loading…</p></Shell>;
+  return (
+    <div className="inbox">
+      <div className="detailhead"><a href="#/" className="back">← inbox</a><h2>Answers bank</h2></div>
+      <p className="muted">Templated answers the apply agent uses for application questions. The pipeline lightly tailors these per job; edits here are the source of truth.</p>
+      {rows.map((r, i) => (
+        <div key={r.key} className="answer">
+          <label>{r.question} <span className="muted">({r.key})</span></label>
+          <textarea value={r.answer} onChange={(e) => setRows(rows.map((x, j) => (j === i ? { ...x, answer: e.target.value } : x)))} />
+          <button onClick={() => save(r)}>{saved === r.key ? 'saved ✓' : 'save'}</button>
+        </div>
+      ))}
+    </div>
+  );
 }
 
 function Inbox() {
@@ -27,7 +50,7 @@ function Inbox() {
   const tabs = ['in_review', 'approved', 'scored', 'rejected'];
   return (
     <div className="inbox">
-      <h1>Job Review</h1>
+      <h1>Job Review <a className="answerslink" href="#/answers">answers bank →</a></h1>
       <div className="tabs">
         {tabs.map((t) => (
           <button key={t} className={t === status ? 'tab active' : 'tab'} onClick={() => setStatus(t)}>

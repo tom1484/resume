@@ -15,3 +15,8 @@ export const label = (id, value) =>
   fetch(`/api/jobs/${encodeURIComponent(id)}/label`, {
     method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ label: value }),
   }).then(json);
+export const getAnswers = () => fetch('/api/answers').then(json);
+export const saveAnswer = (key, question, answer) =>
+  fetch(`/api/answers/${encodeURIComponent(key)}`, {
+    method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ question, answer }),
+  }).then(json);
