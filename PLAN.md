@@ -106,6 +106,6 @@ mutated" invariant — the file becomes seed + export target.
 | E3 | Shared `<ResumeTreeEditor>` (dnd-kit drag, inline rephrase) + two adapters: resume (delete, column-ratio) and overlay (include/exclude, hide) | unit tests for both serializations | [ ] |
 | E4 | `/resume` editor wired to PUT /api/resume (history snapshot per save); JSON tab; live re-render | live: edit → save → persists + re-renders; history row added | [ ] |
 | E5 | Overlay editor → modal in review; no editor toggle on the application render pane | live: modal edits save; application iframe read-only | [ ] |
-| E6 | API validates edited overlays against the **DB** current résumé (was: file) — fixes editor↔validation divergence. Pipeline tailoring still reads the bundled seed at module-load (prompts built at import) — refactor to read DB deferred as a follow-up (documented) | API consistency verified; pipeline-side noted | [~] |
+| E6 | API validates overlays against DB current résumé; **pipeline now tailors against the live DB résumé** (refreshable profile store + lazy prompts; refresh each cycle). Résumé editor gains **Export/Import** JSON buttons (DB-independent backup) | live: PUT edit → pipeline candidateTerms() picks it up; export downloads valid résumé, import loads into editor | [x] |
 | E7 | PDF/capture/CI + render-check skill de-profiled (single résumé) | `pnpm pdf` → one PDF; CI green | [ ] |
 | E8 | Deploy + live verify + docs | ✓ live E2E on jobs.churong.cc: résumé editor saves+versions, app render read-only, overlay modal works; CLAUDE/ARCHITECTURE/memory updated | [x] |
