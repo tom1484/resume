@@ -1,0 +1,60 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+    --primary: 222.2 47.4% 11.2%;
+    --primary-foreground: 210 40% 98%;
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+    --accent: 210 40% 96.1%;
+    --accent-foreground: 222.2 47.4% 11.2%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 222.2 84% 4.9%;
+    --radius: 0.5rem;
+  }
+
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-feature-settings:
+      'rlig' 1,
+      'calt' 1;
+  }
+}
+
+/* ---- Print isolation (DECISIONS req 3) -----------------------------------
+ * The dashboard chrome (sidebar/topbar) is the app shell. When a print-isolated
+ * route mounts (e.g. /resume), it sets <html data-print-target="resume">. In a
+ * browser print (Cmd+P), everything marked .print-hide is hidden and the
+ * iframed résumé canvas (.print-canvas) is promoted to fill the page. The canvas
+ * itself is the bare host (apps/site) whose own @page/usePageStyle drives paper
+ * size + margins. Anything NOT inside .print-canvas is hidden so only the résumé
+ * prints. (For pixel-perfect output the recommended path is to print the iframe
+ * directly via the in-frame print button, which the bare host renders alone.)
+ */
+@media print {
+  body.print-isolating .print-hide {
+    display: none !important;
+  }
+  body.print-isolating .print-canvas {
+    position: static !important;
+    width: 100% !important;
+    height: auto !important;
+    border: 0 !important;
+  }
+}
