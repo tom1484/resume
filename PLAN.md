@@ -94,18 +94,27 @@ Decisions (confirmed): DB is the single source of truth for the canonical
 résumé (seeded from resume.json) + version history + git-export; profiles
 removed (no `?profile`, single `/resume` route); reorder via @dnd-kit
 (touch+mouse); renderer editor = reorder + rephrase + delete (trash) +
-column-ratio + JSON tab, NO visibility toggles (hiding is overlay-only);
-overlay editor keeps include/exclude + hide, moves to a modal; application
-render is read-only (no editor toggle). Reverses the "resume.json never
-mutated" invariant — the file becomes seed + export target.
+JSON tab, NO visibility toggles (hiding is overlay-only); overlay editor
+keeps include/exclude + hide, moves to a modal; application render is
+read-only (no editor toggle). Reverses the "resume.json never mutated"
+invariant — the file becomes seed + export target. (Column-ratio control
+was dropped — it was vestigial/never wired to layout.)
 
 | # | Task | Verification | Status |
 |---|---|---|---|
-| E1 | DB resume store: `resume_versions` table + API (GET current, PUT=snapshot+set-current, history list, restore, export) | seed-on-empty; PUT validates + creates history; restore works (curl) | [ ] |
-| E2 | Renderer: rip out Ctrl+D panel/configContext/import-export/profiles/`?profile`; fold column-ratio into resume `meta.layout`; base-résumé fetch with bundled fallback; `/resume` (editable) + `?application` (read-only) routes | render baseline (old `full`) == `/resume` DOM; `?application` still renders; build/pdf green | [ ] |
-| E3 | Shared `<ResumeTreeEditor>` (dnd-kit drag, inline rephrase) + two adapters: resume (delete, column-ratio) and overlay (include/exclude, hide) | unit tests for both serializations | [ ] |
-| E4 | `/resume` editor wired to PUT /api/resume (history snapshot per save); JSON tab; live re-render | live: edit → save → persists + re-renders; history row added | [ ] |
-| E5 | Overlay editor → modal in review; no editor toggle on the application render pane | live: modal edits save; application iframe read-only | [ ] |
-| E6 | API validates overlays against DB current résumé; **pipeline now tailors against the live DB résumé** (refreshable profile store + lazy prompts; refresh each cycle). Résumé editor gains **Export/Import** JSON buttons (DB-independent backup) | live: PUT edit → pipeline candidateTerms() picks it up; export downloads valid résumé, import loads into editor | [x] |
-| E7 | PDF/capture/CI + render-check skill de-profiled (single résumé) | `pnpm pdf` → one PDF; CI green | [ ] |
+| E1 | DB resume store: `resume_versions` table + API (GET current, PUT=snapshot+set-current, history list, restore, export) | seed-on-empty; PUT validates + creates history; restore works (curl) | [x] |
+| E2 | Renderer: rip out Ctrl+D panel/configContext/import-export/profiles/`?profile`; base-résumé fetch with bundled fallback; `/resume` (editable) + `?application` (read-only) routes (column-ratio dropped) | render baseline (old `full`) == render DOM; `?application` renders; build green | [x] |
+| E3 | Shared `ResumeTree` (dnd-kit drag, inline rephrase) + two adapters: resume (delete) and overlay (include/exclude, hide) | unit tests for both serializations (incl. position-preserving treeToResume) | [x] |
+| E4 | `/resume` editor wired to PUT /api/resume (history snapshot per save); JSON tab; live re-render | live: edit → save → persists + re-renders; history row added | [x] |
+| E5 | Overlay editor → modal in review; no editor toggle on the application render pane | live: modal edits save; application iframe read-only | [x] |
+| E6 | API validates overlays against DB current résumé; **pipeline tailors against the live DB résumé** (refreshable profile store + lazy prompts; refresh each cycle). Résumé editor gains **Export/Import** JSON buttons (DB-independent backup) | live: PUT edit → pipeline candidateTerms() picks it up; export downloads valid résumé, import loads into editor | [x] |
+| E7 | PDF/capture/CI + render-check skill de-profiled (single résumé) | `pnpm pdf` → one PDF; CI green | [x] |
 | E8 | Deploy + live verify + docs | ✓ live E2E on jobs.churong.cc: résumé editor saves+versions, app render read-only, overlay modal works; CLAUDE/ARCHITECTURE/memory updated | [x] |
+
+### Further follow-ups (post-overhaul)
+
+| # | Task | Verification | Status |
+|---|---|---|---|
+| F1 | Move résumé renderer to `/resume/` (was `/site/`); review board stays default `/`; `/resume` redirect; review iframe → `/resume/?application=` | live: `/resume/` renders+edits, `/resume`→redirect, `/`=review board | [x] |
+| F2 | Print config `meta.print` (paper size, margins mm, scale) — global, applications inherit; Print tab in the résumé editor; `@page` rule (browser) + Playwright `page.pdf` opts (pipeline); defaults reproduce prior output | live: Print tab saves meta.print, drives `@page` (Letter+15mm), persists in DB; default PDF unchanged; tests pass | [x] |
+| F3 | Bullet bank regen-from-résumé (master.json drifts from a heavily web-edited résumé) | — | deferred |

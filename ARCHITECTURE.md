@@ -28,8 +28,8 @@ applications. Plan of record: [PROPOSALS.md](PROPOSALS.md); progress:
                          │  └────────────┘         │        │                                │
                          │                         │        └─▶ Telegram: "N ready to review"│
                          │                         ▼                                         │
-                         │  jobs-api (Fastify) ── serves ──┬─ review SPA  (apps/review)       │
-                         │   reads/writes jobs+answers     ├─ résumé renderer at /site/       │
+                         │  jobs-api (Fastify) ── serves ──┬─ review SPA  (apps/review) at /  │
+                         │   jobs+answers+résumé versions  ├─ résumé renderer at /resume/     │
                          │                                 └─ /applications/:id/overlay.json  │
                          │         ▲                                                          │
                          └─────────┼──────────────────────────────────────────────────────┘
@@ -53,30 +53,33 @@ resume/
 ├── packages/renderer/        @resume/renderer — the résumé as data + components
 │   └── src/
 │       ├── data/
-│       │   ├── resume.json            canonical JSON Resume (NEVER mutated by tooling)
+│       │   ├── resume.json            JSON Resume SEED (DB is the live source — see below)
 │       │   ├── extensions.schema.json x-* extension schema (academic fields)
 │       │   ├── master.json            bullet bank: every claim, with stable ids (RAG grounding)
 │       │   ├── master.schema.json
 │       │   ├── overlay.schema.json    the tailoring contract (profile + RFC-6902 patches)
 │       │   ├── adapter.js             resume.json → component view models (key contract)
-│       │   ├── profiles.js            builds profile variants (buildProfileFrom)
+│       │   ├── profiles.js            buildProfileFrom: assemble selected sections (overlay)
 │       │   ├── overlay.js             applyOverlay: patch a clone, rebuild, never mutate
-│       │   └── index.js               data API incl. registerApplication()
+│       │   ├── editorModel.js         résumé/overlay ⇄ editor tree (treeToResume / editorTreeToOverlay)
+│       │   ├── print.js               meta.print → @page CSS + Playwright pdf options
+│       │   └── index.js               data API: registerResume / registerApplication / getResumeDoc
+│       ├── editor/ResumeTree.jsx      shared dnd-kit structured editor (résumé + overlay modes)
 │       ├── components/  config/  contexts/  hooks/   the renderer
 │       └── index.js                   package barrel
 │
-├── apps/site/                the résumé site (Vite). ?profile=<id> or ?application=<id>
-│   └── src/index.jsx         async bootstrap: fetch overlay → register → render
+├── apps/site/                the résumé site (Vite), served at /resume/
+│   └── src/{index.jsx (routes: /resume, ?application=), App.jsx, ResumeEditor.jsx}
 │
-├── apps/review/              the review SPA (Vite). hash routes: #/ , #/app/:id , #/answers
-│   └── src/{App.jsx, api.js, style.css}
+├── apps/review/              the review SPA (Vite) at /. hash routes: #/, #/app/:id, #/answers
+│   └── src/{App.jsx, Editor.jsx (overlay editor modal), api.js, style.css}
 │
 ├── services/
 │   ├── discovery/            Python/uv — board fetchers + JobSpy, normalize, dedupe, upsert
 │   │   ├── src/discovery/{boards,jobspy_search,normalize,store,main}.py
 │   │   └── config/{searches.yml, companies.yml}   saved searches + verified board slugs
 │   ├── pipeline/             Node ESM — the LLM pipeline + worker
-│   │   ├── migrations/       001 jobs+events · 002 overlay/labels/answers · 003 answers seed
+│   │   ├── migrations/       001 jobs+events · 002 overlay/labels/answers · 003 answers seed · 004 resume_versions
 │   │   ├── src/
 │   │   │   ├── parseJd.js    structured JD extraction (Haiku)
 │   │   │   ├── score.js      0.5·keyword(fuzzy) + 0.3·llmFit + 0.2·structural
@@ -108,7 +111,7 @@ resume/
 | `jobs-discovery` | nightly cron discovery (supercronic, `init: true`) | internal | no |
 | `jobs-pipeline` | poller: parse → score → tailor → verify | internal | no |
 | `jobs-api` | review API + SPA + résumé renderer | internal + nginx | via NPM (auth) |
-| `jobs-review` | static résumé stub (legacy public host) | internal + nginx | via NPM |
+| `jobs-review` | legacy static stub (unused; NPM now points at `jobs-api`) | internal + nginx | — |
 
 Web exposure is exclusively through nginx-proxy-manager on the external
 `nginx` network; **no service publishes host ports**. `jobs.churong.cc` →
@@ -125,6 +128,8 @@ discovery, and the pipeline are unreachable from outside the host.
   `cost_usd`, duration, ok, detail. The cost/observability ledger.
 - **answers** — templated application answers (work auth, salary, …),
   edited in the review UI, read by the future apply agent.
+- **resume_versions** — the canonical résumé, one row per save (latest =
+  current; full history). Seeded from `resume.json` on first read.
 
 Status lifecycle: `new → parsing → scored → in_review → approved →
 applying → applied → responded | rejected | skipped | error`.
@@ -134,9 +139,14 @@ applying → applied → responded | rejected | skipped | error`.
 - **The canonical résumé is DB-backed and editable.** `resume_versions`
   (latest row = current); `resume.json` is the seed + git-export target +
   bundled fallback (CI/PDF). The `/resume` route renders it and offers a
-  structured editor (drag reorder, rephrase, delete) + JSON tab, saving new
-  versions via `PUT /api/resume` (full history). No profiles — a single
-  résumé; per-job section selection lives only in the overlay.
+  structured editor (drag reorder, rephrase, delete) + JSON + Print tabs +
+  Export/Import, saving new versions via `PUT /api/resume` (full history). No
+  profiles — a single résumé; per-job section selection lives only in the
+  overlay. The pipeline reads the current résumé from the DB each cycle
+  (`refreshResume`), so web edits flow into tailoring without a redeploy.
+- **Print config (`meta.print`)** — paper size, margins, scale; global on the
+  résumé, inherited by applications. Drives an `@page` rule (browser print)
+  and Playwright `page.pdf` (PDF pipeline).
 - **Tailoring is a structured overlay** — section selection + RFC-6902
   patches — applied to a clone at render time. Every change is a reviewable
   diff; the review app edits it in a modal (shared dnd-kit editor). Reviewer
@@ -160,6 +170,6 @@ applying → applied → responded | rejected | skipped | error`.
 ## CI
 
 `.github/workflows/ci.yml`: validate (schemas + overlays) → vitest (renderer
-+ pipeline) → build → per-profile PDFs; separate job runs discovery's
++ pipeline) → build → `out/resume.pdf`; separate job runs discovery's
 uv/ruff/pytest. Live LLM evals are NOT in CI (they cost API spend) — run
 them manually before changing a prompt.

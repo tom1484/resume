@@ -1,27 +1,58 @@
 # Resume
 
-A data-driven resume site built with React + Vite + Tailwind. All content lives
-in a single [JSON Resume](https://jsonresume.org/) document and renders as a
-print-ready page, with multiple profile variants exported as PDFs.
+A data-driven résumé built with React + Vite + Tailwind, and the base of a
+self-hosted job-application pipeline. The résumé content is a single
+[JSON Resume v1.0.0](https://jsonresume.org/schema) document (plus `x-`
+extensions); it renders as a print-ready page and is edited through a web
+editor backed by a versioned database.
+
+This repo is a **pnpm workspace**:
+
+```
+apps/site/            the résumé renderer + /resume editor (Vite)
+apps/review/          the job-review SPA (Vite)
+packages/renderer/    @resume/renderer — résumé data, components, editor, overlay
+services/             discovery (Python) · pipeline (Node) · api (Fastify)
+scripts/              validate · print-pdf · capture
+deploy/               docker compose + nginx conf
+```
+
+For the pipeline's design see [ARCHITECTURE.md](ARCHITECTURE.md); the plan is
+[PROPOSALS.md](PROPOSALS.md), progress is [PLAN.md](PLAN.md), and operator
+setup is [PREPARE.md](PREPARE.md). The rest of this file is the résumé site.
 
 ## Quick start
 
 ```sh
 pnpm install
-pnpm dev        # dev server
-pnpm build      # validate data + production build into build/
+pnpm dev        # résumé site dev server (apps/site)
+pnpm build      # validate data + production build into apps/site/build/
 pnpm preview    # serve the production build
+pnpm test       # vitest across the workspace
+pnpm validate   # Ajv: JSON Resume schema + extensions + overlays + master bank
+pnpm pdf        # render the résumé to out/resume.pdf
 ```
 
-## Editing content
+## Editing the résumé
 
-Everything is in **`src/data/resume.json`** — a standard
-[JSON Resume v1.0.0](https://jsonresume.org/schema) document, so it works with
-the wider ecosystem (themes, the [registry](https://registry.jsonresume.org/),
-`resumed render`, ATS importers).
+Two ways:
 
-Academic features the standard lacks are layered on as `x-` extension fields
-(validated by `src/data/extensions.schema.json`):
+1. **The web editor** (deployed): open `/resume`, click **✎ Edit**. A
+   structured editor (drag-reorder sections/items/bullets, rephrase, delete)
+   with a **JSON** tab and a **Print** tab. **Export/Import** download/load the
+   résumé as JSON (a DB-independent backup). Saving writes a new version — the
+   canonical résumé is **DB-backed** (`resume_versions`, full history; restore
+   any version). `packages/renderer/src/data/resume.json` is the **seed +
+   git-export target + offline fallback**, not the live source.
+
+2. **Edit the seed file** `packages/renderer/src/data/resume.json` directly
+   (e.g. via git), then `pnpm validate && pnpm test`. Use this to sync the
+   committed seed with edits you exported from the web editor.
+
+### `x-` extensions
+
+Academic features the JSON Resume standard lacks are layered on as `x-` fields
+(validated by `packages/renderer/src/data/extensions.schema.json`):
 
 | Extension | Where | Purpose |
 |---|---|---|
@@ -36,68 +67,53 @@ Academic features the standard lacks are layered on as `x-` extension fields
 | `x-tags` | work/volunteer | tag row (`keywords` is used where it's standard) |
 | `x-info`, `x-courses` | education | key/value rows and courses with grades |
 | `x-qrcodes` | basics | QR images in the header |
-| `x-profiles` | meta | profile definitions (see below) |
+| `meta.sectionOrder` | meta | section display order (set by the editor) |
+| `meta.print` | meta | print config — paper size, margins (mm), scale |
 
-Content conventions: `<br>` inside a highlight string creates a sub-bullet;
-`!` before an author name highlights it.
+Conventions: `<br>` inside a highlight creates a sub-bullet; `!` before an
+author name highlights it.
 
-Validate after editing:
+## Print / PDF
 
-```sh
-pnpm validate   # Ajv: official JSON Resume schema + extension schema
-pnpm test       # adapter contract tests
-```
+Print settings live in `meta.print` (Print tab in the editor): paper size
+(A4/Letter/Legal/A3/A5), margins, and scale. Defaults are A4 / no margins /
+scale 1.
 
-## Profiles
+- **Browser:** print or "Save as PDF" from `/resume` — an `@page` rule applies
+  the configured size + margins.
+- **`pnpm pdf`:** renders `out/resume.pdf` from the bundled seed using the
+  print config (Playwright). Layout is print-aware (`print-no-break-*`
+  utilities keep items intact across pages).
 
-`meta.x-profiles` in `resume.json` defines resume variants (`full`,
-`academic`, `industry`, `minimal`) as section selections plus declarative
-filters (`tagsAnyOf`, `titleIn`, `limit`). Open a variant with
-`?profile=<id>`, e.g. `http://localhost:5173/?profile=academic`.
+## Routes
 
-## PDF export
+- `/resume` — the canonical résumé (renders + editor).
+- `/resume/?application=<id>` — a tailored résumé for a job (read-only;
+  fetches the overlay from the API). Used by the review app.
 
-```sh
-pnpm build
-pnpm pdf        # writes out/resume-<profile>.pdf for every profile
-```
+There are **no profile variants** — a single canonical résumé. Per-job section
+selection/tailoring lives in application *overlays* (see ARCHITECTURE.md).
 
-Or print any page from the browser — the layout is print-aware
-(`print-no-break-*` utilities keep items intact across pages).
-
-## In-browser config panel
-
-Press **Cmd/Ctrl + D** to toggle a panel for hiding/reordering sections and
-items, adjusting the layout, and exporting/importing that configuration as
-JSON. The panel never appears in print output.
-
-## Architecture
+## How the renderer works
 
 ```
-src/data/resume.json    canonical data (JSON Resume + x- extensions)
-src/data/adapter.js     maps resume.json -> component view models
-src/data/profiles.js    builds profile variants from meta.x-profiles
-src/components/         renderers (experiences, publications, education, ...)
-src/config/             section list, component registry, Tailwind theme
-scripts/validate.mjs    Ajv schema validation (pnpm validate)
-scripts/print-pdf.mjs   per-profile PDF rendering (pnpm pdf)
-scripts/capture.mjs     DOM/PDF/PNG capture for render-regression checks
+packages/renderer/src/
+  data/resume.json        canonical content (JSON Resume + x-)  ← seed
+  data/adapter.js         resume.json → component view models (key contract)
+  data/profiles.js        buildProfileFrom: assemble selected sections (used by overlay)
+  data/overlay.js         applyOverlay: patch a CLONE, rebuild, never mutate the canonical
+  data/editorModel.js     résumé/overlay ⇄ editor tree (treeToResume / editorTreeToOverlay)
+  data/print.js           meta.print → @page CSS + Playwright pdf options
+  editor/ResumeTree.jsx   shared dnd-kit structured editor (résumé + overlay modes)
+  components/             renderers (experiences, publications, education, …)
+  config/                 section list, component registry, Tailwind theme
 ```
 
 One sharp edge: components spread view-model items onto DOM elements, so the
-adapter must emit exactly the known keys — `src/data/adapter.test.js` enforces
-this.
-
-## Job pipeline
-
-This repo is also the base of a self-hosted job-application pipeline
-(discovery → scoring → LLM tailoring → human review → apply). See
-[ARCHITECTURE.md](ARCHITECTURE.md) for the system design,
-[PROPOSALS.md](PROPOSALS.md) for the plan, and [PLAN.md](PLAN.md) for
-progress. The résumé itself (everything below) is the pipeline's canonical
-data source.
+adapter must emit exactly the known keys — `adapter.test.js` enforces this.
 
 ## CI
 
-`.github/workflows/ci.yml` validates the data, runs tests, builds, and
-uploads per-profile PDFs as artifacts.
+`.github/workflows/ci.yml` validates the data, runs tests, builds, and uploads
+`out/resume.pdf` as an artifact; a separate job lints + tests the Python
+discovery service.
