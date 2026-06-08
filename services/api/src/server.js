@@ -168,15 +168,18 @@ app.put('/api/answers/:key', async (req) => {
 
 app.get('/healthz', async () => 'ok');
 
-// --- static: resume renderer (for the embedded tailored view) + review SPA
-// Renderer build is mounted at /site (it fetches /applications/<id>/overlay.json,
-// served above). Review SPA is the default root.
-app.register(fastifyStatic, { root: join(root, '../site'), prefix: '/site/', decorateReply: false });
+// --- static: résumé renderer at /resume (canonical editor + the embedded
+// tailored view), review SPA at the default root.
+app.get('/resume', (req, reply) => reply.redirect('/resume/'));
+app.register(fastifyStatic, { root: join(root, '../site'), prefix: '/resume/', decorateReply: false });
 app.register(fastifyStatic, { root: join(root, '../review'), prefix: '/', decorateReply: true });
 
-// SPA fallback for client-side routes (/inbox, /app/:id)
+// SPA fallback for the review board's client-side routes (#/app/:id, etc.).
+// /api, /applications, and /resume are handled above — never fall back to
+// the review SPA for those.
 app.setNotFoundHandler((req, reply) => {
-  if (req.raw.url.startsWith('/api/') || req.raw.url.startsWith('/applications/')) {
+  const u = req.raw.url;
+  if (u.startsWith('/api/') || u.startsWith('/applications/') || u.startsWith('/resume')) {
     return reply.code(404).send({ error: 'not found' });
   }
   return reply.sendFile('index.html', join(root, '../review'));

@@ -122,7 +122,7 @@ function Detail({ id }) {
       <div className="panes">
         <section className="pane">
           <h3>Tailored résumé {patches.length > 0 && <span className="muted">({patches.length} edits)</span>}</h3>
-          <iframe className="resume" title="tailored resume" src={`/site/?application=${encodeURIComponent(id)}&rev=${rev}`} />
+          <iframe className="resume" title="tailored resume" src={`/resume/?application=${encodeURIComponent(id)}&rev=${rev}`} />
         </section>
 
         <section className="pane">

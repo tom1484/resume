@@ -107,3 +107,12 @@ describe('treeToResume (resume mode)', () => {
     expect(treeToResume(tree, resume).meta.sectionOrder[0]).toBe('skills');
   });
 });
+
+describe('treeToResume position preservation', () => {
+  it('no-op save reproduces work[] exactly (overlays keep positional paths)', () => {
+    const tree = buildEditorModel({}, resume);
+    const rebuilt = treeToResume(tree, resume);
+    expect(rebuilt.work).toEqual(resume.work);
+    expect(rebuilt.projects).toEqual(resume.projects);
+  });
+});

@@ -105,8 +105,8 @@ export function treeToResume(tree, baseDoc) {
   const out = jsonpatch.deepClone(baseDoc);
   out.meta = { ...(out.meta ?? {}), sectionOrder: tree.sections.map((s) => s.key) };
 
-  // group tree items by source array, in tree order, rebuilding each entry
-  const bySource = {};
+  // Build per-source, per-section queues of edited entries in editor order.
+  const queues = {}; // source -> sectionKey -> [entry]
   for (const s of tree.sections) {
     if (!s.list) continue;
     for (const it of s.items) {
@@ -114,10 +114,27 @@ export function treeToResume(tree, baseDoc) {
       if (!orig) continue;
       const entry = jsonpatch.deepClone(orig);
       if (s.editable) entry.highlights = it.bullets.filter((b) => !b.hidden).map((b) => b.text);
-      (bySource[it.source] ??= []).push(entry);
+      ((queues[it.source] ??= {})[s.key] ??= []).push(entry);
     }
   }
-  for (const [source, entries] of Object.entries(bySource)) out[source] = entries;
+
+  // Which display section an original entry belongs to (work/projects split).
+  const sectionOf = (source, entry) =>
+    SECTIONS.find((sec) => sec.source === source && (!sec.pick || sec.pick(entry)))?.key;
+
+  // Rebuild each source array IN PLACE: walk the original slots, and at each
+  // slot pull the next entry from that slot's section queue. This applies
+  // within-section reorder/edits/deletes while keeping each section's slots
+  // in their original absolute positions — so a no-op save reproduces the
+  // array exactly and existing overlays' positional patches stay valid.
+  for (const source of Object.keys(queues)) {
+    const rebuilt = [];
+    for (const orig of baseDoc[source] ?? []) {
+      const q = queues[source][sectionOf(source, orig)];
+      if (q && q.length) rebuilt.push(q.shift());
+    }
+    out[source] = rebuilt;
+  }
   return out;
 }
 

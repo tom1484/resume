@@ -12,7 +12,7 @@ RUN pnpm install --frozen-lockfile
 COPY packages/renderer packages/renderer
 COPY apps/site apps/site
 COPY apps/review apps/review
-RUN VITE_BASE=/site/ pnpm --filter site build && pnpm --filter review build
+RUN VITE_BASE=/resume/ pnpm --filter site build && pnpm --filter review build
 
 # Stage 2: API runtime with built static assets co-located.
 FROM node:22-alpine
