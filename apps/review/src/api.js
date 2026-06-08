@@ -1,6 +1,9 @@
 // Thin API client. Same-origin: the review SPA is served by the API service.
-const json = (r) => {
-  if (!r.ok) throw new Error(`HTTP ${r.status}`);
+const json = async (r) => {
+  if (!r.ok) {
+    const body = await r.json().catch(() => ({}));
+    throw new Error(body.problems ? body.problems.join('; ') : body.error || `HTTP ${r.status}`);
+  }
   return r.json();
 };
 
@@ -15,14 +18,10 @@ export const label = (id, value) =>
   fetch(`/api/jobs/${encodeURIComponent(id)}/label`, {
     method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ label: value }),
   }).then(json);
-export const updateOverlay = async (id, overlay) => {
-  const r = await fetch(`/api/jobs/${encodeURIComponent(id)}/overlay`, {
+export const saveOverlay = (id, overlay) =>
+  fetch(`/api/jobs/${encodeURIComponent(id)}/overlay`, {
     method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(overlay),
-  });
-  const body = await r.json().catch(() => ({}));
-  if (!r.ok) throw new Error((body.problems ?? [body.error ?? `HTTP ${r.status}`]).join('\n'));
-  return body;
-};
+  }).then(json);
 export const getAnswers = () => fetch('/api/answers').then(json);
 export const saveAnswer = (key, question, answer) =>
   fetch(`/api/answers/${encodeURIComponent(key)}`, {

@@ -14,25 +14,22 @@ const pool = new pg.Pool({ connectionString: process.env.DATABASE_URL });
 const root = dirname(fileURLToPath(import.meta.url));
 const app = Fastify({ logger: true });
 
-// Canonical data for overlay validation (mounted read-only at DATA_DIR).
+// Canonical data + overlay schema (mounted read-only at DATA_DIR) — used to
+// validate reviewer-edited overlays before persisting them.
 const dataDir = process.env.DATA_DIR ?? '/data';
 const resume = JSON.parse(readFileSync(join(dataDir, 'resume.json'), 'utf8'));
 const overlaySchema = JSON.parse(readFileSync(join(dataDir, 'overlay.schema.json'), 'utf8'));
-const validateOverlaySchema = new Ajv({ allErrors: true }).compile(overlaySchema);
+const validateOverlay = new Ajv({ allErrors: true }).compile(overlaySchema);
 
-// Same gate as the tailor stage: schema-valid + patches apply cleanly to
-// resume.json + must include personalInfo. Returns a list of problems.
+// Returns an array of problems (empty = valid).
 function overlayProblems(overlay) {
   const problems = [];
-  if (!validateOverlaySchema(overlay)) {
-    problems.push(...validateOverlaySchema.errors.map((e) => `${e.instancePath || '/'} ${e.message}`));
-    return problems; // shape is wrong; deeper checks would be noise
+  if (!validateOverlay(overlay)) {
+    problems.push(...validateOverlay.errors.map((e) => `${e.instancePath || '/'} ${e.message}`));
   }
-  const patchError = jsonpatch.validate(overlay.patches ?? [], resume);
-  if (patchError) {
-    problems.push(`patch #${patchError.index} ${patchError.name} at ${patchError.operation?.path}`);
-  }
-  if (!overlay.profile.sections.includes('personalInfo')) {
+  const err = jsonpatch.validate(overlay?.patches ?? [], resume);
+  if (err) problems.push(`patch #${err.index} ${err.name} at ${err.operation?.path}`);
+  if (overlay?.profile && !overlay.profile.sections?.includes('personalInfo')) {
     problems.push('profile.sections must include personalInfo');
   }
   return problems;
@@ -94,24 +91,18 @@ app.post('/api/jobs/:id/label', async (req, reply) => {
 
 app.put('/api/jobs/:id/overlay', async (req, reply) => {
   const overlay = req.body;
-  if (overlay?.jobId !== req.params.id) {
-    return reply.code(400).send({ problems: [`jobId must equal "${req.params.id}"`] });
-  }
   const problems = overlayProblems(overlay);
-  if (problems.length) return reply.code(400).send({ problems });
-
-  // Manual edits are human-authored — flag so they bypass the LLM
-  // verify/drop path and never get mistaken for auto-verified output.
-  const stored = {
-    ...overlay,
-    audit: { ...(overlay.audit ?? {}), unsupported: [], humanEdited: true },
-  };
+  if (problems.length) return reply.code(400).send({ error: 'invalid overlay', problems });
+  if (overlay.jobId !== req.params.id) return reply.code(400).send({ error: 'jobId mismatch' });
   await pool.query(
     'UPDATE jobs SET overlay=$2, cover_letter=$3, audit=$4, updated_at=now() WHERE id=$1',
-    [req.params.id, JSON.stringify(stored), stored.coverLetter ?? null, JSON.stringify(stored.audit)]
+    [req.params.id, JSON.stringify(overlay), overlay.coverLetter ?? null, JSON.stringify(overlay.audit ?? { claims: [], unsupported: [] })]
   );
   return { ok: true };
 });
+
+// Base resume (for the structured editor to know section/item structure)
+app.get('/api/resume', async () => resume);
 
 app.get('/api/answers', async () => (await pool.query('SELECT key, question, answer FROM answers ORDER BY key')).rows);
 

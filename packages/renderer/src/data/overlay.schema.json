@@ -44,17 +44,17 @@
             "properties": {
               "tagsAnyOf": { "type": "array", "items": { "type": "string" } },
               "titleIn": { "type": "array", "items": { "type": "string" } },
-              "limit": { "type": "integer", "minimum": 0 },
-              "order": {
-                "type": "array",
-                "items": { "type": "string" },
-                "description": "Explicit item selection + ordering by item title. When present, selects exactly these items in this order and overrides tagsAnyOf/titleIn/limit for the section."
-              },
               "exclude": {
                 "type": "array",
                 "items": { "type": "string" },
-                "description": "Item titles to drop from the section (applied after selection, before limit)."
-              }
+                "description": "Item titles to hide (reviewer exclude list)"
+              },
+              "order": {
+                "type": "array",
+                "items": { "type": "string" },
+                "description": "Item titles in display order; unlisted keep relative order after these"
+              },
+              "limit": { "type": "integer", "minimum": 0 }
             }
           }
         }

@@ -41,6 +41,9 @@ importers:
 
   apps/review:
     dependencies:
+      '@resume/renderer':
+        specifier: workspace:^
+        version: link:../../packages/renderer
       react:
         specifier: ^18.3.1
         version: 18.3.1

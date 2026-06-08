@@ -6,31 +6,36 @@ import { buildViewModels } from './adapter';
 const viewModels = buildViewModels(resume);
 const profileDefs = resume.meta['x-profiles'];
 
-// Apply a declarative filter to a section's items. Items are identified by
-// `title`. Precedence:
-//  - `order` (explicit title list) selects exactly those items, in order,
-//    ignoring tagsAnyOf/titleIn/limit;
-//  - otherwise tagsAnyOf then titleIn narrow the set;
-//  - `exclude` (title list) then drops items (applies in both branches);
-//  - `limit` caps the count last (skipped when `order` is explicit).
+// Apply a declarative filter to a section's items. Items are keyed by their
+// `title` (company / project / institution name — what the adapter emits).
+//   tagsAnyOf : keep items having any of these tags
+//   titleIn   : keep only these titles
+//   exclude   : drop these titles (reviewer "hide item" — overrides the rest)
+//   order     : reorder by this title list; unlisted items keep their
+//               relative order, after the listed ones
+//   limit     : cap count (applied last)
 function applyFilter(items, filter) {
-  let result;
-  if (filter.order) {
-    const byTitle = new Map(items.map((item) => [item.title, item]));
-    result = filter.order.map((title) => byTitle.get(title)).filter(Boolean);
-  } else {
-    result = items;
-    if (filter.tagsAnyOf) {
-      result = result.filter((item) => item.tags?.some((tag) => filter.tagsAnyOf.includes(tag)));
-    }
-    if (filter.titleIn) {
-      result = result.filter((item) => filter.titleIn.includes(item.title));
-    }
+  let result = items;
+  if (filter.tagsAnyOf) {
+    result = result.filter((item) => item.tags?.some((tag) => filter.tagsAnyOf.includes(tag)));
+  }
+  if (filter.titleIn) {
+    result = result.filter((item) => filter.titleIn.includes(item.title));
   }
   if (filter.exclude) {
     result = result.filter((item) => !filter.exclude.includes(item.title));
   }
-  if (filter.limit != null && !filter.order) {
+  if (filter.order) {
+    const rank = (item) => {
+      const i = filter.order.indexOf(item.title);
+      return i === -1 ? filter.order.length : i;
+    };
+    result = result
+      .map((item, i) => [item, i])
+      .sort(([a, ai], [b, bi]) => rank(a) - rank(b) || ai - bi)
+      .map(([item]) => item);
+  }
+  if (filter.limit != null) {
     result = result.slice(0, filter.limit);
   }
   return result;

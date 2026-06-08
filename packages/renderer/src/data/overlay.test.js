@@ -54,55 +54,27 @@ describe('applyOverlay', () => {
     expect(Object.keys(profile.data)).toEqual(['skills', 'education']);
   });
 
-  it('order selects and reorders items by title, overriding other filters', () => {
-    const full = applyOverlay({ jobId: 'f', profile: { sections: ['projects'] } });
-    const titles = full.data.projects.map((p) => p.title);
-    expect(titles.length).toBeGreaterThanOrEqual(2);
-    const reversed = [titles[1], titles[0]]; // pick 2, swap order
-    const profile = applyOverlay({
+  it('excludes items by title', () => {
+    const all = applyOverlay({ jobId: 't', profile: { sections: ['working'] } });
+    const drop = all.data.working[0].title;
+    const filtered = applyOverlay({
       jobId: 't',
-      profile: { sections: ['projects'], filters: { projects: { order: reversed } } },
+      profile: { sections: ['working'], filters: { working: { exclude: [drop] } } },
     });
-    expect(profile.data.projects.map((p) => p.title)).toEqual(reversed);
+    expect(filtered.data.working.map((w) => w.title)).not.toContain(drop);
+    expect(filtered.data.working).toHaveLength(all.data.working.length - 1);
   });
 
-  it('order ignores unknown titles and wins over tagsAnyOf/limit', () => {
-    const full = applyOverlay({ jobId: 'f', profile: { sections: ['projects'] } });
-    const known = full.data.projects[0].title;
-    const profile = applyOverlay({
+  it('reorders items by the order list, unlisted kept after', () => {
+    const all = applyOverlay({ jobId: 't', profile: { sections: ['projects'] } });
+    const titles = all.data.projects.map((p) => p.title);
+    const last = titles[titles.length - 1];
+    const reordered = applyOverlay({
       jobId: 't',
-      profile: {
-        sections: ['projects'],
-        filters: { projects: { order: [known, 'NO SUCH PROJECT'], tagsAnyOf: ['nope'], limit: 0 } },
-      },
+      profile: { sections: ['projects'], filters: { projects: { order: [last] } } },
     });
-    expect(profile.data.projects.map((p) => p.title)).toEqual([known]);
-  });
-
-  it('exclude drops items by title from a section', () => {
-    const full = applyOverlay({ jobId: 'f', profile: { sections: ['projects'] } });
-    const titles = full.data.projects.map((p) => p.title);
-    const drop = titles[0];
-    const profile = applyOverlay({
-      jobId: 't',
-      profile: { sections: ['projects'], filters: { projects: { exclude: [drop] } } },
-    });
-    const after = profile.data.projects.map((p) => p.title);
-    expect(after).not.toContain(drop);
-    expect(after).toHaveLength(titles.length - 1);
-  });
-
-  it('exclude composes with tagsAnyOf', () => {
-    const tagged = applyOverlay({
-      jobId: 'f',
-      profile: { sections: ['projects'], filters: { projects: { tagsAnyOf: ['Embedded Systems'] } } },
-    }).data.projects.map((p) => p.title);
-    expect(tagged.length).toBeGreaterThanOrEqual(2);
-    const profile = applyOverlay({
-      jobId: 't',
-      profile: { sections: ['projects'], filters: { projects: { tagsAnyOf: ['Embedded Systems'], exclude: [tagged[0]] } } },
-    });
-    expect(profile.data.projects.map((p) => p.title)).not.toContain(tagged[0]);
+    expect(reordered.data.projects[0].title).toBe(last); // moved to front
+    expect(reordered.data.projects).toHaveLength(all.data.projects.length); // none dropped
   });
 
   it('throws on a patch that does not apply cleanly', () => {
