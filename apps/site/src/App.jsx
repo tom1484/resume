@@ -1,11 +1,26 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { getComponent } from '@config/componentRegistry';
 import { sectionsConfig } from '@config/sections';
 import { getData, getResumeDoc, registerResume } from '@data';
+import { getPrint, pageCss } from '@data/print';
 import { ThemeProvider, useTheme } from '@contexts/themeContext';
 import Title from '@components/title';
 import ErrorBoundary from '@components/common/errorBoundary';
 import { ResumeEditor } from './ResumeEditor';
+
+// Inject the résumé's print config as an @page rule in <head> (browser
+// print / Save-as-PDF). Kept out of #root so it doesn't affect the render
+// DOM. Re-applied when `rev` changes (after a save).
+function usePageStyle(rev) {
+  useEffect(() => {
+    const el = document.createElement('style');
+    el.id = 'print-cfg';
+    el.textContent = pageCss(getPrint(getResumeDoc()));
+    document.getElementById('print-cfg')?.remove();
+    document.head.appendChild(el);
+    return () => el.remove();
+  }, [rev]);
+}
 
 // Sections honor an optional meta.sectionOrder (set by the editor); unknown
 // keys fall to the end in their declared order.
@@ -44,6 +59,7 @@ function ResumeView() {
 function AppContent({ editable }) {
   const [editing, setEditing] = useState(false);
   const [rev, setRev] = useState(0); // bump to force a fresh render after save
+  usePageStyle(rev);
 
   const onSaved = async () => {
     try {

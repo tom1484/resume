@@ -32,8 +32,10 @@ export const registerResume = (doc) => {
 // The résumé document currently rendered (used by the /resume editor)
 export const getResumeDoc = () => activeDoc;
 
-// Render an application overlay against a base résumé document
+// Render an application overlay against a base résumé document. activeDoc is
+// the base résumé so meta (print config, etc.) is inherited by the render.
 export const registerApplication = (overlay, baseDoc = bundledResume) => {
+  activeDoc = baseDoc;
   activeData = applyOverlay(overlay, baseDoc).data;
   return activeData;
 };
