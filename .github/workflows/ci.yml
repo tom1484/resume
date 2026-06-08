@@ -36,14 +36,14 @@ jobs:
       - name: Install Playwright Chromium
         run: pnpm exec playwright install --with-deps chromium
 
-      - name: Generate per-profile PDFs
+      - name: Generate résumé PDF
         run: pnpm pdf
 
-      - name: Upload PDF artifacts
+      - name: Upload PDF artifact
         uses: actions/upload-artifact@v4
         with:
-          name: resume-pdfs
-          path: out/*.pdf
+          name: resume-pdf
+          path: out/resume.pdf
 
   discovery:
     runs-on: ubuntu-latest
