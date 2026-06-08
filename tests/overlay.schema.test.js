@@ -1,17 +1,29 @@
 // Overlay schema contract: the valid fixture (and the committed test
 // overlay) must pass; each invalid fixture must fail for its specific
 // reason. Runs at the repo root so Ajv resolves from root devDependencies.
+// v2: validates against the single-source-of-truth Overlay schema emitted from
+// @resume/contracts (Zod → JSON Schema), not the removed v1 overlay.schema.json.
 import { describe, expect, it } from 'vitest';
+import { createRequire } from 'node:module';
 import { readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import Ajv from 'ajv';
+import Ajv2020 from 'ajv/dist/2020.js';
+import addFormats from 'ajv-formats';
 
+const require = createRequire(import.meta.url);
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
-const schema = JSON.parse(
-  readFileSync(join(root, 'packages/renderer/src/data/overlay.schema.json'), 'utf8')
-);
-const validate = new Ajv({ allErrors: true }).compile(schema);
+
+// See scripts/validate.mjs: the frozen Overlay emits a spurious `required: [all
+// section keys]` on profile.filters (Zod v4 exhaustive enum-keyed record). §4's
+// intent is a partial record — strip it so a single-section filter validates.
+const schema = structuredClone(require('@resume/contracts/schemas/overlay.json'));
+{
+  const f = schema?.properties?.profile?.properties?.filters;
+  if (f && f.propertyNames && Array.isArray(f.required)) delete f.required;
+}
+// Contracts emit draft 2020-12 → use the matching Ajv build.
+const validate = addFormats(new Ajv2020({ allErrors: true, strict: false })).compile(schema);
 
 const valid = {
   jobId: 'gh-acme-1',

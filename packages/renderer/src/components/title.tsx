@@ -1,7 +1,7 @@
 import clsx from 'clsx';
 import { useTheme } from '@contexts/themeContext';
 
-export default function Title({ title }) {
+export default function Title({ title }: { title: string }) {
   const { theme } = useTheme();
 
   return (

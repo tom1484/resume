@@ -1,6 +1,12 @@
 import { useTheme } from '@contexts/themeContext';
 
-export default function SplitLine({ variant = 'default', className = '' }) {
+export default function SplitLine({
+  variant = 'default',
+  className = '',
+}: {
+  variant?: 'default' | 'section';
+  className?: string;
+}) {
   const { theme } = useTheme();
   
   const style = variant === 'section' 

@@ -1,16 +1,27 @@
+import React from 'react';
 import clsx from 'clsx';
 import { useTheme } from '@contexts/themeContext';
 
+interface ContainerProps {
+  children?: React.ReactNode;
+  variant?: string;
+  width?: string;
+  padding?: boolean | string;
+  margin?: string | null;
+  className?: string;
+  [key: string]: unknown;
+}
+
 // Generic Container component for consistent layout
-export default function Container({ 
+export default function Container({
   children,
   variant = 'default',
   width = 'default',
   padding = true,
   margin = null,
   className = '',
-  ...props 
-}) {
+  ...props
+}: ContainerProps) {
   const { theme } = useTheme();
   
   const getContainerStyles = () => {

@@ -1,8 +1,9 @@
 import { useTheme } from '@contexts/themeContext';
 import Link from '@components/common/link';
 import Image from '@components/common/image';
+import type { PersonalInfoVM } from '@resume/contracts';
 
-export default function PersonalInfo({ data }) {
+export default function PersonalInfo({ data }: { data: PersonalInfoVM }) {
   const { theme } = useTheme();
   
   const info = data.info;

@@ -4,6 +4,15 @@ import List from '@components/common/list';
 import SectionList from '@components/common/sectionList';
 import SplitLine from '@components/common/splitLine';
 import TagList from '@components/common/tagList';
+import type { ExperienceVM } from '@resume/contracts';
+
+interface ExperienceItemProps extends Partial<ExperienceVM> {
+  isLast?: boolean;
+  showTags?: boolean;
+  showHighlight?: boolean;
+  showLinks?: boolean;
+  [key: string]: unknown;
+}
 
 function ExperienceItem({
   title,
@@ -20,7 +29,7 @@ function ExperienceItem({
   showHighlight = true,
   showLinks: _showLinks = true,
   ...props
-}) {
+}: ExperienceItemProps) {
   const { theme } = useTheme();
 
   // Determine if we need two rows or can collapse to one
@@ -122,11 +131,19 @@ function ExperienceItem({
   );
 }
 
-export default function Experiences({ title: _sectionTitle, data, config = {} }) {
+export default function Experiences({
+  title: _sectionTitle,
+  data,
+  config = {},
+}: {
+  title?: string;
+  data: ExperienceVM[];
+  config?: Record<string, unknown>;
+}) {
   return (
     <SectionList
       data={data}
-      renderItem={(item, idx, isLast) => (
+      renderItem={(item: ExperienceVM, idx: number, isLast: boolean) => (
         <ExperienceItem
           key={idx}
           {...item}

@@ -2,13 +2,22 @@
   "name": "@resume/renderer",
   "version": "0.1.0",
   "private": true,
-  "description": "Resume renderer: components, themes, adapter, overlay/editor data layer (source package, consumed via Vite aliases and deep subpath imports — no main entry)",
+  "description": "Resume renderer: components, themes, adapter, overlay/editor data layer (TSX source package, consumed via Vite aliases and deep subpath imports — no main entry)",
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",
     "@dnd-kit/sortable": "^10.0.0",
     "@dnd-kit/utilities": "^3.2.2",
+    "@resume/contracts": "workspace:*",
     "clsx": "^2.1.1",
     "fast-json-patch": "^3.1.1",
     "react": "^18.3.1"
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.1",
+    "@types/react-dom": "^18.3.1",
+    "typescript": "^5.7.2"
   }
 }

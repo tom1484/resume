@@ -5,6 +5,19 @@ import List from '@components/common/list';
 import SectionList from '@components/common/sectionList';
 import SplitLine from '@components/common/splitLine';
 import TagList from '@components/common/tagList';
+import type { PublicationVM } from '@resume/contracts';
+
+interface PublicationItemProps extends Partial<PublicationVM> {
+  time?: string;
+  content?: string[];
+  tags?: string[];
+  showTags?: boolean;
+  showLinks?: boolean;
+  isLast?: boolean;
+  className?: string;
+  config?: Record<string, unknown>;
+  [key: string]: unknown;
+}
 
 function PublicationItem({
   title,
@@ -20,7 +33,7 @@ function PublicationItem({
   className = '',
   config: _config = {},
   ...props
-}) {
+}: PublicationItemProps) {
   const { theme } = useTheme();
 
   const renderAuthors = () => (
@@ -81,17 +94,20 @@ function PublicationItem({
   );
 }
 
-export default function Publications({ title: _sectionTitle, data, config = {} }) {
+export default function Publications({
+  title: _sectionTitle,
+  data,
+  config = {},
+}: {
+  title?: string;
+  data: PublicationVM[];
+  config?: Record<string, unknown>;
+}) {
   return (
     <SectionList
       data={data}
-      renderItem={(item, idx, isLast) => (
-        <PublicationItem
-          key={idx}
-          {...item}
-          config={config}
-          isLast={isLast}
-        />
+      renderItem={(item: PublicationVM, idx: number, isLast: boolean) => (
+        <PublicationItem key={idx} {...item} config={config} isLast={isLast} />
       )}
     />
   );

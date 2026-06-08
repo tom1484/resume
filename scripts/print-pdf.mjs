@@ -7,7 +7,7 @@ import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { chromium } from 'playwright';
 import { serveStatic } from './lib/server.mjs';
-import { getPrint, pdfOptions } from '../packages/renderer/src/data/print.js';
+import { getPrint, pdfOptions } from '../packages/renderer/src/data/print.ts';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const buildDir = join(root, 'apps/site/build');

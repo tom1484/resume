@@ -1,16 +1,26 @@
 import React from 'react';
 import { useTheme } from '../../contexts/themeContext';
 
+interface ListProps {
+  items?: unknown[];
+  variant?: 'bulleted' | 'inline' | 'vertical' | 'tags' | string;
+  className?: string;
+  itemClassName?: string;
+  separator?: React.ReactNode;
+  renderItem?: ((item: unknown, index: number) => React.ReactNode) | null;
+  [key: string]: unknown;
+}
+
 // Generic List component for various list types
-export default function List({ 
+export default function List({
   items,
   variant = 'bulleted',
   className = '',
   itemClassName = '',
   separator = null,
   renderItem = null,
-  ...props 
-}) {
+  ...props
+}: ListProps) {
   const { theme } = useTheme();
   
   if (!items || !Array.isArray(items)) return null;
@@ -44,7 +54,7 @@ export default function List({
     }
   };
 
-  const processContent = (content) => {
+  const processContent = (content: unknown): React.ReactNode => {
     if (typeof content === 'string' && content.includes('<br>')) {
       return content.split('<br>').map((text, i, arr) => (
         <React.Fragment key={i}>
@@ -53,10 +63,10 @@ export default function List({
         </React.Fragment>
       ));
     }
-    return content;
+    return content as React.ReactNode;
   };
 
-  const renderListItem = (item, index) => {
+  const renderListItem = (item: unknown, index: number) => {
     const content = renderItem ? renderItem(item, index) : processContent(item);
     
     if (variant === 'bulleted') {

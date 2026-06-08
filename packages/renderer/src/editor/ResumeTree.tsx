@@ -9,8 +9,17 @@ import React from 'react';
 import { DndContext, PointerSensor, TouchSensor, KeyboardSensor, closestCenter, useSensor, useSensors } from '@dnd-kit/core';
 import { SortableContext, useSortable, verticalListSortingStrategy, sortableKeyboardCoordinates } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
+import type { EditorTree } from '../data/editorModel.js';
 
-function SortableList({ ids, onReorder, children }) {
+function SortableList({
+  ids,
+  onReorder,
+  children,
+}: {
+  ids: string[];
+  onReorder: (from: number, to: number) => void;
+  children: React.ReactNode;
+}) {
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
     useSensor(TouchSensor, { activationConstraint: { delay: 200, tolerance: 6 } }),
@@ -18,14 +27,22 @@ function SortableList({ ids, onReorder, children }) {
   );
   return (
     <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={({ active, over }) => {
-      if (over && active.id !== over.id) onReorder(ids.indexOf(active.id), ids.indexOf(over.id));
+      if (over && active.id !== over.id) onReorder(ids.indexOf(String(active.id)), ids.indexOf(String(over.id)));
     }}>
       <SortableContext items={ids} strategy={verticalListSortingStrategy}>{children}</SortableContext>
     </DndContext>
   );
 }
 
-function Row({ id, children, indent = 0 }) {
+function Row({
+  id,
+  children,
+  indent = 0,
+}: {
+  id: string;
+  children: React.ReactNode;
+  indent?: number;
+}) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id });
   return (
     <div ref={setNodeRef} style={{
@@ -40,23 +57,53 @@ function Row({ id, children, indent = 0 }) {
   );
 }
 
-const move = (arr, from, to) => {
+function move<T>(arr: T[], from: number, to: number): T[] {
   const next = arr.slice();
   const [m] = next.splice(from, 1);
   next.splice(to, 0, m);
   return next;
-};
+}
 
-export function ResumeTree({ tree, onChange, mode = 'resume' }) {
+export function ResumeTree({
+  tree,
+  onChange,
+  mode = 'resume',
+}: {
+  tree: EditorTree;
+  onChange: (tree: EditorTree) => void;
+  mode?: 'resume' | 'overlay';
+}) {
   const overlay = mode === 'overlay';
-  const set = (sections) => onChange({ ...tree, sections });
-  const updSection = (si, patch) => set(tree.sections.map((s, i) => (i === si ? { ...s, ...patch } : s)));
-  const updItem = (si, ii, patch) => updSection(si, { items: tree.sections[si].items.map((it, j) => (j === ii ? { ...it, ...patch } : it)) });
-  const updBullet = (si, ii, bi, patch) => updItem(si, ii, { bullets: tree.sections[si].items[ii].bullets.map((b, k) => (k === bi ? { ...b, ...patch } : b)) });
-  const delItem = (si, ii) => updSection(si, { items: tree.sections[si].items.filter((_, j) => j !== ii) });
-  const delBullet = (si, ii, bi) => updItem(si, ii, { bullets: tree.sections[si].items[ii].bullets.filter((_, k) => k !== bi) });
+  const set = (sections: EditorTree['sections']) => onChange({ ...tree, sections });
+  const updSection = (si: number, patch: Partial<EditorTree['sections'][number]>) =>
+    set(tree.sections.map((s, i) => (i === si ? { ...s, ...patch } : s)));
+  const updItem = (
+    si: number,
+    ii: number,
+    patch: Partial<EditorTree['sections'][number]['items'][number]>
+  ) =>
+    updSection(si, {
+      items: tree.sections[si].items.map((it, j) => (j === ii ? { ...it, ...patch } : it)),
+    });
+  const updBullet = (
+    si: number,
+    ii: number,
+    bi: number,
+    patch: Partial<EditorTree['sections'][number]['items'][number]['bullets'][number]>
+  ) =>
+    updItem(si, ii, {
+      bullets: tree.sections[si].items[ii].bullets.map((b, k) =>
+        k === bi ? { ...b, ...patch } : b
+      ),
+    });
+  const delItem = (si: number, ii: number) =>
+    updSection(si, { items: tree.sections[si].items.filter((_, j) => j !== ii) });
+  const delBullet = (si: number, ii: number, bi: number) =>
+    updItem(si, ii, {
+      bullets: tree.sections[si].items[ii].bullets.filter((_, k) => k !== bi),
+    });
 
-  const trash = (onClick) => (
+  const trash = (onClick: () => void) => (
     <button onClick={onClick} title="delete" style={{ border: 'none', background: 'none', cursor: 'pointer', color: '#c5221f', fontSize: 13 }}>🗑</button>
   );
 

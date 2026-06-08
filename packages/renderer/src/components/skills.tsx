@@ -1,12 +1,12 @@
 import { useTheme } from '@contexts/themeContext';
 import Container from '@components/layout/container';
+import type { SkillVM } from '@resume/contracts';
 
-
-export default function Skills({ data }) {
+export default function Skills({ data }: { data: SkillVM[] }) {
   const { theme } = useTheme();
 
   // Group skills by category and display as text
-  const skillsByCategory = data.reduce((acc, skill) => {
+  const skillsByCategory = data.reduce<Record<string, string[]>>((acc, skill) => {
     const category = skill.category || 'Others';
     if (!acc[category]) {
       acc[category] = [];

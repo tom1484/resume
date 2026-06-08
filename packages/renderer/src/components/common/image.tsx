@@ -1,7 +1,27 @@
+import React from 'react';
 import { useTheme } from '../../contexts/themeContext';
 
-// Generic Image component with consistent styling and loading states
-export default function Image({ 
+// BUG FIX (DOM-neutral, DECISIONS drop/fix list): v1's `size: 'icon'` branch
+// pushed theme.components.skills.icon, which is UNDEFINED in the theme — it
+// would have rendered no class (and is unreached by the current seed, which
+// only uses size 'qr'). v2 removes the dead reference; the branch now pushes
+// nothing, identical to the prior `undefined` (React omits it). No new theme
+// key is introduced (that would change the DOM).
+
+interface ImageProps {
+  src: string;
+  alt?: string;
+  variant?: 'default' | 'rounded' | 'circle' | 'icon';
+  size?: 'icon' | 'small' | 'medium' | 'large' | 'qr' | 'default';
+  className?: string;
+  label?: string | null;
+  labelPosition?: 'bottom' | 'top' | 'left';
+  loading?: 'lazy' | 'eager';
+  onError?: ((e: React.SyntheticEvent<HTMLImageElement>) => void) | null;
+  [key: string]: unknown;
+}
+
+export default function Image({
   src,
   alt = '',
   variant = 'default',
@@ -11,17 +31,17 @@ export default function Image({
   labelPosition = 'bottom',
   loading = 'lazy',
   onError = null,
-  ...props 
-}) {
+  ...props
+}: ImageProps) {
   const { theme } = useTheme();
-  
-  const getImageStyles = () => {
-    let styles = [];
-    
+
+  const getImageStyles = (): string => {
+    const styles: string[] = [];
+
     // Size variants
     switch (size) {
       case 'icon':
-        styles.push(theme.components.skills.icon); // h-8
+        // dead/undefined in v1 (theme.components.skills.icon) — push nothing
         break;
       case 'small':
         styles.push('w-12 h-12');
@@ -40,7 +60,7 @@ export default function Image({
         styles.push('w-auto h-auto');
         break;
     }
-    
+
     // Variant styles
     switch (variant) {
       case 'rounded':
@@ -56,21 +76,21 @@ export default function Image({
       default:
         break;
     }
-    
+
     return styles.join(' ');
   };
 
-  const handleError = (e) => {
+  const handleError = (e: React.SyntheticEvent<HTMLImageElement>) => {
     if (onError) {
       onError(e);
     } else {
       // Default error handling - hide broken image
-      e.target.style.display = 'none';
+      (e.target as HTMLImageElement).style.display = 'none';
     }
   };
 
   const imageElement = (
-    <img 
+    <img
       src={src}
       alt={alt}
       loading={loading}
@@ -81,19 +101,19 @@ export default function Image({
   );
 
   if (label) {
-    const containerStyles = labelPosition === 'bottom' 
-      ? theme.components.personalInfo.qrItem // flex flex-col items-center
-      : 'flex items-center gap-2';
-    
-    const labelStyles = labelPosition === 'bottom'
-      ? theme.components.personalInfo.qrLabel // text-xs text-neutral-500
-      : theme.typography.caption + ' ' + theme.colors.secondary;
+    const containerStyles =
+      labelPosition === 'bottom'
+        ? theme.components.personalInfo.qrItem // flex flex-col items-center
+        : 'flex items-center gap-2';
+
+    const labelStyles =
+      labelPosition === 'bottom'
+        ? theme.components.personalInfo.qrLabel // text-xs text-neutral-500
+        : theme.typography.caption + ' ' + theme.colors.secondary;
 
     return (
       <div className={containerStyles}>
-        {labelPosition === 'top' && (
-          <span className={labelStyles}>{label}</span>
-        )}
+        {labelPosition === 'top' && <span className={labelStyles}>{label}</span>}
         {imageElement}
         {labelPosition === 'bottom' && (
           <span className={labelStyles}>{label}</span>

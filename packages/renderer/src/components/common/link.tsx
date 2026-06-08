@@ -1,11 +1,20 @@
+import React from 'react';
 import { useTheme } from '../../contexts/themeContext';
 import clsx from 'clsx';
 
-// Generic Link component with consistent styling
+// Generic Link component with consistent styling. NOTE: `className` is accepted
+// but intentionally IGNORED — v1's Link never applied a caller className (it set
+// its own theme classes), and personalInfo passes one. Honoring it would add a
+// DOM attribute and break the render-check; we keep v1's drop-it behavior.
 export default function Link({
   children,
   href,
   variant = 'default',
+}: {
+  children: React.ReactNode;
+  href: string;
+  variant?: 'default' | 'block';
+  className?: string;
 }) {
   const { theme } = useTheme();
 

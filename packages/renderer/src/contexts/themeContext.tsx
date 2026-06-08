@@ -1,23 +1,21 @@
 import React, { createContext, useContext } from 'react';
-import { getTheme } from '@config/themes';
+import { getTheme, type Theme } from '@config/themes';
 
-const ThemeContext = createContext();
+interface ThemeValue {
+  theme: Theme;
+}
 
-export function ThemeProvider({ children }) {
+const ThemeContext = createContext<ThemeValue | null>(null);
+
+export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const theme = getTheme();
-
-  const value = {
-    theme
-  };
-
+  const value: ThemeValue = { theme };
   return (
-    <ThemeContext.Provider value={value}>
-      {children}
-    </ThemeContext.Provider>
+    <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>
   );
 }
 
-export function useTheme() {
+export function useTheme(): ThemeValue {
   const context = useContext(ThemeContext);
   if (!context) {
     throw new Error('useTheme must be used within a ThemeProvider');

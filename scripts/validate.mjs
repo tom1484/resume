@@ -1,50 +1,44 @@
-// Validates the canonical resume data and all application overlays:
-//   1. resume.json against the official JSON Resume v1.0.0 schema
-//      (@jsonresume/schema), with x-* extension keys stripped first,
-//   2. resume.json against the local extension schema
-//      (extensions.schema.json) covering the x-* fields,
-//   3. every apps/site/public/applications/*/overlay.json against
-//      overlay.schema.json, AND a dry-run of its RFC-6902 patches
-//      against resume.json (a patch that doesn't apply cleanly fails).
+// Validates the canonical résumé seed, the master bullet bank, and all
+// application overlays against the v2 single-source-of-truth JSON Schemas
+// emitted from `@resume/contracts` (Zod → JSON Schema, §0). This replaces v1's
+// dual upstream-JSON-Resume + extension-schema validation: v2 owns one schema.
+//   1. data/resume.json against the `resume` schema (ResumeDoc),
+//   2. master.json against the `master` schema (MasterBank) + id uniqueness,
+//   3. every apps/site/public/applications/*/overlay.json against the `overlay`
+//      schema (Overlay), AND a dry-run of its RFC-6902 patches against the
+//      résumé (a patch that doesn't apply cleanly fails).
 // Usage: pnpm validate
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import Ajv from 'ajv';
+import Ajv2020 from 'ajv/dist/2020.js';
 import addFormats from 'ajv-formats';
 import jsonpatch from 'fast-json-patch';
 
 const require = createRequire(import.meta.url);
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
+const dataDir = join(root, 'packages/renderer/src/data'); // master bank lives here
 
-const dataDir = join(root, 'packages/renderer/src/data');  // schemas + master bank
-const resume = JSON.parse(readFileSync(join(root, 'data/resume.json'), 'utf8'));  // canonical résumé seed
-const extensionsSchema = JSON.parse(
-  readFileSync(join(dataDir, 'extensions.schema.json'), 'utf8')
-);
-const officialSchema = require('@jsonresume/schema/schema.json');
+// Contract schemas (emitted by `pnpm --filter @resume/contracts gen:schemas`).
+const schema = (name) => require(`@resume/contracts/schemas/${name}.json`);
+const resumeSchema = schema('resume');
+const masterSchema = schema('master');
 
-// Deep-copy with all x-* keys (and $schema) removed, for official validation
-function stripExtensions(value) {
-  if (Array.isArray(value)) return value.map(stripExtensions);
-  if (value && typeof value === 'object') {
-    return Object.fromEntries(
-      Object.entries(value)
-        .filter(([key]) => !key.startsWith('x-') && key !== '$schema')
-        .map(([key, v]) => [key, stripExtensions(v)])
-    );
-  }
-  return value;
-}
+// profile.filters is a PARTIAL record over section keys (contracts uses
+// z.partialRecord, so the emitted schema carries no spurious `required`).
+const overlaySchema = schema('overlay');
 
-const ajv = new Ajv({ allErrors: true, strict: false });
+const resume = JSON.parse(readFileSync(join(root, 'data/resume.json'), 'utf8'));
+
+// Contracts emit draft 2020-12 → use the matching Ajv build.
+const ajv = new Ajv2020({ allErrors: true, strict: false });
 addFormats(ajv);
 
 let failed = false;
 
-function check(label, schema, data) {
-  const validate = ajv.compile(schema);
+function check(label, schemaObj, data) {
+  const validate = ajv.compile(schemaObj);
   if (validate(data)) {
     console.log(`✓ ${label}`);
   } else {
@@ -56,13 +50,11 @@ function check(label, schema, data) {
   }
 }
 
-check('JSON Resume v1.0.0 (official schema, x-* stripped)', officialSchema, stripExtensions(resume));
-check('x- extensions (extensions.schema.json)', extensionsSchema, resume);
+check('resume.json (@resume/contracts ResumeDoc)', resumeSchema, resume);
 
 // Master bullet bank: schema + id uniqueness
-const masterSchema = JSON.parse(readFileSync(join(dataDir, 'master.schema.json'), 'utf8'));
 const master = JSON.parse(readFileSync(join(dataDir, 'master.json'), 'utf8'));
-check('master.json (master.schema.json)', masterSchema, master);
+check('master.json (@resume/contracts MasterBank)', masterSchema, master);
 {
   const ids = master.bullets.map((b) => b.id);
   const dupes = ids.filter((id, i) => ids.indexOf(id) !== i);
@@ -75,7 +67,6 @@ check('master.json (master.schema.json)', masterSchema, master);
 }
 
 // Application overlays: schema + patch dry-run against resume.json
-const overlaySchema = JSON.parse(readFileSync(join(dataDir, 'overlay.schema.json'), 'utf8'));
 const applicationsDir = join(root, 'apps/site/public/applications');
 const overlayIds = existsSync(applicationsDir)
   ? readdirSync(applicationsDir, { withFileTypes: true })
@@ -91,7 +82,7 @@ for (const id of overlayIds) {
     continue;
   }
   const overlay = JSON.parse(readFileSync(overlayPath, 'utf8'));
-  check(`overlay ${id} (overlay.schema.json)`, overlaySchema, overlay);
+  check(`overlay ${id} (@resume/contracts Overlay)`, overlaySchema, overlay);
 
   const patchError = jsonpatch.validate(overlay.patches ?? [], resume);
   if (patchError) {
