@@ -72,7 +72,7 @@ approve flips status, artifacts (PDF) ready for the apply agent.
 | P3.1 | Tailor stage: overlay generation (Sonnet default, Opus for `dream` flag), grounded on master bank with per-patch `groundedIn` citations | 3 real jobs tailored live (2-4¢/job): overlays mechanically valid, patches cite bullets; Wayve over-reach correctly blocked by verify | [x] |
 | P3.2 | Verify-claims: deterministic numeric tripwire + Haiku skeptic; `audit.unsupported` must be `[]` | **adversarial eval 4/4 (3 runs each)**: invented metric (tripwire), leadership, technology all flagged 3/3; clean rephrase 0/3 | [x] |
 | P3.3 | Per-application artifacts: overlay served from DB, PDF rendered via existing print pipeline | PDF text-extract contains patched content (ATS re-parse check) | [ ] |
-| P3.4 | Review API + review UI (`apps/review` importing @resume/renderer): /inbox, /app/:id (JD ⇄ tailored resume ⇄ diff ⇄ cover letter), approve/edit/reject | Playwright E2E through jobs.churong.cc; approve flips DB status | [ ] |
+| P3.4 | Review API + review UI (`apps/review` importing @resume/renderer): /inbox, /app/:id (JD ⇄ tailored resume ⇄ diff ⇄ cover letter), approve/edit/reject. **Also: a good/bad label control per job → drives threshold calibration (Tom labels here, not via CSV)** | Playwright E2E through jobs.churong.cc; approve flips DB status; labels persist | [ ] |
 | P3.5 | Pipeline wiring: scored ≥ gate → tailor → verify → in_review → Telegram with review link | live: a real job flows scored → in_review with notification | [ ] |
 | P3.6 | Answers bank: table + seed (F-1/CPT etc.) + editing in review UI | seed visible/editable; agent API returns answers | [ ] |
 | P3.7 | Deploy + checkpoint + **NPM access list enabled (Tom)** | phone approval demo; UI behind auth | [ ] |
