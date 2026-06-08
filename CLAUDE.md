@@ -10,7 +10,7 @@ Update this line as phases complete.
 
 Services: `services/discovery` (Python), `services/pipeline` (Node ESM:
 parse/score/tailor/verify/poller), `services/api` (Fastify review API +
-SPA host, container `review-api`). Frontends: `apps/site` (renderer),
+SPA host, container `jobs-api`). Frontends: `apps/site` (renderer),
 `apps/review` (review SPA). Migrations in `services/pipeline/migrations`.
 Anti-fabrication is load-bearing: verify.js numeric tripwire + skeptic,
 drop-unsupported-patches policy in tailorJob.js — never weaken without
