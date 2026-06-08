@@ -106,6 +106,6 @@ mutated" invariant — the file becomes seed + export target.
 | E3 | Shared `<ResumeTreeEditor>` (dnd-kit drag, inline rephrase) + two adapters: resume (delete, column-ratio) and overlay (include/exclude, hide) | unit tests for both serializations | [ ] |
 | E4 | `/resume` editor wired to PUT /api/resume (history snapshot per save); JSON tab; live re-render | live: edit → save → persists + re-renders; history row added | [ ] |
 | E5 | Overlay editor → modal in review; no editor toggle on the application render pane | live: modal edits save; application iframe read-only | [ ] |
-| E6 | Pipeline reads current résumé from DB (file fallback) so tailoring uses edits | tailor a job after an edit; reflects the edit | [ ] |
+| E6 | API validates edited overlays against the **DB** current résumé (was: file) — fixes editor↔validation divergence. Pipeline tailoring still reads the bundled seed at module-load (prompts built at import) — refactor to read DB deferred as a follow-up (documented) | API consistency verified; pipeline-side noted | [~] |
 | E7 | PDF/capture/CI + render-check skill de-profiled (single résumé) | `pnpm pdf` → one PDF; CI green | [ ] |
 | E8 | Deploy + live verify + docs (CLAUDE invariant, ARCHITECTURE, memory) | end-to-end on jobs.churong.cc | [ ] |

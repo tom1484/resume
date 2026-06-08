@@ -21,13 +21,15 @@ const resume = JSON.parse(readFileSync(join(dataDir, 'resume.json'), 'utf8'));
 const overlaySchema = JSON.parse(readFileSync(join(dataDir, 'overlay.schema.json'), 'utf8'));
 const validateOverlay = new Ajv({ allErrors: true }).compile(overlaySchema);
 
-// Returns an array of problems (empty = valid).
-function overlayProblems(overlay) {
+// Returns an array of problems (empty = valid). Validates patches against
+// the CURRENT canonical résumé (resumeDoc) so it matches what the editor
+// built against and what the renderer applies.
+function overlayProblems(overlay, resumeDoc) {
   const problems = [];
   if (!validateOverlay(overlay)) {
     problems.push(...validateOverlay.errors.map((e) => `${e.instancePath || '/'} ${e.message}`));
   }
-  const err = jsonpatch.validate(overlay?.patches ?? [], resume);
+  const err = jsonpatch.validate(overlay?.patches ?? [], resumeDoc);
   if (err) problems.push(`patch #${err.index} ${err.name} at ${err.operation?.path}`);
   if (overlay?.profile && !overlay.profile.sections?.includes('personalInfo')) {
     problems.push('profile.sections must include personalInfo');
@@ -91,7 +93,7 @@ app.post('/api/jobs/:id/label', async (req, reply) => {
 
 app.put('/api/jobs/:id/overlay', async (req, reply) => {
   const overlay = req.body;
-  const problems = overlayProblems(overlay);
+  const problems = overlayProblems(overlay, (await currentResume()).data);
   if (problems.length) return reply.code(400).send({ error: 'invalid overlay', problems });
   if (overlay.jobId !== req.params.id) return reply.code(400).send({ error: 'jobId mismatch' });
   await pool.query(
