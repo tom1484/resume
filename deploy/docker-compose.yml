@@ -70,8 +70,12 @@ services:
     build:
       context: ..
       dockerfile: services/api/Dockerfile
+    container_name: review-api
     restart: unless-stopped
-    networks: [internal]
+    # On the nginx network so NPM CAN reach it — but it is NOT exposed until
+    # Tom points an ACCESS-LISTED proxy host (jobs.churong.cc) at
+    # review-api:8080. Serves PII; never expose without the access list.
+    networks: [internal, nginx]
     environment:
       DATABASE_URL: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
     depends_on:
