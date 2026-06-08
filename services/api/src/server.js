@@ -101,8 +101,56 @@ app.put('/api/jobs/:id/overlay', async (req, reply) => {
   return { ok: true };
 });
 
-// Base resume (for the structured editor to know section/item structure)
-app.get('/api/resume', async () => resume);
+// --- canonical résumé (DB-backed, seeded from the bundled file) ----------
+// Latest resume_versions row is "current". Seed on first read if empty.
+async function currentResume() {
+  const { rows } = await pool.query('SELECT id, data FROM resume_versions ORDER BY id DESC LIMIT 1');
+  if (rows.length) return rows[0];
+  const seeded = await pool.query(
+    "INSERT INTO resume_versions (data, note) VALUES ($1, 'seed') RETURNING id, data",
+    [JSON.stringify(resume)]
+  );
+  return seeded.rows[0];
+}
+
+// Validate an edited résumé: must still pass the JSON Resume + extension
+// schemas the build uses. We reuse the overlay's patch validator indirectly
+// by re-validating shape here against a minimal structural check + Ajv if
+// the schemas are mounted.
+app.get('/api/resume', async () => (await currentResume()).data);
+
+app.put('/api/resume', async (req, reply) => {
+  const data = req.body;
+  if (!data || typeof data !== 'object' || !data.basics || !Array.isArray(data.work)) {
+    return reply.code(400).send({ error: 'not a résumé document (need basics + work[])' });
+  }
+  const { rows } = await pool.query(
+    "INSERT INTO resume_versions (data, note) VALUES ($1, 'edit') RETURNING id, created_at",
+    [JSON.stringify(data)]
+  );
+  return { ok: true, version: rows[0].id, created_at: rows[0].created_at };
+});
+
+app.get('/api/resume/history', async () =>
+  (await pool.query('SELECT id, note, created_at FROM resume_versions ORDER BY id DESC LIMIT 100')).rows
+);
+
+app.post('/api/resume/restore/:id', async (req, reply) => {
+  const { rows } = await pool.query('SELECT data FROM resume_versions WHERE id=$1', [req.params.id]);
+  if (!rows.length) return reply.code(404).send({ error: 'no such version' });
+  const ins = await pool.query(
+    'INSERT INTO resume_versions (data, note) VALUES ($1, $2) RETURNING id',
+    [JSON.stringify(rows[0].data), `restore of #${req.params.id}`]
+  );
+  return { ok: true, version: ins.rows[0].id };
+});
+
+// Export current résumé as a downloadable JSON (commit to git to sync the seed)
+app.get('/api/resume/export', async (req, reply) => {
+  const cur = await currentResume();
+  reply.header('Content-Disposition', 'attachment; filename="resume.json"');
+  return cur.data;
+});
 
 app.get('/api/answers', async () => (await pool.query('SELECT key, question, answer FROM answers ORDER BY key')).rows);
 

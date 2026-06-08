@@ -87,3 +87,25 @@ approve flips status, artifacts (PDF) ready for the apply agent.
 | R4 | Structured editor + JSON tab in review Detail (toggle/reorder/inline-edit, live re-render) | builds; 66 tests pass | [x] |
 | R5 | Deploy + live verify | E2E on jobs.churong.cc: edit bullet → save → persists & re-renders | [x] |
 | R6 | LLM tailoring chat (proposes overlay ops, accept/reject, reuses verify) | — | deferred (by decision) |
+
+## Editor overhaul (post-Phase-3, "intuitive editing")
+
+Decisions (confirmed): DB is the single source of truth for the canonical
+résumé (seeded from resume.json) + version history + git-export; profiles
+removed (no `?profile`, single `/resume` route); reorder via @dnd-kit
+(touch+mouse); renderer editor = reorder + rephrase + delete (trash) +
+column-ratio + JSON tab, NO visibility toggles (hiding is overlay-only);
+overlay editor keeps include/exclude + hide, moves to a modal; application
+render is read-only (no editor toggle). Reverses the "resume.json never
+mutated" invariant — the file becomes seed + export target.
+
+| # | Task | Verification | Status |
+|---|---|---|---|
+| E1 | DB resume store: `resume_versions` table + API (GET current, PUT=snapshot+set-current, history list, restore, export) | seed-on-empty; PUT validates + creates history; restore works (curl) | [ ] |
+| E2 | Renderer: rip out Ctrl+D panel/configContext/import-export/profiles/`?profile`; fold column-ratio into resume `meta.layout`; base-résumé fetch with bundled fallback; `/resume` (editable) + `?application` (read-only) routes | render baseline (old `full`) == `/resume` DOM; `?application` still renders; build/pdf green | [ ] |
+| E3 | Shared `<ResumeTreeEditor>` (dnd-kit drag, inline rephrase) + two adapters: resume (delete, column-ratio) and overlay (include/exclude, hide) | unit tests for both serializations | [ ] |
+| E4 | `/resume` editor wired to PUT /api/resume (history snapshot per save); JSON tab; live re-render | live: edit → save → persists + re-renders; history row added | [ ] |
+| E5 | Overlay editor → modal in review; no editor toggle on the application render pane | live: modal edits save; application iframe read-only | [ ] |
+| E6 | Pipeline reads current résumé from DB (file fallback) so tailoring uses edits | tailor a job after an edit; reflects the edit | [ ] |
+| E7 | PDF/capture/CI + render-check skill de-profiled (single résumé) | `pnpm pdf` → one PDF; CI green | [ ] |
+| E8 | Deploy + live verify + docs (CLAUDE invariant, ARCHITECTURE, memory) | end-to-end on jobs.churong.cc | [ ] |
