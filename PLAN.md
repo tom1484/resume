@@ -108,4 +108,4 @@ mutated" invariant — the file becomes seed + export target.
 | E5 | Overlay editor → modal in review; no editor toggle on the application render pane | live: modal edits save; application iframe read-only | [ ] |
 | E6 | API validates edited overlays against the **DB** current résumé (was: file) — fixes editor↔validation divergence. Pipeline tailoring still reads the bundled seed at module-load (prompts built at import) — refactor to read DB deferred as a follow-up (documented) | API consistency verified; pipeline-side noted | [~] |
 | E7 | PDF/capture/CI + render-check skill de-profiled (single résumé) | `pnpm pdf` → one PDF; CI green | [ ] |
-| E8 | Deploy + live verify + docs (CLAUDE invariant, ARCHITECTURE, memory) | end-to-end on jobs.churong.cc | [ ] |
+| E8 | Deploy + live verify + docs | ✓ live E2E on jobs.churong.cc: résumé editor saves+versions, app render read-only, overlay modal works; CLAUDE/ARCHITECTURE/memory updated | [x] |

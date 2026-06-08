@@ -2,10 +2,9 @@
 
 Personal resume site (React + Vite + Tailwind) being extended into a
 self-hosted job application pipeline. Plan of record: `PROPOSALS.md`.
-**Current phase: 3 functionally done (tailor → verify → in_review →
-review app + answers bank, all live on the internal net) — only P3.7
-remains: Tom enables the NPM access list so the review UI can go public
-(steps in PREPARE.md). Phase 4 (local apply agent) is next.**
+**Current phase: 3 done + review-UI overhaul done (intuitive editors,
+DB-backed editable résumé). Live behind NPM auth at jobs.churong.cc.
+Phase 4 (local apply agent) is next.**
 Update this line as phases complete.
 
 Services: `services/discovery` (Python), `services/pipeline` (Node ESM:
@@ -31,13 +30,27 @@ via Vite aliases `@components/@config/@contexts/@hooks/@data/@utils`),
 
 ## Data invariants
 
-- `packages/renderer/src/data/resume.json` is canonical and is NEVER
-  mutated by tooling or pipeline code. All tailoring goes through overlays:
-  profile selection (same shape as `meta.x-profiles`) + RFC-6902 JSON
-  Patches.
+- **The canonical résumé is DB-backed** (`resume_versions` table; latest row
+  is current). `packages/renderer/src/data/resume.json` is the **seed +
+  git-export target + bundled fallback** for standalone/PDF/CI — it is NOT
+  the live source. The `/resume` editor writes new versions via
+  `PUT /api/resume` (every save = a new history row; nothing is lost).
+  (This reversed the earlier "never mutate resume.json" rule.)
+- **No profiles.** A single résumé; `meta.x-profiles` and `?profile` are
+  gone. Per-job section selection lives only in the application **overlay**
+  (`profile` field: sections + filters incl. exclude/order). Section display
+  order is `meta.sectionOrder`.
+- Tailoring still goes through overlays (selection + RFC-6902 patches);
+  reviewer edits (résumé or overlay) are trusted and bypass the fabrication
+  verify (that only guards LLM-written patches).
 - The adapter (`packages/renderer/src/data/adapter.js`) must emit exactly
   the known view-model keys — components spread items onto DOM elements.
   `adapter.test.js` enforces this; don't add keys casually.
+- `editorModel.js` is the bridge: `buildEditorModel(overlay, doc)` →
+  section/item/bullet tree; `treeToResume` (renderer) / `editorTreeToOverlay`
+  (review) serialize back. Shared editor UI: `src/editor/ResumeTree.jsx`
+  (dnd-kit; deep-imported, NOT via the package barrel which pulls component
+  code needing app aliases).
 - Every JSON artifact (resume, overlays, job records, master bank) must
   pass Ajv validation (`pnpm validate`) before commit.
 

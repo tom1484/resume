@@ -131,9 +131,17 @@ applying → applied → responded | rejected | skipped | error`.
 
 ## Key design decisions
 
-- **resume.json is canonical and never mutated.** Tailoring is a structured
-  *overlay* — section selection + RFC-6902 patches — applied to a clone at
-  render time. Every change is a reviewable diff traceable to the base.
+- **The canonical résumé is DB-backed and editable.** `resume_versions`
+  (latest row = current); `resume.json` is the seed + git-export target +
+  bundled fallback (CI/PDF). The `/resume` route renders it and offers a
+  structured editor (drag reorder, rephrase, delete) + JSON tab, saving new
+  versions via `PUT /api/resume` (full history). No profiles — a single
+  résumé; per-job section selection lives only in the overlay.
+- **Tailoring is a structured overlay** — section selection + RFC-6902
+  patches — applied to a clone at render time. Every change is a reviewable
+  diff; the review app edits it in a modal (shared dnd-kit editor). Reviewer
+  edits are trusted; only LLM-written patches go through the fabrication
+  verify.
 - **Anti-fabrication is load-bearing.** `verify.js` runs a deterministic
   numeric tripwire (any number in a patch absent from its cited master
   bullets = automatic reject) plus an LLM skeptic. `tailorJob.js` then
