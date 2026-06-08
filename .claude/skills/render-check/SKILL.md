@@ -17,36 +17,31 @@ timestamps) — never byte-compare PDFs. PNGs are for human eyeballing only.
 ```sh
 pnpm build   # output: apps/site/build
 mkdir -p .render-baseline
-for p in $(node -e "console.log(Object.keys(require('./packages/renderer/src/data/resume.json').meta['x-profiles']).join(' '))"); do
-  node scripts/capture.mjs apps/site/build .render-baseline/$p profile=$p
-done
+node scripts/capture.mjs apps/site/build .render-baseline/resume
 ```
 
-Profiles are read from `meta.x-profiles` in `resume.json` — never hardcode
-the list. (Once overlay support exists, also capture representative
-`application=<id>` fixtures the same way.)
+There is a single canonical résumé (profiles were removed). The static
+build renders it from the bundled seed when no API is reachable. To check
+a tailored render, also capture an `application=<id>` fixture the same way.
 
 ## 2. Make the change, then capture current
 
-Same loop into `.render-current/`.
+Same into `.render-current/resume`.
 
 ## 3. Diff
 
 ```sh
-for p in $(node -e "console.log(Object.keys(require('./packages/renderer/src/data/resume.json').meta['x-profiles']).join(' '))"); do
-  diff -q .render-baseline/$p.dom.html .render-current/$p.dom.html \
-    && echo "$p: clean" || echo "$p: DRIFT"
-done
+diff -q .render-baseline/resume.dom.html .render-current/resume.dom.html \
+  && echo "clean" || echo "DRIFT"
 ```
 
-- **Pure refactor (restructure, dedupe, dependency bump):** every profile
+- **Pure refactor (restructure, dedupe, dependency bump):** the résumé
   must be `clean`. Any drift = the refactor changed behavior — stop and
   investigate before proceeding.
-- **Intentional render change:** inspect each drift with
-  `diff .render-baseline/$p.dom.html .render-current/$p.dom.html` and the
-  PNGs side by side; confirm only the intended profiles changed, and the
-  change matches intent. Then re-baseline (step 1) so the next check starts
-  clean.
+- **Intentional render change:** inspect the drift with
+  `diff .render-baseline/resume.dom.html .render-current/resume.dom.html`
+  and the PNGs side by side; confirm the change matches intent. Then
+  re-baseline (step 1) so the next check starts clean.
 
 ## Notes
 
