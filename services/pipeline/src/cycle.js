@@ -7,6 +7,7 @@ import { parseJd } from './parseJd.js';
 import { candidateTerms } from './profile.js';
 import { keywordScore, llmFit, structuralScore, combine } from './score.js';
 import { batchSummary, sendTelegram } from './notify.js';
+import { tailorJob } from './tailorJob.js';
 
 export const POLL_MS = Number(process.env.POLL_INTERVAL_MS ?? 60_000);
 export const BATCH = Number(process.env.BATCH_SIZE ?? 10);
@@ -82,14 +83,33 @@ export async function cycle() {
       await query(`UPDATE jobs SET status = 'error', updated_at = now() WHERE id = $1`, [job.id]);
     }
   }
+  // Gate: jobs at/above threshold get auto-tailored -> verified -> in_review.
   const top = scored.filter((j) => j.score >= THRESHOLD).sort((a, b) => b.score - a.score);
+  const tailored = [];
+  for (const job of top) {
+    try {
+      const result = await tailorJob(job);
+      tailored.push({ ...job, dropped: result.dropped, patches: result.overlay.patches.length });
+    } catch (err) {
+      console.error(`tailor ${job.id} failed:`, err.message);
+      await logEvent(job.id, 'tailor', { ok: false, detail: { error: err.message } });
+      // leave as 'scored' so a later cycle / manual run can retry
+    }
+  }
+
   if (scored.length > 0) {
     try {
-      await sendTelegram(batchSummary({ scored: scored.length, threshold: THRESHOLD, top }));
-      await logEvent(null, 'notify', { ok: true, detail: { scored: scored.length, above: top.length } });
+      await sendTelegram(
+        batchSummary({ scored: scored.length, threshold: THRESHOLD, tailored, reviewBase: REVIEW_BASE })
+      );
+      await logEvent(null, 'notify', {
+        ok: true, detail: { scored: scored.length, above: top.length, tailored: tailored.length },
+      });
     } catch (err) {
       console.error('notify failed:', err.message);
       await logEvent(null, 'notify', { ok: false, detail: { error: err.message } });
     }
   }
 }
+
+const REVIEW_BASE = process.env.REVIEW_BASE_URL ?? 'https://jobs.churong.cc';
