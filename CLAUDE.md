@@ -15,16 +15,19 @@ Anti-fabrication is load-bearing: verify.js numeric tripwire + skeptic,
 drop-unsupported-patches policy in tailorJob.js — never weaken without
 re-running `eval/run-verify-eval.js`.
 
-LLM stages run on Haiku (`claude-haiku-4-5`) per the approved cost plan;
-golden-set eval: `services/pipeline/eval/run-parse-eval.js` (live API,
+Bulk LLM stages (parse_jd, score, verify) run on Haiku (`claude-haiku-4-5`)
+per the approved cost plan; tailoring runs on Sonnet (`claude-sonnet-4-6`),
+Opus for `dream`-flagged companies. Golden-set eval:
+`services/pipeline/eval/run-parse-eval.js` (live API,
 ~2¢ — run before landing any prompt change). SCORE_THRESHOLD calibration
 pending Tom's labels in `out/calibration.csv`.
 
 ## Layout
 
 pnpm workspace: `apps/site` (Vite app: bootstrap, css, public assets),
-`packages/renderer` (components, config, contexts, hooks, data — consumed
-via Vite aliases `@components/@config/@contexts/@hooks/@data/@utils`),
+`packages/renderer` (components, config, contexts, data — consumed via Vite
+aliases `@components/@config/@contexts/@data`, plus deep subpath imports for
+the data layer from `apps/review`),
 `services/*` (pipeline services, added per phase), `scripts/` (root tooling),
 `deploy/` (compose + secrets). Build output: `apps/site/build`.
 
@@ -51,8 +54,9 @@ via Vite aliases `@components/@config/@contexts/@hooks/@data/@utils`),
 - `editorModel.js` is the bridge: `buildEditorModel(overlay, doc)` →
   section/item/bullet tree; `treeToResume` (renderer) / `editorTreeToOverlay`
   (review) serialize back. Shared editor UI: `src/editor/ResumeTree.jsx`
-  (dnd-kit; deep-imported, NOT via the package barrel which pulls component
-  code needing app aliases).
+  (dnd-kit). The renderer package has no barrel entry; `apps/review`
+  deep-imports the data layer (e.g. `@resume/renderer/src/data/editorModel`)
+  to avoid pulling component code that needs app-specific Vite aliases.
 - Every JSON artifact (resume, overlays, job records, master bank) must
   pass Ajv validation (`pnpm validate`) before commit.
 

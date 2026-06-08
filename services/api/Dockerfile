@@ -1,5 +1,5 @@
 # Build context = repo root (see deploy/docker-compose.yml).
-# Stage 1: build the resume renderer (base /site/) and the review SPA.
+# Stage 1: build the resume renderer (base /resume/) and the review SPA.
 FROM node:22-alpine AS build
 RUN corepack enable
 WORKDIR /repo

@@ -13,8 +13,8 @@ apps/site/            the résumé renderer + /resume editor (Vite)
 apps/review/          the job-review SPA (Vite)
 packages/renderer/    @resume/renderer — résumé data, components, editor, overlay
 services/             discovery (Python) · pipeline (Node) · api (Fastify)
-scripts/              validate · print-pdf · capture
-deploy/               docker compose + nginx conf
+scripts/              validate · print-pdf · capture · export-seed
+deploy/               docker compose stack + secrets (.env, gitignored)
 ```
 
 For the pipeline's design see [ARCHITECTURE.md](ARCHITECTURE.md); the plan is

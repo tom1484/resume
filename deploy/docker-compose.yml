@@ -68,18 +68,16 @@ services:
         condition: service_healthy
 
   # Review API + UI (serves /api/*, the review SPA, and the resume renderer
-  # at /site/). Serves PII — INTERNAL ONLY until the NPM access list is on
-  # (P3.7). At that point: add the `nginx` network here and point an
-  # access-listed NPM proxy host at api:8080.
+  # at /resume/). Serves PII — live behind the NPM access list at
+  # jobs.churong.cc (proxy host → jobs-api:8080 with HTTP-basic auth).
   api:
     build:
       context: ..
       dockerfile: services/api/Dockerfile
     container_name: jobs-api
     restart: unless-stopped
-    # On the nginx network so NPM CAN reach it — but it is NOT exposed until
-    # Tom points an ACCESS-LISTED proxy host (jobs.churong.cc) at
-    # jobs-api:8080. Serves PII; never expose without the access list.
+    # On the nginx network so NPM reaches it as jobs-api:8080. PII — only
+    # ever expose via an ACCESS-LISTED proxy host (never without auth).
     networks: [internal, nginx]
     environment:
       DATABASE_URL: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}

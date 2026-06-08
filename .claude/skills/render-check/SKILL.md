@@ -1,6 +1,6 @@
 ---
 name: render-check
-description: Render-regression check for the resume renderer. Use BEFORE any refactor touching src/components, src/data/adapter.js, src/config, or the build setup (capture a baseline), and AFTER the change (diff against baseline — must be empty for pure refactors). Also use to verify intentional render changes profile-by-profile.
+description: Render-regression check for the resume renderer. Use BEFORE any refactor touching src/components, src/data/adapter.js, src/config, or the build setup (capture a baseline), and AFTER the change (diff against baseline — must be empty for pure refactors). Also use to verify intentional render changes.
 ---
 
 # render-check

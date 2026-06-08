@@ -66,8 +66,7 @@ resume/
 │       │   ├── print.js               meta.print → @page CSS + Playwright pdf options
 │       │   └── index.js               data API: registerResume / registerApplication / getResumeDoc
 │       ├── editor/ResumeTree.jsx      shared dnd-kit structured editor (résumé + overlay modes)
-│       ├── components/  config/  contexts/  hooks/   the renderer
-│       └── index.js                   package barrel
+│       └── components/  config/  contexts/   the renderer (consumed via Vite aliases / deep imports)
 │
 ├── apps/site/                the résumé site (Vite), served at /resume/
 │   └── src/{index.jsx (routes: /resume, ?application=), App.jsx, ResumeEditor.jsx}
