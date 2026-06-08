@@ -66,19 +66,6 @@ describe('applyOverlay', () => {
     expect(profile.data.projects.map((p) => p.title)).toEqual(reversed);
   });
 
-  it('exclude drops named items, keeping the rest in natural order', () => {
-    const full = applyOverlay({ jobId: 'f', profile: { sections: ['projects'] } });
-    const titles = full.data.projects.map((p) => p.title);
-    const drop = titles[1];
-    const profile = applyOverlay({
-      jobId: 't',
-      profile: { sections: ['projects'], filters: { projects: { exclude: [drop] } } },
-    });
-    const after = profile.data.projects.map((p) => p.title);
-    expect(after).not.toContain(drop);
-    expect(after).toEqual(titles.filter((t) => t !== drop));
-  });
-
   it('order ignores unknown titles and wins over tagsAnyOf/limit', () => {
     const full = applyOverlay({ jobId: 'f', profile: { sections: ['projects'] } });
     const known = full.data.projects[0].title;
@@ -90,6 +77,32 @@ describe('applyOverlay', () => {
       },
     });
     expect(profile.data.projects.map((p) => p.title)).toEqual([known]);
+  });
+
+  it('exclude drops items by title from a section', () => {
+    const full = applyOverlay({ jobId: 'f', profile: { sections: ['projects'] } });
+    const titles = full.data.projects.map((p) => p.title);
+    const drop = titles[0];
+    const profile = applyOverlay({
+      jobId: 't',
+      profile: { sections: ['projects'], filters: { projects: { exclude: [drop] } } },
+    });
+    const after = profile.data.projects.map((p) => p.title);
+    expect(after).not.toContain(drop);
+    expect(after).toHaveLength(titles.length - 1);
+  });
+
+  it('exclude composes with tagsAnyOf', () => {
+    const tagged = applyOverlay({
+      jobId: 'f',
+      profile: { sections: ['projects'], filters: { projects: { tagsAnyOf: ['Embedded Systems'] } } },
+    }).data.projects.map((p) => p.title);
+    expect(tagged.length).toBeGreaterThanOrEqual(2);
+    const profile = applyOverlay({
+      jobId: 't',
+      profile: { sections: ['projects'], filters: { projects: { tagsAnyOf: ['Embedded Systems'], exclude: [tagged[0]] } } },
+    });
+    expect(profile.data.projects.map((p) => p.title)).not.toContain(tagged[0]);
   });
 
   it('throws on a patch that does not apply cleanly', () => {

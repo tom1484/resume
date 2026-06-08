@@ -8,10 +8,11 @@ const profileDefs = resume.meta['x-profiles'];
 
 // Apply a declarative filter to a section's items. Items are identified by
 // `title`. Precedence:
-//   1. `order` (explicit title list) selects + orders exactly those items,
-//      ignoring tagsAnyOf/titleIn/limit; otherwise tagsAnyOf → titleIn →
-//      limit narrow the natural-order list.
-//   2. `exclude` then drops listed titles from whatever remains.
+//  - `order` (explicit title list) selects exactly those items, in order,
+//    ignoring tagsAnyOf/titleIn/limit;
+//  - otherwise tagsAnyOf then titleIn narrow the set;
+//  - `exclude` (title list) then drops items (applies in both branches);
+//  - `limit` caps the count last (skipped when `order` is explicit).
 function applyFilter(items, filter) {
   let result;
   if (filter.order) {
@@ -25,12 +26,12 @@ function applyFilter(items, filter) {
     if (filter.titleIn) {
       result = result.filter((item) => filter.titleIn.includes(item.title));
     }
-    if (filter.limit != null) {
-      result = result.slice(0, filter.limit);
-    }
   }
   if (filter.exclude) {
     result = result.filter((item) => !filter.exclude.includes(item.title));
+  }
+  if (filter.limit != null && !filter.order) {
+    result = result.slice(0, filter.limit);
   }
   return result;
 }

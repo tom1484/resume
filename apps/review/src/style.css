@@ -5,11 +5,8 @@ a { color: #2563eb; text-decoration: none; }
 button { cursor: pointer; border: 1px solid #d0d3d9; background: #fff; border-radius: 6px; padding: 6px 12px; font: inherit; }
 button:disabled { opacity: 0.4; cursor: default; }
 
-.inbox { max-width: 1100px; margin: 0 auto; padding: 16px; }
-/* Detail is full-width so the panes can grow past 1100px when the preview is
-   widened; header/actions stay centered at a readable width. */
-.detail { padding: 16px; }
-.detailhead, .actions { max-width: 1100px; margin-left: auto; margin-right: auto; }
+.inbox, .detail { max-width: 1100px; margin: 0 auto; padding: 16px; }
+.detail { max-width: 1500px; }
 .inbox h1 { font-size: 20px; }
 .tabs { display: flex; gap: 6px; margin-bottom: 12px; flex-wrap: wrap; }
 .tab.active { background: #1a1a1a; color: #fff; border-color: #1a1a1a; }
@@ -25,46 +22,48 @@ button:disabled { opacity: 0.4; cursor: default; }
 .label.good { background: #e6f5ea; color: #137333; }
 .label.bad { background: #fce8e6; color: #c5221f; }
 
-.detailhead { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
-.detailhead h2 { font-size: 18px; margin: 6px 0; flex: 1; }
+.detailhead { display: flex; align-items: center; justify-content: center; gap: 12px; flex-wrap: wrap; }
+.detailhead h2 { font-size: 18px; margin: 6px 0; }
+.detailhead .back { position: absolute; left: 16px; }
+.detail { position: relative; }
 .back { font-size: 14px; }
 .status { font-size: 12px; padding: 2px 10px; border-radius: 12px; background: #eef; }
 .status.approved { background: #e6f5ea; color: #137333; }
 .status.rejected { background: #fce8e6; color: #c5221f; }
 
-.actions { display: flex; align-items: center; gap: 8px; margin: 12px 0; flex-wrap: wrap; }
+/* centered action bar */
+.actions { display: flex; align-items: center; justify-content: center; gap: 8px; margin: 12px 0; flex-wrap: wrap; }
 .actions .approve { background: #137333; color: #fff; border-color: #137333; }
 .actions .reject { background: #fff; color: #c5221f; border-color: #f0b4b0; }
 .actions .sep { flex: 0 0 12px; }
 .lab.on.good { background: #137333; color: #fff; border-color: #137333; }
 .lab.on.bad { background: #c5221f; color: #fff; border-color: #c5221f; }
-.ext { margin-left: auto; font-size: 13px; }
+.ext { font-size: 13px; }
 
-/* Flex, not grid: the preview pane sizes to the (resizable) résumé box and
-   the text pane keeps a stable width, so widening the preview grows the
-   whole row instead of squeezing the text. fit-content + auto margins keep
-   the row centered on the page. */
-.panes { display: flex; gap: 16px; align-items: flex-start; width: fit-content; max-width: 100%; margin: 0 auto; }
-.panes > section:first-child { flex: 0 0 auto; }    /* preview pane → résumé-box width */
-.panes > section:last-child { flex: 0 0 460px; }     /* text pane → stable, never shrinks */
-.pane { background: #fff; border: 1px solid #e6e8eb; border-radius: 8px; padding: 14px; }
-.pane h3 { font-size: 14px; margin: 14px 0 6px; }
-.pane h3:first-child { margin-top: 0; }
-.panehead { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 8px; }
+/* side-by-side preview | editor; equal fixed height, width adjusted by the splitter */
+.editor { display: flex; align-items: stretch; height: 78vh; margin: 0 auto; }
+.editor.dragging { user-select: none; }
+.editor.dragging .resume { pointer-events: none; }
+.epane { display: flex; flex-direction: column; min-width: 0; }
+.epane.preview { gap: 6px; }
 .zoom { display: flex; align-items: center; gap: 4px; font-size: 13px; }
 .zoom button { padding: 2px 8px; }
 .zoom span { min-width: 38px; text-align: center; font-variant-numeric: tabular-nums; }
-/* Definite default size (the box drives the preview-pane width); resizable
-   both ways. overflow:hidden so the ONLY scrollbar is the iframe's own inner
-   vertical one — no outer vertical/horizontal bars on the box. */
-.resumebox { width: 680px; height: 860px; min-height: 240px; min-width: 280px; max-width: 95vw;
-  overflow: hidden; border: 1px solid #e6e8eb; border-radius: 6px; resize: both; background: #fff; }
+.resumebox { flex: 1; min-height: 0; overflow: auto; border: 1px solid #e6e8eb; border-radius: 6px; background: #fff; }
 .resume { display: block; border: 0; }
-.jsoneditor .muted { font-size: 12px; margin: 0 0 8px; }
-.json { width: 100%; height: 60vh; font: 12px/1.5 ui-monospace, SFMono-Regular, Menlo, monospace;
-  padding: 10px; border: 1px solid #d0d3d9; border-radius: 6px; resize: vertical; white-space: pre; }
-.jsonerror { color: #c5221f; background: #fce8e6; border-radius: 6px; padding: 8px 10px; white-space: pre-wrap; font-size: 12px; }
+.splitter { flex: 0 0 10px; cursor: col-resize; align-self: stretch; background:
+  linear-gradient(to right, transparent 4px, #d0d3d9 4px, #d0d3d9 6px, transparent 6px); }
+.splitter:hover { background: linear-gradient(to right, transparent 4px, #2563eb 4px, #2563eb 6px, transparent 6px); }
+.edithint { font-size: 12px; margin: 0 0 6px; }
+.json { flex: 1; min-height: 0; width: 100%; font: 12px/1.5 ui-monospace, SFMono-Regular, Menlo, monospace;
+  padding: 10px; border: 1px solid #d0d3d9; border-radius: 6px; resize: none; white-space: pre; }
+.jsonerror { color: #c5221f; background: #fce8e6; border-radius: 6px; padding: 8px 10px; white-space: pre-wrap; font-size: 12px; margin: 6px 0 0; }
 .jsonactions { display: flex; gap: 8px; margin-top: 8px; }
+
+/* info section below the editor, centered */
+.info { background: #fff; border: 1px solid #e6e8eb; border-radius: 8px; padding: 14px; margin-top: 16px; }
+.info h3 { font-size: 14px; margin: 14px 0 6px; }
+.info h3:first-child { margin-top: 0; }
 .breakdown { display: flex; gap: 16px; list-style: none; padding: 0; margin: 0; }
 .rationale { font-size: 14px; }
 .flags { color: #c5221f; font-size: 14px; }
@@ -75,10 +74,13 @@ button:disabled { opacity: 0.4; cursor: default; }
 .cover { white-space: pre-wrap; background: #fafbfc; border: 1px solid #eee; border-radius: 6px; padding: 10px; font: inherit; }
 .jd { white-space: pre-wrap; max-height: 400px; overflow: auto; font-size: 13px; color: #444; }
 
+/* mobile: stack; preview fills the viewport height, editor below it */
 @media (max-width: 760px) {
-  .panes { flex-direction: column; width: auto; }
-  .panes > section:first-child, .panes > section:last-child { flex: 1 1 auto; }
-  .resumebox { width: 100%; height: 70vh; }
+  .editor { flex-direction: column; height: auto; }
+  .epane.preview, .epane.json { flex-basis: auto !important; }
+  .epane.preview .resumebox { height: 100dvh; flex: none; }
+  .splitter { display: none; }
+  .json { height: 60vh; }
 }
 
 .answerslink { font-size: 13px; font-weight: 400; margin-left: 12px; }

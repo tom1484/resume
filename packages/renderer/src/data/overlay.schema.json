@@ -53,7 +53,7 @@
               "exclude": {
                 "type": "array",
                 "items": { "type": "string" },
-                "description": "Item titles to drop from the section, keeping the rest in their natural order. Applied after order/tagsAnyOf/titleIn/limit. The ergonomic way to remove a single item."
+                "description": "Item titles to drop from the section (applied after selection, before limit)."
               }
             }
           }
