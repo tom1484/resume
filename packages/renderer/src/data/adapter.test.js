@@ -4,7 +4,7 @@
 import { describe, expect, it } from 'vitest';
 import resume from './resume.json';
 import { buildViewModels } from './adapter';
-import { profiles } from './profiles';
+import { buildProfileFrom } from './profiles';
 
 const vm = buildViewModels(resume);
 
@@ -75,24 +75,16 @@ describe('adapter view models', () => {
   });
 });
 
-describe('profiles', () => {
-  it('builds every profile declared in meta.x-profiles', () => {
-    expect(Object.keys(profiles)).toEqual(Object.keys(resume.meta['x-profiles']));
+describe('buildProfileFrom', () => {
+  it('assembles selected sections unfiltered', () => {
+    const p = buildProfileFrom(vm, 'x', { sections: ['projects', 'skills'] });
+    expect(p.data.projects).toHaveLength(vm.projects.length);
+    expect(p.data.skills).toHaveLength(vm.skills.length);
+    expect(Object.keys(p.data)).toEqual(['projects', 'skills']);
   });
 
-  it('full profile contains all sections unfiltered', () => {
-    expect(profiles.full.data.projects).toHaveLength(vm.projects.length);
-    expect(profiles.full.data.skills).toHaveLength(vm.skills.length);
-  });
-
-  it('minimal profile limits projects to 3', () => {
-    expect(profiles.minimal.data.projects).toHaveLength(3);
-  });
-
-  it('academic profile filters skills by title allowlist', () => {
-    const allowed = resume.meta['x-profiles'].academic.filters.skills.titleIn;
-    for (const skill of profiles.academic.data.skills) {
-      expect(allowed).toContain(skill.title);
-    }
+  it('applies a limit filter', () => {
+    const p = buildProfileFrom(vm, 'x', { sections: ['projects'], filters: { projects: { limit: 3 } } });
+    expect(p.data.projects).toHaveLength(3);
   });
 });

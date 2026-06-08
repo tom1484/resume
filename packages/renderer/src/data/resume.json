@@ -23,7 +23,10 @@
       }
     ],
     "x-qrcodes": [
-      { "label": "Links", "src": "links.svg" }
+      {
+        "label": "Links",
+        "src": "links.svg"
+      }
     ]
   },
   "education": [
@@ -34,7 +37,10 @@
       "startDate": "2026-08",
       "x-time": "Starting Aug 2026",
       "x-info": [
-        ["Program", "Master of Science – Robotics"]
+        [
+          "Program",
+          "Master of Science – Robotics"
+        ]
       ]
     },
     {
@@ -54,16 +60,40 @@
       ],
       "x-time": "Sep 2021 - Jan 2026",
       "x-info": [
-        ["Major", "Bachelor of Science in Engineering – Electrical Engineering"],
-        ["GPA", "3.97 / 4.3"]
+        [
+          "Major",
+          "Bachelor of Science in Engineering – Electrical Engineering"
+        ],
+        [
+          "GPA",
+          "3.97 / 4.3"
+        ]
       ],
       "x-courses": [
-        ["Operating Systems", "A+"],
-        ["Computer Graphics", "A+"],
-        ["Robotics", "A+"],
-        ["Robot Sensing and Control", "A+"],
-        ["Precision Motion Control", "A+"],
-        ["Reinforcement Learning", "A+"]
+        [
+          "Operating Systems",
+          "A+"
+        ],
+        [
+          "Computer Graphics",
+          "A+"
+        ],
+        [
+          "Robotics",
+          "A+"
+        ],
+        [
+          "Robot Sensing and Control",
+          "A+"
+        ],
+        [
+          "Precision Motion Control",
+          "A+"
+        ],
+        [
+          "Reinforcement Learning",
+          "A+"
+        ]
       ]
     }
   ],
@@ -80,7 +110,10 @@
         "Stabilized model convergence, reducing evaluation loss variance by 90% across diverse camera settings."
       ],
       "x-time": "Jun 2025 - Aug 2025",
-      "x-tags": ["Embedded Systems", "Edge Computer Vision"]
+      "x-tags": [
+        "Embedded Systems",
+        "Edge Computer Vision"
+      ]
     },
     {
       "name": "Institute of Information Science, Academia Sinica",
@@ -95,9 +128,17 @@
       ],
       "x-time": "Jul 2023 - Aug 2023",
       "x-links": [
-        { "text": "Project", "url": "https://github.com/IIS-summer-2023/meds-simd-highlevel" }
+        {
+          "text": "Project",
+          "url": "https://github.com/IIS-summer-2023/meds-simd-highlevel"
+        }
       ],
-      "x-tags": ["C++", "SIMD", "Post-Quantum Cryptography", "Cybersecurity"]
+      "x-tags": [
+        "C++",
+        "SIMD",
+        "Post-Quantum Cryptography",
+        "Cybersecurity"
+      ]
     },
     {
       "name": "Vision & Learning Lab, NTUEE",
@@ -110,7 +151,11 @@
       "x-section": "academic",
       "x-time": "Jul 2024 - Nov 2025",
       "x-footnote": "Supervisor: Professor Frank Wang",
-      "x-tags": ["Computer Vision", "Scene Reconstruction", "Gaussian Splatting"]
+      "x-tags": [
+        "Computer Vision",
+        "Scene Reconstruction",
+        "Gaussian Splatting"
+      ]
     },
     {
       "name": "Robot Learning Lab, NTUEE",
@@ -124,7 +169,13 @@
       "x-section": "academic",
       "x-time": "Aug 2022 - Aug 2025",
       "x-footnote": "Supervisor: Professor Shao-Hua Sun",
-      "x-tags": ["Reinforcement Learning", "Robotics", "Sim-to-Real", "Imitation Learning", "Mobile ALOHA"]
+      "x-tags": [
+        "Reinforcement Learning",
+        "Robotics",
+        "Sim-to-Real",
+        "Imitation Learning",
+        "Mobile ALOHA"
+      ]
     },
     {
       "name": "Teaching Assistant, NTUEE",
@@ -143,8 +194,19 @@
     {
       "name": "Learning Skill Abstraction from Action-Free Videos via Optical Flow",
       "publisher": "ICML 2025 Workshop on Building Physically Plausible World Models",
-      "x-authors": ["Hung-Chieh Fang*", "Kuo-Han Hung*", "!Chu-Rong Chen", "Po-Jung Chou", "Chun-Kai Yang", "Po-Chen Ko", "et al."],
-      "x-venue": { "type": "conference", "name": "ICML 2025 Workshop on Building Physically Plausible World Models" }
+      "x-authors": [
+        "Hung-Chieh Fang*",
+        "Kuo-Han Hung*",
+        "!Chu-Rong Chen",
+        "Po-Jung Chou",
+        "Chun-Kai Yang",
+        "Po-Chen Ko",
+        "et al."
+      ],
+      "x-venue": {
+        "type": "conference",
+        "name": "ICML 2025 Workshop on Building Physically Plausible World Models"
+      }
     }
   ],
   "projects": [
@@ -159,17 +221,32 @@
       ],
       "x-time": "Nov 2024 - Dec 2024",
       "x-links": [
-        { "text": "Project", "url": "https://github.com/tom1484/DLCV-Fall-2024-Final" },
-        { "text": "Poster", "url": "https://drive.google.com/file/d/1gHW_4sjCmyUdZc4QdCCKXupIMWeTCsYI/view?usp=sharing" }
+        {
+          "text": "Project",
+          "url": "https://github.com/tom1484/DLCV-Fall-2024-Final"
+        },
+        {
+          "text": "Poster",
+          "url": "https://drive.google.com/file/d/1gHW_4sjCmyUdZc4QdCCKXupIMWeTCsYI/view?usp=sharing"
+        }
       ]
     },
     {
       "name": "NTUEE LightDance",
-      "roles": ["Software Team Lead"],
+      "roles": [
+        "Software Team Lead"
+      ],
       "startDate": "2023-10",
       "endDate": "2024-03",
       "url": "https://github.com/NTUEELightDance/LightDance-Editor",
-      "keywords": ["Rust", "Python", "MySQL", "GraphQL", "Async Programming", "Blender Add-on"],
+      "keywords": [
+        "Rust",
+        "Python",
+        "MySQL",
+        "GraphQL",
+        "Async Programming",
+        "Blender Add-on"
+      ],
       "highlights": [
         "Led a 10-member team to build a full-stack light effect editor, delivering ~5× the performance of the legacy JavaScript system.",
         "Built a high-concurrency Rust backend managing complex SQL operations, supporting simultaneous editing across 5,000+ LEDs and 1,000+ keyframes.",
@@ -178,8 +255,14 @@
       "x-time": "Oct 2023 - Mar 2024",
       "x-location": "Taipei, Taiwan",
       "x-links": [
-        { "text": "Project", "url": "https://github.com/NTUEELightDance/LightDance-Editor" },
-        { "text": "Stream", "url": "https://www.youtube.com/watch?v=HviYqvcldPU" }
+        {
+          "text": "Project",
+          "url": "https://github.com/NTUEELightDance/LightDance-Editor"
+        },
+        {
+          "text": "Stream",
+          "url": "https://www.youtube.com/watch?v=HviYqvcldPU"
+        }
       ]
     },
     {
@@ -187,21 +270,32 @@
       "startDate": "2023-09",
       "endDate": "2023-12",
       "url": "https://www.youtube.com/watch?v=paJnYjrRtNI",
-      "keywords": ["Embedded Systems", "OpenCV", "PID Control"],
+      "keywords": [
+        "Embedded Systems",
+        "OpenCV",
+        "PID Control"
+      ],
       "highlights": [
         "Prototyped a fully automated 4-Wheel-Drive robot using ROS 2 on Raspberry Pi, integrating navigation and actuation sub-systems with a PID control loop.",
         "Engineered a computer vision tracking system to calculate frisbee angle and velocity based on real-time target data."
       ],
       "x-time": "Sep 2023 - Dec 2023",
       "x-links": [
-        { "text": "Demo", "url": "https://www.youtube.com/watch?v=paJnYjrRtNI" }
+        {
+          "text": "Demo",
+          "url": "https://www.youtube.com/watch?v=paJnYjrRtNI"
+        }
       ]
     },
     {
       "name": "FPGA Laser Shooter",
       "startDate": "2023-05",
       "endDate": "2023-06",
-      "keywords": ["FPGA", "Verilog", "Image Processing"],
+      "keywords": [
+        "FPGA",
+        "Verilog",
+        "Image Processing"
+      ],
       "highlights": [
         "Designed a hardware-accelerated laser shooting system in Verilog, achieving low-latency target acquisition and firing control.",
         "Implemented a pipelined Hough Circle Transform architecture on FPGA for real-time target detection at high frame rates."
@@ -212,14 +306,20 @@
       "name": "MusicTracker - Automatic Music Sheet Page Turner",
       "startDate": "2023-05",
       "url": "https://youtu.be/sDXGI1Jq3kc",
-      "keywords": ["Embedded Systems", "Real-Time Audio Processing"],
+      "keywords": [
+        "Embedded Systems",
+        "Real-Time Audio Processing"
+      ],
       "highlights": [
         "Developed a real-time audio processing system on STM32 using DMA and I2S, leveraging the CMSIS DSP library for Mel spectrogram analysis.",
         "Implemented a Dynamic Time Warping (DTW) algorithm to synchronize live audio with sheet music, triggering a servo-actuated page turner."
       ],
       "x-time": "May 2023",
       "x-links": [
-        { "text": "Demo", "url": "https://youtu.be/sDXGI1Jq3kc" }
+        {
+          "text": "Demo",
+          "url": "https://youtu.be/sDXGI1Jq3kc"
+        }
       ]
     },
     {
@@ -227,14 +327,21 @@
       "startDate": "2022-12",
       "endDate": "2023-01",
       "url": "https://github.com/tom1484/money-manager",
-      "keywords": ["React Native", "Android", "Fullstack"],
+      "keywords": [
+        "React Native",
+        "Android",
+        "Fullstack"
+      ],
       "highlights": [
         "Built a cross-platform mobile application for finance tracking using React Native, featuring intuitive data visualization for income and expenses.",
         "Implemented a RESTful backend with Express.js and MongoDB to handle user authentication and secure data persistence."
       ],
       "x-time": "Dec 2022 - Jan 2023",
       "x-links": [
-        { "text": "Project", "url": "https://github.com/tom1484/money-manager" }
+        {
+          "text": "Project",
+          "url": "https://github.com/tom1484/money-manager"
+        }
       ]
     },
     {
@@ -242,34 +349,50 @@
       "startDate": "2022-06",
       "endDate": "2022-10",
       "url": "https://drive.google.com/file/d/1EKJGVKytfbCwLHq-11mKcscFEMStKAA6/view?usp=share_link",
-      "keywords": ["Raspberry Pi", "C++", "Peripheral Control"],
+      "keywords": [
+        "Raspberry Pi",
+        "C++",
+        "Peripheral Control"
+      ],
       "highlights": [
         "Engineered an IoT access control system using C++ for peripheral management (ID scanner, LCD) on a Raspberry Pi.",
         "Integrated a server-side backend to log student entry data and display real-time usage instructions."
       ],
       "x-time": "Jun 2022 - Oct 2022",
       "x-links": [
-        { "text": "Project", "url": "https://drive.google.com/file/d/1EKJGVKytfbCwLHq-11mKcscFEMStKAA6/view?usp=share_link" }
+        {
+          "text": "Project",
+          "url": "https://drive.google.com/file/d/1EKJGVKytfbCwLHq-11mKcscFEMStKAA6/view?usp=share_link"
+        }
       ]
     },
     {
       "name": "Furuta Pendulum - Digital Controller Design",
       "startDate": "2022-12",
       "url": "https://drive.google.com/file/d/18b7DX8dk0K--bYAh3qZRaT6zejtQcBO7/view?usp=share_link",
-      "keywords": ["Control System Design", "Simulink"],
+      "keywords": [
+        "Control System Design",
+        "Simulink"
+      ],
       "highlights": [
         "Modeled and linearized the dynamics of a Furuta pendulum to design an optimal LQR controller in Simulink.",
         "Deployed the control algorithm to physical hardware, achieving stable equilibrium and robust disturbance rejection."
       ],
       "x-time": "Dec 2022",
       "x-links": [
-        { "text": "Report", "url": "https://drive.google.com/file/d/18b7DX8dk0K--bYAh3qZRaT6zejtQcBO7/view?usp=share_link" }
+        {
+          "text": "Report",
+          "url": "https://drive.google.com/file/d/18b7DX8dk0K--bYAh3qZRaT6zejtQcBO7/view?usp=share_link"
+        }
       ]
     },
     {
       "name": "Ear Detection Gate - Ear Shape Identification System",
       "startDate": "2020",
-      "keywords": ["Object Detection", "YOLO"],
+      "keywords": [
+        "Object Detection",
+        "YOLO"
+      ],
       "highlights": [
         "Developed a contactless biometric scanning system using YOLO object detection to identify individuals by ear shape.",
         "Designed the system to function effectively without mask removal, addressing specific security challenges during the COVID-19 pandemic."
@@ -281,23 +404,38 @@
       "startDate": "2020-01",
       "endDate": "2020-04",
       "url": "https://www.youtube.com/watch?v=WfrQ2J9VpX0",
-      "keywords": ["Mobile App", "Indoor Navigation", "BLE"],
+      "keywords": [
+        "Mobile App",
+        "Indoor Navigation",
+        "BLE"
+      ],
       "highlights": [
         "Created a shopping cart system featuring BLE-based indoor localization and product guidance; awarded Taiwan Utility Model Patent."
       ],
       "x-time": "Jan 2020 - Apr 2020",
       "x-highlight": "Patent",
       "x-links": [
-        { "text": "Demo", "url": "https://www.youtube.com/watch?v=WfrQ2J9VpX0" }
+        {
+          "text": "Demo",
+          "url": "https://www.youtube.com/watch?v=WfrQ2J9VpX0"
+        }
       ]
     },
     {
       "name": "CPLC Lander Challenge - Student Self-landing Rocket",
-      "roles": ["Avionics Team"],
+      "roles": [
+        "Avionics Team"
+      ],
       "startDate": "2023-11",
       "endDate": "2025-10",
       "url": "https://www.facebook.com/p/STAR-Student-Society-of-Taiwan-Advanced-Rocketry-61558308603436/",
-      "keywords": ["Rocketry", "Avionics", "Embedded Systems", "Control", "System Engineering"],
+      "keywords": [
+        "Rocketry",
+        "Avionics",
+        "Embedded Systems",
+        "Control",
+        "System Engineering"
+      ],
       "highlights": [
         "Contributed to the avionics team for a VTVL (Vertical Takeoff, Vertical Landing) rocket, assisting in system design and specification.",
         "Designed the universal prototype controller board to interface with various sensors and actuators used in the rocket."
@@ -306,16 +444,27 @@
       "x-time": "Nov 2023 - Oct 2025",
       "x-location": "Taipei & Hsinchu, Taiwan",
       "x-links": [
-        { "text": "Team", "url": "https://www.facebook.com/p/STAR-Student-Society-of-Taiwan-Advanced-Rocketry-61558308603436/" }
+        {
+          "text": "Team",
+          "url": "https://www.facebook.com/p/STAR-Student-Society-of-Taiwan-Advanced-Rocketry-61558308603436/"
+        }
       ]
     },
     {
       "name": "Kibo RPC - International Space Robotics Challenge",
-      "roles": ["Navigation Team Lead"],
+      "roles": [
+        "Navigation Team Lead"
+      ],
       "startDate": "2022-06",
       "endDate": "2022-10",
       "url": "https://youtu.be/NjOgNrPMUJs?t=5368",
-      "keywords": ["Android", "OpenCV", "Trajectory Planning", "Space Robotics", "Visual Servoing"],
+      "keywords": [
+        "Android",
+        "OpenCV",
+        "Trajectory Planning",
+        "Space Robotics",
+        "Visual Servoing"
+      ],
       "highlights": [
         "Secured the World Championship representing Taiwan, with code successfully deployed on JAXA's Astrobee robot aboard the International Space Station.",
         "Developed a vision-based laser aiming system and a trajectory planning engine to autonomously navigate obstacle-filled \"Keep-Out Zones\" with high accuracy and safety."
@@ -324,7 +473,10 @@
       "x-time": "Jun 2022 - Oct 2022",
       "x-highlight": "World Champion",
       "x-links": [
-        { "text": "Stream", "url": "https://youtu.be/NjOgNrPMUJs?t=5368" }
+        {
+          "text": "Stream",
+          "url": "https://youtu.be/NjOgNrPMUJs?t=5368"
+        }
       ]
     }
   ],
@@ -364,43 +516,49 @@
     }
   ],
   "skills": [
-    { "name": "Languages", "keywords": ["English (TOEFL 115, GRE 329)"] },
-    { "name": "Programming", "keywords": ["Rust", "C/C++", "Python", "CUDA", "TypeScript"] },
-    { "name": "Frameworks", "keywords": ["PyTorch", "ROS 2", "React", "Android"] },
-    { "name": "Design Tools", "keywords": ["AutoCAD", "Fusion 360", "KiCad", "MATLAB/Simulink"] },
-    { "name": "Platforms", "keywords": ["STM32", "Raspberry Pi"] }
+    {
+      "name": "Languages",
+      "keywords": [
+        "English (TOEFL 115, GRE 329)"
+      ]
+    },
+    {
+      "name": "Programming",
+      "keywords": [
+        "Rust",
+        "C/C++",
+        "Python",
+        "CUDA",
+        "TypeScript"
+      ]
+    },
+    {
+      "name": "Frameworks",
+      "keywords": [
+        "PyTorch",
+        "ROS 2",
+        "React",
+        "Android"
+      ]
+    },
+    {
+      "name": "Design Tools",
+      "keywords": [
+        "AutoCAD",
+        "Fusion 360",
+        "KiCad",
+        "MATLAB/Simulink"
+      ]
+    },
+    {
+      "name": "Platforms",
+      "keywords": [
+        "STM32",
+        "Raspberry Pi"
+      ]
+    }
   ],
   "meta": {
-    "version": "v1.0.0",
-    "x-profiles": {
-      "full": {
-        "name": "Full Resume",
-        "description": "Complete resume with all sections",
-        "sections": ["personalInfo", "education", "academics", "working", "publications", "competitions", "projects", "extracurriculars", "skills"]
-      },
-      "academic": {
-        "name": "Academic Resume",
-        "description": "Focus on research, publications, and academic experience",
-        "sections": ["personalInfo", "education", "academics", "publications", "projects", "skills"],
-        "filters": {
-          "projects": { "tagsAnyOf": ["Machine Learning", "Computer Vision", "Research"] },
-          "skills": { "titleIn": ["Python", "C++", "MATLAB", "Rust"] }
-        }
-      },
-      "industry": {
-        "name": "Industry Resume",
-        "description": "Focus on working, projects, and technical skills",
-        "sections": ["personalInfo", "education", "working", "projects", "competitions", "skills"]
-      },
-      "minimal": {
-        "name": "Minimal Resume",
-        "description": "Essential information only",
-        "sections": ["personalInfo", "education", "projects", "skills"],
-        "filters": {
-          "projects": { "limit": 3 },
-          "skills": { "titleIn": ["Python", "C++", "Rust", "TypeScript", "Full Stack"] }
-        }
-      }
-    }
+    "version": "v1.0.0"
   }
 }

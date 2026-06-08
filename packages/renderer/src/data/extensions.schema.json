@@ -131,36 +131,7 @@
       }
     },
     "meta": {
-      "type": "object",
-      "required": ["x-profiles"],
-      "properties": {
-        "x-profiles": {
-          "type": "object",
-          "required": ["full"],
-          "additionalProperties": {
-            "type": "object",
-            "required": ["name", "description", "sections"],
-            "properties": {
-              "name": { "type": "string" },
-              "description": { "type": "string" },
-              "sections": { "$ref": "#/definitions/stringList" },
-              "filters": {
-                "type": "object",
-                "additionalProperties": {
-                  "type": "object",
-                  "properties": {
-                    "tagsAnyOf": { "$ref": "#/definitions/stringList" },
-                    "titleIn": { "$ref": "#/definitions/stringList" },
-                    "limit": { "type": "integer", "minimum": 0 }
-                  },
-                  "additionalProperties": false
-                }
-              }
-            },
-            "additionalProperties": false
-          }
-        }
-      }
+      "type": "object"
     }
   }
 }

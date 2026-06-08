@@ -1,25 +1,22 @@
 import React from 'react';
 import { getComponent } from '@config/componentRegistry';
-import { ConfigProvider, useConfig } from '@contexts/configContext';
+import { sectionsConfig } from '@config/sections';
+import { getData } from '@data';
 import { ThemeProvider, useTheme } from '@contexts/themeContext';
 import Title from '@components/title';
-import DataValidationDemo from '@components/dataValidation';
 import ErrorBoundary from '@components/common/errorBoundary';
 
-// TODO:
-//   Certifications (TOEFL, GRE, etc.)
-
+// Single canonical résumé: render every section in order. Section/item
+// selection for a specific job is handled upstream (application overlay),
+// not here.
 function AppContent() {
-  const { getVisibleSections, getVisibleItems } = useConfig();
   const { theme } = useTheme();
 
   const renderSection = (section) => {
     const Component = getComponent(section.component);
     if (!Component) return null;
-
-    const data = getVisibleItems(section.id);
+    const data = getData(section.dataKey);
     if (!data || (Array.isArray(data) && data.length === 0)) return null;
-
     return (
       <React.Fragment key={section.id}>
         {section.title && <Title title={section.title} />}
@@ -30,16 +27,8 @@ function AppContent() {
 
   return (
     <div className={theme.components.container.main}>
-      {/* Data Management Demo Panel (includes theme switcher) */}
-      <DataValidationDemo />
-
-      {/* Top margin */}
       <div className={`${theme.layout.containerWidth} ${theme.layout.margins.top}`}></div>
-
-      {/* Dynamic sections rendering */}
-      {getVisibleSections().map(renderSection)}
-
-      {/* Bottom margin */}
+      {sectionsConfig.map(renderSection)}
       <div className={`${theme.layout.containerWidth} ${theme.layout.margins.bottom}`}></div>
     </div>
   );
@@ -48,11 +37,9 @@ function AppContent() {
 function App() {
   return (
     <ThemeProvider>
-      <ConfigProvider>
-        <ErrorBoundary>
-          <AppContent />
-        </ErrorBoundary>
-      </ConfigProvider>
+      <ErrorBoundary>
+        <AppContent />
+      </ErrorBoundary>
     </ThemeProvider>
   );
 }

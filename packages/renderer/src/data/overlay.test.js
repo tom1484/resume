@@ -8,18 +8,19 @@
 import { describe, expect, it } from 'vitest';
 import resume from './resume.json';
 import { applyOverlay } from './overlay';
-import { profiles } from './profiles';
+import { buildViewModels } from './adapter';
 
-const fullDef = resume.meta['x-profiles'].full;
+const ALL_SECTIONS = ['personalInfo', 'education', 'academics', 'working', 'publications', 'competitions', 'projects', 'extracurriculars', 'skills'];
 
 describe('applyOverlay', () => {
-  it('identity: empty patches + full sections === built-in full profile data', () => {
+  it('identity: empty patches + all sections === unfiltered view models', () => {
     const profile = applyOverlay({
       jobId: 'identity',
-      profile: { sections: fullDef.sections },
+      profile: { sections: ALL_SECTIONS },
       patches: [],
     });
-    expect(profile.data).toEqual(profiles.full.data);
+    const vm = buildViewModels(resume);
+    for (const key of ALL_SECTIONS) expect(profile.data[key]).toEqual(vm[key]);
   });
 
   it('applies a replace patch without mutating the canonical resume', () => {
