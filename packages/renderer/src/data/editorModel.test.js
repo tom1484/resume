@@ -70,3 +70,40 @@ describe('editorTreeToOverlay round-trip', () => {
     expect(overlay.profile.sections[0]).toBe('skills');
   });
 });
+
+import { treeToResume } from './editorModel';
+import { buildViewModels } from './adapter';
+import resume from './resume.json';
+
+describe('treeToResume (resume mode)', () => {
+  it('round-trips: unchanged tree → same rendered view models', () => {
+    const tree = buildEditorModel({}, resume);
+    const rebuilt = treeToResume(tree, resume);
+    expect(buildViewModels(rebuilt)).toEqual(buildViewModels(resume));
+    expect(rebuilt.meta.sectionOrder).toContain('working');
+  });
+
+  it('deleting an item removes it from the rebuilt résumé', () => {
+    const tree = buildEditorModel({}, resume);
+    const proj = tree.sections.find((s) => s.key === 'projects');
+    const dropped = proj.items[0].title;
+    proj.items = proj.items.slice(1);
+    const rebuilt = treeToResume(tree, resume);
+    expect(buildViewModels(rebuilt).projects.map((p) => p.title)).not.toContain(dropped);
+  });
+
+  it('editing a bullet writes through to highlights', () => {
+    const tree = buildEditorModel({}, resume);
+    const work = tree.sections.find((s) => s.key === 'working');
+    work.items[0].bullets[0].text = 'RESUME EDIT';
+    const rebuilt = treeToResume(tree, resume);
+    const vm = buildViewModels(rebuilt).working.find((w) => w.title === work.items[0].title);
+    expect(vm.content).toContain('RESUME EDIT');
+  });
+
+  it('reordering sections sets meta.sectionOrder', () => {
+    const tree = buildEditorModel({}, resume);
+    tree.sections = [tree.sections.find((s) => s.key === 'skills'), ...tree.sections.filter((s) => s.key !== 'skills')];
+    expect(treeToResume(tree, resume).meta.sectionOrder[0]).toBe('skills');
+  });
+});

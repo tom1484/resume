@@ -1,20 +1,17 @@
-// Editor model: a UI-friendly tree bridging the overlay and a structured
-// editor. buildEditorModel(overlay) returns sections → items → bullets (with
-// resume.json paths), reflecting the overlay's current selection/edits.
-// editorTreeToOverlay(tree, jobId, coverLetter) serializes it back.
+// Editor model: a UI-friendly tree bridging the résumé/overlay and the
+// structured editor. One tree shape feeds two modes:
+//   - overlay mode  (review app): editorTreeToOverlay → application overlay
+//   - resume mode   (renderer):   treeToResume → a new canonical résumé doc
 //
-// Design choices that keep this tractable:
-//  - items are keyed by `title` (consistent with applyFilter's exclude/order)
-//  - bullet edits serialize as ONE `replace` of the entry's whole
-//    `/…/highlights` array (no per-index remove → no RFC-6902 index-shift
-//    headaches); a patch is emitted only when the array actually differs
-//    from base resume.json
-//  - user edits are trusted (their own claims): audit.unsupported = []
+// Tree: { sections: [ { key, label, list, editable, enabled,
+//                       items: [ { id, title, source, index, path,
+//                                  bullets: [ { id, text, hidden? } ] } ] } ] }
+// ids are stable within a session (for dnd-kit keys). Items are keyed by
+// `title` for overlay exclude/order; bullet edits serialize as a whole-array
+// replace (overlay) or written straight into highlights (resume).
 import jsonpatch from 'fast-json-patch';
-import resume from './resume.json';
+import bundledResume from './resume.json';
 
-// Section map: order matches the 'full' profile. `editable` sections expose
-// per-bullet editing; `list` sections expose item toggle/reorder.
 const SECTIONS = [
   { key: 'personalInfo', label: 'Header', list: false },
   { key: 'education', label: 'Education', list: true, source: 'education', titleKey: 'institution' },
@@ -26,43 +23,41 @@ const SECTIONS = [
   { key: 'extracurriculars', label: 'Activities', list: true, editable: true, source: 'volunteer', titleKey: 'organization' },
   { key: 'skills', label: 'Skills', list: false },
 ];
+const SECTION_KEYS = SECTIONS.map((s) => s.key);
 
-const baseHighlights = (source, idx) => resume[source]?.[idx]?.highlights ?? [];
+const orderRank = (list, key, fallback = 99) => {
+  const i = (list ?? []).indexOf(key);
+  return i === -1 ? fallback : i;
+};
 
-export function buildEditorModel(overlay = {}) {
-  const profile = overlay.profile ?? { sections: SECTIONS.map((s) => s.key) };
-  const enabledSet = new Set(profile.sections ?? []);
+// Build the section/item/bullet tree from a résumé doc, optionally reflecting
+// an overlay's selection/order/patches. `sectionOrderKeys` overrides display
+// order (resume mode uses doc.meta.sectionOrder).
+export function buildEditorModel(overlay = {}, doc = bundledResume, sectionOrderKeys = null) {
+  const profile = overlay.profile ?? { sections: SECTION_KEYS };
+  const enabledSet = new Set(profile.sections ?? SECTION_KEYS);
   const filters = profile.filters ?? {};
-  // current bullet text reflects existing patches
-  const patched = jsonpatch.applyPatch(jsonpatch.deepClone(resume), overlay.patches ?? [], false, false).newDocument;
+  const patched = jsonpatch.applyPatch(jsonpatch.deepClone(doc), overlay.patches ?? [], false, false).newDocument;
+  const order = sectionOrderKeys ?? profile.sections ?? SECTION_KEYS;
 
   const sections = SECTIONS
-    // keep selected order first, then any unselected sections
-    .map((s) => s)
-    .sort((a, b) => {
-      const ai = (profile.sections ?? []).indexOf(a.key);
-      const bi = (profile.sections ?? []).indexOf(b.key);
-      return (ai === -1 ? 99 : ai) - (bi === -1 ? 99 : bi);
-    })
+    .slice()
+    .sort((a, b) => orderRank(order, a.key) - orderRank(order, b.key))
     .map((s) => {
       const node = { key: s.key, label: s.label, enabled: enabledSet.has(s.key), list: !!s.list, editable: !!s.editable, items: [] };
       if (!s.list) return node;
       const f = filters[s.key] ?? {};
       const exclude = new Set(f.exclude ?? []);
       const items = [];
-      (resume[s.source] ?? []).forEach((entry, idx) => {
+      (patched[s.source] ?? []).forEach((entry, idx) => {
         if (s.pick && !s.pick(entry)) return;
         const title = entry[s.titleKey];
         const bullets = s.editable
-          ? (patched[s.source][idx].highlights ?? []).map((text, j) => ({ text, baseIndex: j }))
+          ? (entry.highlights ?? []).map((text, j) => ({ id: `${s.key}-${idx}-${j}`, text }))
           : [];
-        items.push({ title, enabled: !exclude.has(title), source: s.source, index: idx, path: `/${s.source}/${idx}/highlights`, bullets });
+        items.push({ id: `${s.key}-${idx}`, title, enabled: !exclude.has(title), source: s.source, index: idx, path: `/${s.source}/${idx}/highlights`, bullets });
       });
-      // apply saved order
-      if (f.order) {
-        const rank = (t) => { const i = f.order.indexOf(t); return i === -1 ? f.order.length : i; };
-        items.sort((a, b) => rank(a.title) - rank(b.title));
-      }
+      if (f.order) items.sort((a, b) => orderRank(f.order, a.title) - orderRank(f.order, b.title));
       node.items = items;
       return node;
     });
@@ -70,36 +65,60 @@ export function buildEditorModel(overlay = {}) {
   return { sections };
 }
 
-export function editorTreeToOverlay(tree, jobId, coverLetter) {
+// ---- overlay mode -------------------------------------------------------
+export function editorTreeToOverlay(tree, jobId, coverLetter, doc = bundledResume) {
   const sections = tree.sections.filter((s) => s.enabled).map((s) => s.key);
   const filters = {};
   const patches = [];
-
   for (const s of tree.sections) {
     if (!s.list || !s.enabled) continue;
     const excluded = s.items.filter((it) => !it.enabled).map((it) => it.title);
-    const order = s.items.map((it) => it.title);
+    const ord = s.items.map((it) => it.title);
     const f = {};
     if (excluded.length) f.exclude = excluded;
-    if (order.length) f.order = order;
+    if (ord.length) f.order = ord;
     if (Object.keys(f).length) filters[s.key] = f;
-
     if (!s.editable) continue;
     for (const it of s.items) {
-      const base = baseHighlights(it.source, it.index);
+      const base = doc[it.source]?.[it.index]?.highlights ?? [];
       const next = it.bullets.filter((b) => !b.hidden).map((b) => b.text);
       if (next.length !== base.length || next.some((t, i) => t !== base[i])) {
         patches.push({ op: 'replace', path: it.path, value: next });
       }
     }
   }
-
   const overlay = {
     jobId,
     profile: { name: `Application ${jobId}`, sections, ...(Object.keys(filters).length ? { filters } : {}) },
     patches,
-    audit: { claims: [], unsupported: [] }, // reviewer edits are trusted
+    audit: { claims: [], unsupported: [] },
   };
   if (coverLetter != null) overlay.coverLetter = coverLetter;
   return overlay;
 }
+
+// ---- resume mode --------------------------------------------------------
+// Rebuild a canonical résumé doc from the tree. Reordering/deleting items and
+// editing/deleting bullets are written straight into the source arrays;
+// section display order is saved to meta.sectionOrder.
+export function treeToResume(tree, baseDoc) {
+  const out = jsonpatch.deepClone(baseDoc);
+  out.meta = { ...(out.meta ?? {}), sectionOrder: tree.sections.map((s) => s.key) };
+
+  // group tree items by source array, in tree order, rebuilding each entry
+  const bySource = {};
+  for (const s of tree.sections) {
+    if (!s.list) continue;
+    for (const it of s.items) {
+      const orig = baseDoc[it.source]?.[it.index];
+      if (!orig) continue;
+      const entry = jsonpatch.deepClone(orig);
+      if (s.editable) entry.highlights = it.bullets.filter((b) => !b.hidden).map((b) => b.text);
+      (bySource[it.source] ??= []).push(entry);
+    }
+  }
+  for (const [source, entries] of Object.entries(bySource)) out[source] = entries;
+  return out;
+}
+
+export { SECTION_KEYS };
