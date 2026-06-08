@@ -62,8 +62,24 @@ services:
       db:
         condition: service_healthy
 
-  # Phase 1 stub: serves the built resume site (incl. /applications/*
-  # overlays baked into the build). Replaced by the review app in Phase 3.
+  # Review API + UI (serves /api/*, the review SPA, and the resume renderer
+  # at /site/). Serves PII — INTERNAL ONLY until the NPM access list is on
+  # (P3.7). At that point: add the `nginx` network here and point an
+  # access-listed NPM proxy host at api:8080.
+  api:
+    build:
+      context: ..
+      dockerfile: services/api/Dockerfile
+    restart: unless-stopped
+    networks: [internal]
+    environment:
+      DATABASE_URL: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
+    depends_on:
+      db:
+        condition: service_healthy
+
+  # Phase 1 stub: public resume at jobs.churong.cc (the renderer is also
+  # served by `api` at /site/; this stub stays until P3.7 repoints NPM).
   review:
     image: nginx:alpine
     container_name: review
