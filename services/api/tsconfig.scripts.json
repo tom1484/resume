@@ -1,0 +1,17 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    // The migrate-v1-to-v2 one-shot is run via Node's native TS type-stripping
+    // (like scripts/migrate/run-resume-seed.ts at the root), NOT tsc-compiled —
+    // so it imports the frozen root reshapers with `.ts` extensions. This config
+    // only typechecks it. `module: nodenext` + allowImportingTsExtensions lets
+    // tsc resolve the `.ts` specifiers; verbatimModuleSyntax off avoids the
+    // CJS/ESM misclassification of the dependency-light root `.ts` files (root
+    // has no "type":"module"; Node strip treats them as ESM at runtime).
+    "noEmit": true,
+    "allowImportingTsExtensions": true,
+    "verbatimModuleSyntax": false,
+    "types": ["node"]
+  },
+  "include": ["scripts/**/*.ts"]
+}
