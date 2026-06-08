@@ -76,3 +76,14 @@ approve flips status, artifacts (PDF) ready for the apply agent.
 | P3.5 | Pipeline cycle: scored ≥ gate auto-tailors → verifies → in_review; Telegram links each to its review page | live (temp gate 0.5): 2 jobs new→scored→tailored→in_review, verify dropped over-reach, notify fired with links. NOTE: real 0.65 gate currently tailors nothing (top score 0.63) until calibration | [x] |
 | P3.6 | Answers bank: seed (migration 003: F-1/CPT, citizenship, availability + TODO placeholders) + `/answers` editor in review UI; `GET /api/answers` for the apply agent | seeded 6 answers; PUT edit round-trips live; UI renders 6 editable fields | [x] |
 | P3.7 | Review app live behind NPM access list at `https://jobs.churong.cc` (jobs-api:8080); Cloudflare SSL→Full fixed the redirect loop | ✓ auth prompt → review inbox loads; checkpoint met | [x] |
+
+## Review UI enhancements (post-Phase-3)
+
+| # | Task | Verification | Status |
+|---|---|---|---|
+| R1 | Overlay model: per-section `exclude` (hide items) + `order` (reorder), by title | renderer applyFilter + schema; 7 tests | [x] |
+| R2 | `editorModel.js`: overlay ⇄ section/item/bullet tree (with paths); bullet edits = whole-array replace | round-trip tests (hide item, edit/hide bullet, reorder) | [x] |
+| R3 | API: PUT /overlay validates schema + patch dry-run (data dir mounted); GET /api/resume | invalid (no personalInfo / bad path) → 400 live | [x] |
+| R4 | Structured editor + JSON tab in review Detail (toggle/reorder/inline-edit, live re-render) | builds; 66 tests pass | [x] |
+| R5 | Deploy + live verify | E2E on jobs.churong.cc: edit bullet → save → persists & re-renders | [x] |
+| R6 | LLM tailoring chat (proposes overlay ops, accept/reject, reuses verify) | — | deferred (by decision) |
