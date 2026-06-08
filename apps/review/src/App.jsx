@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { approve, getAnswers, getJob, label, listJobs, reject, saveAnswer } from './api.js';
+import { addAnswer, approve, deleteAnswer, getAnswers, getJob, label, listJobs, reject, saveAnswer } from './api.js';
 import { EditorModal } from './Editor.jsx';
 
 // Hash routing: #/ (inbox) | #/app/<id> (detail). No router dep.
@@ -26,20 +26,42 @@ export function App() {
 function Answers() {
   const [rows, setRows] = useState(null);
   const [saved, setSaved] = useState(null);
-  useEffect(() => { getAnswers().then(setRows).catch(() => setRows([])); }, []);
+  const [nq, setNq] = useState('');
+  const [na, setNa] = useState('');
+  const [adding, setAdding] = useState(false);
+  const reload = () => getAnswers().then(setRows).catch(() => setRows([]));
+  useEffect(() => { reload(); }, []);
+
   const save = async (r) => { await saveAnswer(r.key, r.question, r.answer); setSaved(r.key); setTimeout(() => setSaved(null), 1500); };
+  const add = async () => {
+    if (!nq.trim()) return;
+    setAdding(true);
+    try { await addAnswer(nq.trim(), na.trim()); setNq(''); setNa(''); await reload(); }
+    finally { setAdding(false); }
+  };
+  const del = async (r) => { if (confirm(`Delete "${r.question}"?`)) { await deleteAnswer(r.key); await reload(); } };
+
   if (!rows) return <Shell><p className="muted">Loading…</p></Shell>;
   return (
     <div className="inbox">
       <div className="detailhead"><a href="#/" className="back">← inbox</a><h2>Answers bank</h2></div>
-      <p className="muted">Templated answers the apply agent uses for application questions. The pipeline lightly tailors these per job; edits here are the source of truth.</p>
+      <p className="muted">Templated answers the apply agent uses for application questions. Add your own question/answer pairs below; edits here are the source of truth.</p>
       {rows.map((r, i) => (
         <div key={r.key} className="answer">
           <label>{r.question} <span className="muted">({r.key})</span></label>
           <textarea value={r.answer} onChange={(e) => setRows(rows.map((x, j) => (j === i ? { ...x, answer: e.target.value } : x)))} />
-          <button onClick={() => save(r)}>{saved === r.key ? 'saved ✓' : 'save'}</button>
+          <div className="answerbtns">
+            <button onClick={() => save(r)}>{saved === r.key ? 'saved ✓' : 'save'}</button>
+            <button className="del" onClick={() => del(r)}>delete</button>
+          </div>
         </div>
       ))}
+      <div className="answer add">
+        <label>Add a custom question</label>
+        <input className="qinput" placeholder="Question (e.g. Why are you interested in robotics?)" value={nq} onChange={(e) => setNq(e.target.value)} />
+        <textarea placeholder="Answer" value={na} onChange={(e) => setNa(e.target.value)} />
+        <button onClick={add} disabled={adding || !nq.trim()}>{adding ? 'adding…' : 'Add'}</button>
+      </div>
     </div>
   );
 }

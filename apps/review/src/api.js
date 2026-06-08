@@ -27,3 +27,9 @@ export const saveAnswer = (key, question, answer) =>
   fetch(`/api/answers/${encodeURIComponent(key)}`, {
     method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ question, answer }),
   }).then(json);
+export const addAnswer = (question, answer) =>
+  fetch('/api/answers', {
+    method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ question, answer }),
+  }).then(json);
+export const deleteAnswer = (key) =>
+  fetch(`/api/answers/${encodeURIComponent(key)}`, { method: 'DELETE' }).then(json);

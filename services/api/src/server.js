@@ -167,6 +167,26 @@ app.put('/api/answers/:key', async (req) => {
   return { ok: true };
 });
 
+// Add a custom Q&A. Key is auto-derived from the question (slug, made
+// unique) so the reviewer only types a question + answer.
+app.post('/api/answers', async (req, reply) => {
+  const question = (req.body?.question ?? '').trim();
+  const answer = (req.body?.answer ?? '').trim();
+  if (!question) return reply.code(400).send({ error: 'question is required' });
+  const base = question.toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_+|_+$/g, '').slice(0, 40) || 'custom';
+  const { rows } = await pool.query('SELECT key FROM answers');
+  const taken = new Set(rows.map((r) => r.key));
+  let key = base;
+  for (let i = 2; taken.has(key); i++) key = `${base}_${i}`;
+  await pool.query('INSERT INTO answers (key, question, answer) VALUES ($1,$2,$3)', [key, question, answer]);
+  return { ok: true, key };
+});
+
+app.delete('/api/answers/:key', async (req) => {
+  await pool.query('DELETE FROM answers WHERE key=$1', [req.params.key]);
+  return { ok: true };
+});
+
 app.get('/healthz', async () => 'ok');
 
 // --- static: résumé renderer at /resume (canonical editor + the embedded

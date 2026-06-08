@@ -88,3 +88,8 @@ button:disabled { opacity: 0.4; cursor: default; }
 .modal-head strong { flex: 1; }
 .modal-body { overflow: auto; }
 .modal-body h4 { font-size: 13px; margin: 14px 0 4px; }
+
+.answerbtns { display: flex; gap: 8px; margin-top: 6px; }
+.answer .del { color: #c5221f; border-color: #f0b4b0; }
+.answer.add { border-style: dashed; }
+.answer .qinput { width: 100%; font: inherit; padding: 8px; border: 1px solid #d0d3d9; border-radius: 6px; margin-bottom: 6px; }
