@@ -1,6 +1,7 @@
 -- Uniform job record (PROPOSALS.md §3.2) + per-stage event log (§5).
--- status lifecycle: new -> parsed -> scored -> tailored -> in_review
---   -> approved -> applying -> applied -> responded | rejected | skipped
+-- status lifecycle (actual values used by the code): new -> parsing ->
+--   scored -> in_review -> approved -> applying -> applied
+--   -> responded | rejected | skipped | error
 -- (text, not enum: the lifecycle grows with later phases)
 
 CREATE TABLE IF NOT EXISTS jobs (

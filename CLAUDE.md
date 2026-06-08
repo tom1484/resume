@@ -2,6 +2,8 @@
 
 Personal resume site (React + Vite + Tailwind) being extended into a
 self-hosted job application pipeline. Plan of record: `PROPOSALS.md`.
+**Deep agent reference: `docs/agents/` (start at `docs/agents/README.md`) —
+exhaustive per-subsystem maps; read it before non-trivial changes.**
 **Current phase: 3 done + review-UI overhaul done (intuitive editors,
 DB-backed editable résumé). Live behind NPM auth at jobs.churong.cc.
 Phase 4 (local apply agent) is next.**
