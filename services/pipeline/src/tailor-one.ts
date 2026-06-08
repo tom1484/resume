@@ -1,10 +1,10 @@
 // Manual: tailor + verify a single job by id (or the top scored job).
-// Usage: node src/tailor-one.js [jobId]
+// Usage: node dist/src/tailor-one.js [jobId]   (no migration — API owns it)
 import { pool, query } from './db.js';
-import { migrate } from './migrate.js';
+import { getConfig } from './config.js';
 import { tailorJob } from './tailorJob.js';
+import type { Job } from './types.js';
 
-await migrate();
 const id = process.argv[2];
 const { rows } = id
   ? await query('SELECT * FROM jobs WHERE id=$1', [id])
@@ -14,6 +14,10 @@ if (!rows.length) {
   await pool.end();
   process.exit(1);
 }
-const result = await tailorJob(rows[0]);
-console.log(`tailored ${rows[0].id}: ${result.overlay.patches.length} patches kept, ${result.dropped} dropped (${result.model})`);
+const cfg = await getConfig('llm');
+const job = rows[0] as Job;
+const result = await tailorJob(job, cfg);
+console.log(
+  `tailored ${job.id}: ${result.overlay.patches.length} patches kept, ${result.dropped} dropped (${result.model})`
+);
 await pool.end();

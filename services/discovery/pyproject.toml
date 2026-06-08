@@ -5,8 +5,9 @@ requires-python = ">=3.12"
 dependencies = [
     "httpx>=0.28.1",
     "psycopg[binary]>=3.3.4",
+    "pydantic>=2.0",       # §10 typed DiscoveredJob validation before upsert
     "python-jobspy>=1.1.82",
-    "pyyaml>=6.0.3",
+    "tzdata>=2024.1",      # zoneinfo data for the scheduler tz in the slim container
 ]
 
 [dependency-groups]

@@ -1,5 +1,0 @@
-# Nightly discovery (server runs Asia/Taipei; 09:00 local = US afternoon/evening,
-# catching the day's fresh postings). Boards + JobSpy (Indeed default).
-# NOTE: supercronic execs directly (no shell) — keep commands shell-free;
-# cwd is the container WORKDIR (/app).
-0 9 * * * uv run --no-sync python -m discovery.main --all

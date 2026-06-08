@@ -1,38 +1,36 @@
-"""Discovery entry point: fetch boards (+ optionally JobSpy), normalize,
-upsert into Postgres, log a discover event.
+"""Discovery entry point: fetch boards (+ optionally JobSpy), normalize, validate
+against the DiscoveredJob contract, upsert into Postgres, log a discover event.
 
-Usage:
+§10: config (sites, searches, companies, excludes, title-include) comes from the
+DB-backed DiscoveryConfig (config table), NOT the YAMLs — those are migration seed
+only, owned by the API agent. We just read config.
+
+Usage (one-shot; the scheduler invokes run() in-process):
   python -m discovery.main --boards          # board APIs only
   python -m discovery.main --jobspy          # JobSpy searches only
-  python -m discovery.main --all             # both (nightly cron default)
+  python -m discovery.main --all             # both
 """
 
 import argparse
-import os
 import sys
 import time
-from pathlib import Path
-
-import yaml
+from typing import Any, Literal
 
 from discovery import store
 from discovery.boards import FETCHERS
-from discovery.normalize import PROVIDER_NORMALIZERS, finalize, is_internship
+from discovery.config import get_config
+from discovery.normalize import PROVIDER_NORMALIZERS, finalize, is_internship, norm
 
-CONFIG_DIR = Path(os.environ.get("CONFIG_DIR", Path(__file__).parents[2] / "config"))
-
-
-def load_config():
-    searches = yaml.safe_load((CONFIG_DIR / "searches.yml").read_text())
-    companies = yaml.safe_load((CONFIG_DIR / "companies.yml").read_text())
-    return searches, companies
+Mode = Literal["boards", "jobspy", "all"]
 
 
-def run_boards(searches_cfg: dict, companies_cfg: dict) -> list[dict]:
-    exclude = searches_cfg["exclude"]
-    include_terms = companies_cfg["title_include"]
+def run_boards(cfg: dict[str, Any]) -> list[dict]:
+    exclude = cfg["exclude"]
+    include_terms = cfg["titleInclude"]
     records = []
-    for entry in companies_cfg["companies"]:
+    for entry in cfg["companies"]:
+        if not entry.get("enabled", True):
+            continue
         board = entry.get("board")
         if not board:
             continue
@@ -62,15 +60,72 @@ def run_boards(searches_cfg: dict, companies_cfg: dict) -> list[dict]:
     return records
 
 
-def run_jobspy(searches_cfg: dict, companies_cfg: dict) -> list[dict]:
+def run_jobspy(cfg: dict[str, Any]) -> list[dict]:
     from discovery.jobspy_search import run_searches  # heavy import, lazy
-    from discovery.normalize import norm
 
-    # JobSpy results matching a target company inherit its flags
-    searches_cfg["_flags_by_company"] = {
-        norm(c["name"]): c.get("flags", []) for c in companies_cfg["companies"]
+    # JobSpy results matching a target company inherit its flags.
+    flags_by_company = {
+        norm(c["name"]): c.get("flags", []) for c in cfg["companies"]
     }
-    return run_searches(searches_cfg)
+    return run_searches(cfg, flags_by_company)
+
+
+def run(mode: Mode, *, conn=None, dry_run: bool = False) -> int:
+    """Run a discovery pass. If `conn` is provided (the scheduler's long-lived
+    connection), config is read from it and writes go through it; otherwise a
+    fresh connection is opened for the write. Returns inserted count (or 0)."""
+    do_boards = mode in ("boards", "all")
+    do_jobspy = mode in ("jobspy", "all")
+
+    owns_conn = conn is None
+    if conn is None and not dry_run:
+        conn = store.connect()
+    # config read is best-effort; falls back to schema defaults without a conn.
+    cfg = get_config(conn, "discovery") if conn is not None else get_config(_NoConn(), "discovery")
+
+    started = time.monotonic()
+    records: list[dict] = []
+    if do_boards:
+        print("== boards ==")
+        records += run_boards(cfg)
+    if do_jobspy:
+        print("== jobspy ==")
+        records += run_jobspy(cfg)
+
+    fresh = sum(1 for r in records if r["status"] == "new")
+    skipped = len(records) - fresh
+    print(f"normalized: {len(records)} ({fresh} new, {skipped} skipped by rules)")
+
+    if dry_run:
+        return 0
+
+    duration_ms = int((time.monotonic() - started) * 1000)
+    inserted = store.upsert(conn, records)
+    store.log_event(
+        conn,
+        "discover",
+        ok=True,
+        duration_ms=duration_ms,
+        detail={
+            "found": len(records),
+            "inserted": inserted,
+            "skipped_by_rules": skipped,
+            "boards": do_boards,
+            "jobspy": do_jobspy,
+        },
+    )
+    if owns_conn:
+        conn.close()
+    print(f"inserted: {inserted} (deduped {len(records) - inserted})")
+    return inserted
+
+
+class _NoConn:
+    """Sentinel so get_config(self) takes its except-path → schema defaults when
+    discovery runs with no DB (--dry-run without DATABASE_URL)."""
+
+    def cursor(self):
+        raise RuntimeError("no DB connection")
 
 
 def main() -> int:
@@ -84,41 +139,8 @@ def main() -> int:
     do_jobspy = args.jobspy or args.all
     if not (do_boards or do_jobspy):
         parser.error("pick --boards, --jobspy, or --all")
-
-    searches_cfg, companies_cfg = load_config()
-    started = time.monotonic()
-    records = []
-    if do_boards:
-        print("== boards ==")
-        records += run_boards(searches_cfg, companies_cfg)
-    if do_jobspy:
-        print("== jobspy ==")
-        records += run_jobspy(searches_cfg, companies_cfg)
-
-    fresh = sum(1 for r in records if r["status"] == "new")
-    skipped = len(records) - fresh
-    print(f"normalized: {len(records)} ({fresh} new, {skipped} skipped by rules)")
-
-    if args.dry_run:
-        return 0
-
-    duration_ms = int((time.monotonic() - started) * 1000)
-    with store.connect() as conn:
-        inserted = store.upsert(conn, records)
-        store.log_event(
-            conn,
-            "discover",
-            ok=True,
-            duration_ms=duration_ms,
-            detail={
-                "found": len(records),
-                "inserted": inserted,
-                "skipped_by_rules": skipped,
-                "boards": do_boards,
-                "jobspy": do_jobspy,
-            },
-        )
-    print(f"inserted: {inserted} (deduped {len(records) - inserted})")
+    mode: Mode = "all" if args.all else ("boards" if do_boards else "jobspy")
+    run(mode, dry_run=args.dry_run)
     return 0
 
 

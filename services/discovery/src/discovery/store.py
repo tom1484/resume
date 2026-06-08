@@ -1,25 +1,17 @@
-"""Postgres upsert for normalized job records + run-level event logging."""
+"""Postgres upsert for normalized job records + run-level event logging.
+
+§10 typed write: each record is validated against the DiscoveredJob contract
+(jobrow.py, mirror of @resume/contracts) BEFORE the SQL — a record that fails
+validation is logged and skipped, never silently dict-sliced (the v1 drop bug).
+"""
 
 import json
 import os
+import sys
 
 import psycopg
 
-COLUMNS = [
-    "id",
-    "source",
-    "company",
-    "title",
-    "location",
-    "remote",
-    "url",
-    "posted_at",
-    "jd_text",
-    "status",
-    "skip_reason",
-    "company_flags",
-    "dedupe_key",
-]
+from discovery.jobrow import COLUMNS, ValidationError, validate_record
 
 INSERT = f"""
 INSERT INTO jobs ({", ".join(COLUMNS)})
@@ -33,11 +25,20 @@ def connect():
 
 
 def upsert(conn, records: list[dict]) -> int:
-    """Insert records, skipping any dedupe-key or id conflict. Returns inserted count."""
+    """Validate + insert records, skipping dedupe-key/id conflicts. Returns the
+    inserted count. Records failing DiscoveredJob validation are logged+skipped
+    (anti-drop §10: never silently lose a record to a column-slice)."""
     inserted = 0
     with conn.cursor() as cur:
         for record in records:
-            row = {c: record.get(c) for c in COLUMNS}
+            try:
+                row = validate_record(record)
+            except ValidationError as err:
+                print(
+                    f"  ! dropping invalid record {record.get('id', '?')}: {err.errors()}",
+                    file=sys.stderr,
+                )
+                continue
             cur.execute(INSERT, row)
             inserted += cur.rowcount
     conn.commit()

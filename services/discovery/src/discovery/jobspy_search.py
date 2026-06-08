@@ -2,24 +2,22 @@
 
 Conservative by design (report §6: home-IP bans are the #1 risk):
 - Indeed only by default (no rate limit, JDs included in results);
-  LinkedIn requires JOBSPY_SITES=indeed,linkedin (opt-in).
+  LinkedIn is opt-in via DiscoveryConfig.sites = [indeed, linkedin].
 - One call per search term against a country-wide query, NOT per-location
   fan-out: 4 calls/night instead of 56.
 - Jittered 3-10s pauses between calls.
+
+§10: sites, jobspy defaults (incl. location), title-include and exclude lists all
+come from the DB-backed DiscoveryConfig (passed in), not env / hard-coded values.
+Dead v1 config (searches[].keywords, locations, defaults.sites) is gone.
 """
 
-import os
 import random
 import sys
 import time
+from typing import Any
 
 from discovery.normalize import dedupe_key, finalize, is_internship, norm
-
-INCLUDE_TERMS = ["intern", "internship", "co-op", "coop"]
-
-
-def _sites() -> list[str]:
-    return os.environ.get("JOBSPY_SITES", "indeed").split(",")
 
 
 def _clean(value) -> str | None:
@@ -45,24 +43,29 @@ def _row_to_record(row: dict) -> dict:
     }
 
 
-def run_searches(searches_cfg: dict) -> list[dict]:
+def run_searches(
+    discovery_cfg: dict[str, Any], flags_by_company: dict[str, list[str]]
+) -> list[dict]:
+    """Run each enabled search in the DiscoveryConfig and return finalized records."""
     from jobspy import scrape_jobs  # heavy import (pandas), keep lazy
 
-    defaults = searches_cfg["defaults"]
-    exclude = searches_cfg["exclude"]
-    flags_by_company = searches_cfg.get("_flags_by_company", {})
+    sites = discovery_cfg["sites"]
+    defaults = discovery_cfg["jobspyDefaults"]
+    include_terms = discovery_cfg["titleInclude"]
+    exclude = discovery_cfg["exclude"]
+    searches = [s for s in discovery_cfg["searches"] if s.get("enabled", True)]
     records, seen_keys = [], set()
 
-    for search in searches_cfg["searches"]:
+    for search in searches:
         try:
             df = scrape_jobs(
-                site_name=_sites(),
+                site_name=sites,
                 search_term=search["term"],
-                location="United States",
-                results_wanted=defaults.get("results_wanted", 25),
-                hours_old=defaults.get("hours_old", 72),
-                job_type=defaults.get("job_type", "internship"),
-                country_indeed=defaults.get("country", "USA"),
+                location=defaults["location"],
+                results_wanted=defaults["resultsWanted"],
+                hours_old=defaults["hoursOld"],
+                job_type=defaults["jobType"],
+                country_indeed=defaults["country"],
                 description_format="markdown",
                 verbose=0,
             )
@@ -73,7 +76,7 @@ def run_searches(searches_cfg: dict) -> list[dict]:
         kept = 0
         for row in df.to_dict("records"):
             record = _row_to_record(row)
-            if not is_internship(record["title"], INCLUDE_TERMS):
+            if not is_internship(record["title"], include_terms):
                 continue
             key = dedupe_key(record["company"], record["title"], record["location"])
             if key in seen_keys:  # cross-search in-batch dedupe

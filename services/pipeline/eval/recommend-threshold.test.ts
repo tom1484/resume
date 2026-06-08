@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { evaluateThresholds, parseCsv } from './recommend-threshold.js';
+import { evaluateThresholds, parseCsv, type Sample } from './recommend-threshold.js';
 
 describe('parseCsv', () => {
   it('handles quoted fields with commas and escaped quotes', () => {
@@ -14,7 +14,7 @@ describe('parseCsv', () => {
 
 describe('evaluateThresholds', () => {
   it('finds the separating threshold on separable data', () => {
-    const samples = [
+    const samples: Sample[] = [
       ...Array.from({ length: 10 }, (_, i) => ({ score: 0.7 + i * 0.01, label: 'good' })),
       ...Array.from({ length: 10 }, (_, i) => ({ score: 0.3 + i * 0.01, label: 'bad' })),
     ];
