@@ -147,7 +147,6 @@ function Detail({ id }) {
 function ResumePane({ id, job, onSaved }) {
   const [tab, setTab] = useState('preview');
   const [zoom, setZoom] = useState(() => Number(localStorage.getItem('resumeZoom')) || 1);
-  const [height, setHeight] = useState(() => Number(localStorage.getItem('resumeHeight')) || 640);
   const [version, setVersion] = useState(0); // cache-bust the iframe after a save
   const [draft, setDraft] = useState('');
   const [error, setError] = useState(null);
@@ -159,13 +158,20 @@ function ResumePane({ id, job, onSaved }) {
   useEffect(() => {
     if (tab === 'json') setDraft(JSON.stringify(job.overlay ?? { jobId: id, profile: { sections: [] } }, null, 2));
   }, [tab, job.overlay, id]);
-  // persist the drag-resized height
+  // Box size lives entirely in the DOM (CSS `resize: both`) + localStorage —
+  // NOT React state — so re-renders (zoom, save) never reset the user's drag.
+  // Restore the saved size and persist future drags whenever the box mounts.
   useEffect(() => {
+    if (tab !== 'preview') return undefined;
     const el = boxRef.current;
     if (!el) return undefined;
+    const saved = JSON.parse(localStorage.getItem('resumeBox') || 'null');
+    if (saved?.w) el.style.width = saved.w;
+    if (saved?.h) el.style.height = saved.h;
     const ro = new ResizeObserver(() => {
-      const h = el.clientHeight;
-      if (h) { setHeight(h); localStorage.setItem('resumeHeight', String(h)); }
+      if (el.style.width || el.style.height) {
+        localStorage.setItem('resumeBox', JSON.stringify({ w: el.style.width, h: el.style.height }));
+      }
     });
     ro.observe(el);
     return () => ro.disconnect();
@@ -205,7 +211,7 @@ function ResumePane({ id, job, onSaved }) {
       </div>
 
       {tab === 'preview' ? (
-        <div className="resumebox" ref={boxRef} style={{ height }}>
+        <div className="resumebox" ref={boxRef}>
           <iframe
             key={version}
             className="resume"
@@ -216,10 +222,11 @@ function ResumePane({ id, job, onSaved }) {
         </div>
       ) : (
         <div className="jsoneditor">
-          <p className="muted">Edit the overlay: reorder <code>profile.sections</code>, add a
-            per-section <code>filters.&lt;section&gt;.order</code> (item titles) to reorder/select
-            items, or add <code>replace</code> patches to rephrase bullets. Saved edits are
-            yours (human-authored) and skip the AI fabrication check.</p>
+          <p className="muted">Edit the overlay: reorder <code>profile.sections</code>; per section,
+            <code>filters.&lt;section&gt;.order</code> (titles) reorders/selects items,
+            <code>filters.&lt;section&gt;.exclude</code> (titles) drops specific items (e.g. remove
+            one project); <code>replace</code> patches rephrase bullets. Saved edits are yours
+            (human-authored) and skip the AI fabrication check.</p>
           <textarea className="json" value={draft} spellCheck={false} onChange={(e) => setDraft(e.target.value)} />
           {error && <pre className="jsonerror">{error}</pre>}
           <div className="jsonactions">

@@ -66,6 +66,19 @@ describe('applyOverlay', () => {
     expect(profile.data.projects.map((p) => p.title)).toEqual(reversed);
   });
 
+  it('exclude drops named items, keeping the rest in natural order', () => {
+    const full = applyOverlay({ jobId: 'f', profile: { sections: ['projects'] } });
+    const titles = full.data.projects.map((p) => p.title);
+    const drop = titles[1];
+    const profile = applyOverlay({
+      jobId: 't',
+      profile: { sections: ['projects'], filters: { projects: { exclude: [drop] } } },
+    });
+    const after = profile.data.projects.map((p) => p.title);
+    expect(after).not.toContain(drop);
+    expect(after).toEqual(titles.filter((t) => t !== drop));
+  });
+
   it('order ignores unknown titles and wins over tagsAnyOf/limit', () => {
     const full = applyOverlay({ jobId: 'f', profile: { sections: ['projects'] } });
     const known = full.data.projects[0].title;

@@ -6,24 +6,31 @@ import { buildViewModels } from './adapter';
 const viewModels = buildViewModels(resume);
 const profileDefs = resume.meta['x-profiles'];
 
-// Apply a declarative filter to a section's items.
-// `order` (explicit title list) takes precedence: it selects exactly the
-// listed items, in that order, ignoring tagsAnyOf/titleIn/limit. Items are
-// identified by `title`; an order entry with no matching item is skipped.
+// Apply a declarative filter to a section's items. Items are identified by
+// `title`. Precedence:
+//   1. `order` (explicit title list) selects + orders exactly those items,
+//      ignoring tagsAnyOf/titleIn/limit; otherwise tagsAnyOf → titleIn →
+//      limit narrow the natural-order list.
+//   2. `exclude` then drops listed titles from whatever remains.
 function applyFilter(items, filter) {
+  let result;
   if (filter.order) {
     const byTitle = new Map(items.map((item) => [item.title, item]));
-    return filter.order.map((title) => byTitle.get(title)).filter(Boolean);
+    result = filter.order.map((title) => byTitle.get(title)).filter(Boolean);
+  } else {
+    result = items;
+    if (filter.tagsAnyOf) {
+      result = result.filter((item) => item.tags?.some((tag) => filter.tagsAnyOf.includes(tag)));
+    }
+    if (filter.titleIn) {
+      result = result.filter((item) => filter.titleIn.includes(item.title));
+    }
+    if (filter.limit != null) {
+      result = result.slice(0, filter.limit);
+    }
   }
-  let result = items;
-  if (filter.tagsAnyOf) {
-    result = result.filter((item) => item.tags?.some((tag) => filter.tagsAnyOf.includes(tag)));
-  }
-  if (filter.titleIn) {
-    result = result.filter((item) => filter.titleIn.includes(item.title));
-  }
-  if (filter.limit != null) {
-    result = result.slice(0, filter.limit);
+  if (filter.exclude) {
+    result = result.filter((item) => !filter.exclude.includes(item.title));
   }
   return result;
 }
