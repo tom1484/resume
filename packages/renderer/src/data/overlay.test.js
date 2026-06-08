@@ -54,6 +54,31 @@ describe('applyOverlay', () => {
     expect(Object.keys(profile.data)).toEqual(['skills', 'education']);
   });
 
+  it('order selects and reorders items by title, overriding other filters', () => {
+    const full = applyOverlay({ jobId: 'f', profile: { sections: ['projects'] } });
+    const titles = full.data.projects.map((p) => p.title);
+    expect(titles.length).toBeGreaterThanOrEqual(2);
+    const reversed = [titles[1], titles[0]]; // pick 2, swap order
+    const profile = applyOverlay({
+      jobId: 't',
+      profile: { sections: ['projects'], filters: { projects: { order: reversed } } },
+    });
+    expect(profile.data.projects.map((p) => p.title)).toEqual(reversed);
+  });
+
+  it('order ignores unknown titles and wins over tagsAnyOf/limit', () => {
+    const full = applyOverlay({ jobId: 'f', profile: { sections: ['projects'] } });
+    const known = full.data.projects[0].title;
+    const profile = applyOverlay({
+      jobId: 't',
+      profile: {
+        sections: ['projects'],
+        filters: { projects: { order: [known, 'NO SUCH PROJECT'], tagsAnyOf: ['nope'], limit: 0 } },
+      },
+    });
+    expect(profile.data.projects.map((p) => p.title)).toEqual([known]);
+  });
+
   it('throws on a patch that does not apply cleanly', () => {
     expect(() =>
       applyOverlay({

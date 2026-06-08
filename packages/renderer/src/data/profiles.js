@@ -6,8 +6,15 @@ import { buildViewModels } from './adapter';
 const viewModels = buildViewModels(resume);
 const profileDefs = resume.meta['x-profiles'];
 
-// Apply a declarative filter to a section's items
+// Apply a declarative filter to a section's items.
+// `order` (explicit title list) takes precedence: it selects exactly the
+// listed items, in that order, ignoring tagsAnyOf/titleIn/limit. Items are
+// identified by `title`; an order entry with no matching item is skipped.
 function applyFilter(items, filter) {
+  if (filter.order) {
+    const byTitle = new Map(items.map((item) => [item.title, item]));
+    return filter.order.map((title) => byTitle.get(title)).filter(Boolean);
+  }
   let result = items;
   if (filter.tagsAnyOf) {
     result = result.filter((item) => item.tags?.some((tag) => filter.tagsAnyOf.includes(tag)));

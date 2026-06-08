@@ -44,7 +44,12 @@
             "properties": {
               "tagsAnyOf": { "type": "array", "items": { "type": "string" } },
               "titleIn": { "type": "array", "items": { "type": "string" } },
-              "limit": { "type": "integer", "minimum": 0 }
+              "limit": { "type": "integer", "minimum": 0 },
+              "order": {
+                "type": "array",
+                "items": { "type": "string" },
+                "description": "Explicit item selection + ordering by item title. When present, selects exactly these items in this order and overrides tagsAnyOf/titleIn/limit for the section."
+              }
             }
           }
         }

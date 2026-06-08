@@ -40,7 +40,18 @@ button:disabled { opacity: 0.4; cursor: default; }
 .pane { background: #fff; border: 1px solid #e6e8eb; border-radius: 8px; padding: 14px; }
 .pane h3 { font-size: 14px; margin: 14px 0 6px; }
 .pane h3:first-child { margin-top: 0; }
-.resume { width: 100%; height: 80vh; border: 1px solid #e6e8eb; border-radius: 6px; }
+.panehead { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 8px; }
+.zoom { display: flex; align-items: center; gap: 4px; font-size: 13px; }
+.zoom button { padding: 2px 8px; }
+.zoom span { min-width: 38px; text-align: center; font-variant-numeric: tabular-nums; }
+.resumebox { width: 100%; height: 640px; min-height: 240px; overflow: auto; border: 1px solid #e6e8eb;
+  border-radius: 6px; resize: vertical; background: #fff; }
+.resume { display: block; border: 0; }
+.jsoneditor .muted { font-size: 12px; margin: 0 0 8px; }
+.json { width: 100%; height: 60vh; font: 12px/1.5 ui-monospace, SFMono-Regular, Menlo, monospace;
+  padding: 10px; border: 1px solid #d0d3d9; border-radius: 6px; resize: vertical; white-space: pre; }
+.jsonerror { color: #c5221f; background: #fce8e6; border-radius: 6px; padding: 8px 10px; white-space: pre-wrap; font-size: 12px; }
+.jsonactions { display: flex; gap: 8px; margin-top: 8px; }
 .breakdown { display: flex; gap: 16px; list-style: none; padding: 0; margin: 0; }
 .rationale { font-size: 14px; }
 .flags { color: #c5221f; font-size: 14px; }

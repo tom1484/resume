@@ -1,15 +1,42 @@
 // Review API + static host for the review SPA and the resume renderer.
 // Joins the nginx network (no published ports); NPM proxies jobs.churong.cc
 // here and enforces the access list. Everything behind this is PII.
+import { readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import Fastify from 'fastify';
 import fastifyStatic from '@fastify/static';
 import pg from 'pg';
+import Ajv from 'ajv';
+import jsonpatch from 'fast-json-patch';
 
 const pool = new pg.Pool({ connectionString: process.env.DATABASE_URL });
 const root = dirname(fileURLToPath(import.meta.url));
 const app = Fastify({ logger: true });
+
+// Canonical data for overlay validation (mounted read-only at DATA_DIR).
+const dataDir = process.env.DATA_DIR ?? '/data';
+const resume = JSON.parse(readFileSync(join(dataDir, 'resume.json'), 'utf8'));
+const overlaySchema = JSON.parse(readFileSync(join(dataDir, 'overlay.schema.json'), 'utf8'));
+const validateOverlaySchema = new Ajv({ allErrors: true }).compile(overlaySchema);
+
+// Same gate as the tailor stage: schema-valid + patches apply cleanly to
+// resume.json + must include personalInfo. Returns a list of problems.
+function overlayProblems(overlay) {
+  const problems = [];
+  if (!validateOverlaySchema(overlay)) {
+    problems.push(...validateOverlaySchema.errors.map((e) => `${e.instancePath || '/'} ${e.message}`));
+    return problems; // shape is wrong; deeper checks would be noise
+  }
+  const patchError = jsonpatch.validate(overlay.patches ?? [], resume);
+  if (patchError) {
+    problems.push(`patch #${patchError.index} ${patchError.name} at ${patchError.operation?.path}`);
+  }
+  if (!overlay.profile.sections.includes('personalInfo')) {
+    problems.push('profile.sections must include personalInfo');
+  }
+  return problems;
+}
 
 const JOB_FIELDS = `id, source, company, title, location, remote, url, posted_at,
   score, score_breakdown, status, company_flags, label, reject_reason,
@@ -67,10 +94,21 @@ app.post('/api/jobs/:id/label', async (req, reply) => {
 
 app.put('/api/jobs/:id/overlay', async (req, reply) => {
   const overlay = req.body;
-  if (!overlay?.jobId || !overlay?.profile) return reply.code(400).send({ error: 'malformed overlay' });
+  if (overlay?.jobId !== req.params.id) {
+    return reply.code(400).send({ problems: [`jobId must equal "${req.params.id}"`] });
+  }
+  const problems = overlayProblems(overlay);
+  if (problems.length) return reply.code(400).send({ problems });
+
+  // Manual edits are human-authored — flag so they bypass the LLM
+  // verify/drop path and never get mistaken for auto-verified output.
+  const stored = {
+    ...overlay,
+    audit: { ...(overlay.audit ?? {}), unsupported: [], humanEdited: true },
+  };
   await pool.query(
-    'UPDATE jobs SET overlay=$2, cover_letter=$3, updated_at=now() WHERE id=$1',
-    [req.params.id, JSON.stringify(overlay), overlay.coverLetter ?? null]
+    'UPDATE jobs SET overlay=$2, cover_letter=$3, audit=$4, updated_at=now() WHERE id=$1',
+    [req.params.id, JSON.stringify(stored), stored.coverLetter ?? null, JSON.stringify(stored.audit)]
   );
   return { ok: true };
 });

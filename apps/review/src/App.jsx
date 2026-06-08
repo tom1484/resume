@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { approve, getAnswers, getJob, label, listJobs, reject, saveAnswer } from './api.js';
+import { approve, getAnswers, getJob, label, listJobs, reject, saveAnswer, updateOverlay } from './api.js';
 
 // Hash routing: #/ (inbox) | #/app/<id> (detail). No router dep.
 function useHashRoute() {
@@ -113,10 +113,7 @@ function Detail({ id }) {
       </div>
 
       <div className="panes">
-        <section className="pane">
-          <h3>Tailored résumé {patches.length > 0 && <span className="muted">({patches.length} edits)</span>}</h3>
-          <iframe className="resume" title="tailored resume" src={`/site/?application=${encodeURIComponent(id)}`} />
-        </section>
+        <ResumePane id={id} job={job} onSaved={reload} />
 
         <section className="pane">
           <h3>Score {job.score?.toFixed(2)}</h3>
@@ -143,6 +140,95 @@ function Detail({ id }) {
         </section>
       </div>
     </Shell>
+  );
+}
+
+// Résumé pane: Preview (resizable + zoomable iframe) | JSON (overlay editor).
+function ResumePane({ id, job, onSaved }) {
+  const [tab, setTab] = useState('preview');
+  const [zoom, setZoom] = useState(() => Number(localStorage.getItem('resumeZoom')) || 1);
+  const [height, setHeight] = useState(() => Number(localStorage.getItem('resumeHeight')) || 640);
+  const [version, setVersion] = useState(0); // cache-bust the iframe after a save
+  const [draft, setDraft] = useState('');
+  const [error, setError] = useState(null);
+  const [saving, setSaving] = useState(false);
+  const boxRef = React.useRef(null);
+
+  useEffect(() => { localStorage.setItem('resumeZoom', String(zoom)); }, [zoom]);
+  // load the current overlay into the editor when switching to JSON
+  useEffect(() => {
+    if (tab === 'json') setDraft(JSON.stringify(job.overlay ?? { jobId: id, profile: { sections: [] } }, null, 2));
+  }, [tab, job.overlay, id]);
+  // persist the drag-resized height
+  useEffect(() => {
+    const el = boxRef.current;
+    if (!el) return undefined;
+    const ro = new ResizeObserver(() => {
+      const h = el.clientHeight;
+      if (h) { setHeight(h); localStorage.setItem('resumeHeight', String(h)); }
+    });
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, [tab]);
+
+  const save = async () => {
+    setSaving(true); setError(null);
+    try {
+      const overlay = JSON.parse(draft);
+      await updateOverlay(id, overlay);
+      setVersion((v) => v + 1);   // re-render iframe
+      await onSaved();            // refresh job (diff, cover letter)
+      setTab('preview');
+    } catch (e) {
+      setError(e instanceof SyntaxError ? `Invalid JSON: ${e.message}` : e.message);
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const z = Math.round(zoom * 100);
+  return (
+    <section className="pane">
+      <div className="panehead">
+        <div className="tabs">
+          <button className={tab === 'preview' ? 'tab active' : 'tab'} onClick={() => setTab('preview')}>Preview</button>
+          <button className={tab === 'json' ? 'tab active' : 'tab'} onClick={() => setTab('json')}>JSON</button>
+        </div>
+        {tab === 'preview' && (
+          <div className="zoom">
+            <button onClick={() => setZoom((x) => Math.max(0.4, +(x - 0.1).toFixed(2)))}>−</button>
+            <span>{z}%</span>
+            <button onClick={() => setZoom((x) => Math.min(2, +(x + 0.1).toFixed(2)))}>＋</button>
+            <button onClick={() => setZoom(1)}>reset</button>
+          </div>
+        )}
+      </div>
+
+      {tab === 'preview' ? (
+        <div className="resumebox" ref={boxRef} style={{ height }}>
+          <iframe
+            key={version}
+            className="resume"
+            title="tailored resume"
+            src={`/site/?application=${encodeURIComponent(id)}&v=${version}`}
+            style={{ transform: `scale(${zoom})`, transformOrigin: '0 0', width: `${100 / zoom}%`, height: `${100 / zoom}%` }}
+          />
+        </div>
+      ) : (
+        <div className="jsoneditor">
+          <p className="muted">Edit the overlay: reorder <code>profile.sections</code>, add a
+            per-section <code>filters.&lt;section&gt;.order</code> (item titles) to reorder/select
+            items, or add <code>replace</code> patches to rephrase bullets. Saved edits are
+            yours (human-authored) and skip the AI fabrication check.</p>
+          <textarea className="json" value={draft} spellCheck={false} onChange={(e) => setDraft(e.target.value)} />
+          {error && <pre className="jsonerror">{error}</pre>}
+          <div className="jsonactions">
+            <button className="approve" disabled={saving} onClick={save}>{saving ? 'saving…' : 'Save & preview'}</button>
+            <button disabled={saving} onClick={() => setTab('preview')}>Cancel</button>
+          </div>
+        </div>
+      )}
+    </section>
   );
 }
 
