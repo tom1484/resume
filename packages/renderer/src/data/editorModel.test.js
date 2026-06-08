@@ -73,7 +73,7 @@ describe('editorTreeToOverlay round-trip', () => {
 
 import { treeToResume } from './editorModel';
 import { buildViewModels } from './adapter';
-import resume from './resume.json';
+import resume from '../../../../data/resume.json';
 
 describe('treeToResume (resume mode)', () => {
   it('round-trips: unchanged tree → same rendered view models', () => {

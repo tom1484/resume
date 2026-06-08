@@ -9,6 +9,7 @@ COPY apps/site/package.json apps/site/
 COPY apps/review/package.json apps/review/
 COPY services/api/package.json services/api/
 RUN pnpm install --frozen-lockfile
+COPY data data
 COPY packages/renderer packages/renderer
 COPY apps/site apps/site
 COPY apps/review apps/review

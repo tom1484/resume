@@ -2,7 +2,7 @@
 // DOM elements, so any extra key would leak into the DOM as an attribute —
 // the allowed-key assertions below are load-bearing, not style.
 import { describe, expect, it } from 'vitest';
-import resume from './resume.json';
+import resume from '../../../../data/resume.json';
 import { buildViewModels } from './adapter';
 import { buildProfileFrom } from './profiles';
 

@@ -3,7 +3,7 @@
 // The canonical resume document is NEVER mutated — patches are applied to
 // a deep clone, then view models are rebuilt from the patched document.
 import jsonpatch from 'fast-json-patch';
-import resume from './resume.json';
+import resume from '../../../../data/resume.json';
 import { buildViewModels } from './adapter';
 import { buildProfileFrom } from './profiles';
 

@@ -7,8 +7,9 @@ import { join } from 'node:path';
 import { query } from './db.js';
 
 const dataDir = process.env.DATA_DIR ?? new URL('../../../packages/renderer/src/data', import.meta.url).pathname;
+const seedFile = process.env.RESUME_SEED ?? new URL('../../../data/resume.json', import.meta.url).pathname;
 
-const seedResume = JSON.parse(readFileSync(join(dataDir, 'resume.json'), 'utf8'));
+const seedResume = JSON.parse(readFileSync(seedFile, 'utf8'));
 export const master = JSON.parse(readFileSync(join(dataDir, 'master.json'), 'utf8'));
 
 let _resume = seedResume;

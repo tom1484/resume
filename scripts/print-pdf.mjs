@@ -14,7 +14,7 @@ const buildDir = join(root, 'apps/site/build');
 const outDir = join(root, 'out');
 mkdirSync(outDir, { recursive: true });
 
-const resume = JSON.parse(readFileSync(join(root, 'packages/renderer/src/data/resume.json'), 'utf8'));
+const resume = JSON.parse(readFileSync(join(root, 'data/resume.json'), 'utf8'));
 const print = getPrint(resume);
 
 const { port, close } = await serveStatic(buildDir);

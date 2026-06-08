@@ -18,8 +18,8 @@ import jsonpatch from 'fast-json-patch';
 const require = createRequire(import.meta.url);
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 
-const dataDir = join(root, 'packages/renderer/src/data');
-const resume = JSON.parse(readFileSync(join(dataDir, 'resume.json'), 'utf8'));
+const dataDir = join(root, 'packages/renderer/src/data');  // schemas + master bank
+const resume = JSON.parse(readFileSync(join(root, 'data/resume.json'), 'utf8'));  // canonical résumé seed
 const extensionsSchema = JSON.parse(
   readFileSync(join(dataDir, 'extensions.schema.json'), 'utf8')
 );

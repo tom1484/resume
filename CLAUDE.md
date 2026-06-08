@@ -31,11 +31,13 @@ via Vite aliases `@components/@config/@contexts/@hooks/@data/@utils`),
 ## Data invariants
 
 - **The canonical résumé is DB-backed** (`resume_versions` table; latest row
-  is current). `packages/renderer/src/data/resume.json` is the **seed +
-  git-export target + bundled fallback** for standalone/PDF/CI — it is NOT
-  the live source. The `/resume` editor writes new versions via
-  `PUT /api/resume` (every save = a new history row; nothing is lost).
-  (This reversed the earlier "never mutate resume.json" rule.)
+  is current). `data/resume.json` (repo root) is the **seed + git-export
+  target + bundled fallback** for standalone/PDF/CI — it is NOT the live
+  source. The `/resume` editor writes new versions via `PUT /api/resume`
+  (every save = a new history row; nothing is lost). Run `pnpm export-seed`
+  to refresh `data/resume.json` from the live DB. (This reversed the earlier
+  "never mutate resume.json" rule.) Note: `data/resume.json` holds the seed;
+  the renderer's `src/data/` keeps only code + schemas + `master.json`.
 - **No profiles.** A single résumé; `meta.x-profiles` and `?profile` are
   gone. Per-job section selection lives only in the application **overlay**
   (`profile` field: sections + filters incl. exclude/order). Section display

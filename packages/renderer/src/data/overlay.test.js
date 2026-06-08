@@ -6,7 +6,7 @@
 //  - filters behave like profile filters
 //  - dirty patches and unknown sections throw (no silent fallback)
 import { describe, expect, it } from 'vitest';
-import resume from './resume.json';
+import resume from '../../../../data/resume.json';
 import { applyOverlay } from './overlay';
 import { buildViewModels } from './adapter';
 

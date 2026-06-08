@@ -559,6 +559,27 @@
     }
   ],
   "meta": {
-    "version": "v1.0.0"
+    "version": "v1.0.0",
+    "sectionOrder": [
+      "personalInfo",
+      "education",
+      "academics",
+      "working",
+      "publications",
+      "competitions",
+      "projects",
+      "extracurriculars",
+      "skills"
+    ],
+    "print": {
+      "scale": 1,
+      "margins": {
+        "top": 20,
+        "left": 0,
+        "right": 0,
+        "bottom": 5
+      },
+      "paperSize": "A4"
+    }
   }
 }

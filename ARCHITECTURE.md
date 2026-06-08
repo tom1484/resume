@@ -50,10 +50,11 @@ applications. Plan of record: [PROPOSALS.md](PROPOSALS.md); progress:
 
 ```
 resume/
+├── data/resume.json          JSON Resume SEED (repo root; DB is the live source — see
+│                             below). git-export target; `pnpm export-seed` refreshes it.
 ├── packages/renderer/        @resume/renderer — the résumé as data + components
 │   └── src/
 │       ├── data/
-│       │   ├── resume.json            JSON Resume SEED (DB is the live source — see below)
 │       │   ├── extensions.schema.json x-* extension schema (academic fields)
 │       │   ├── master.json            bullet bank: every claim, with stable ids (RAG grounding)
 │       │   ├── master.schema.json
@@ -94,7 +95,7 @@ resume/
 │   └── api/                  Fastify — review API + static host (jobs-api)
 │       └── src/server.js
 │
-├── scripts/                  validate.mjs (schemas + overlays) · print-pdf.mjs · capture.mjs
+├── scripts/                  validate.mjs (schemas + overlays) · print-pdf.mjs · capture.mjs · export-seed.mjs (DB → data/resume.json)
 ├── deploy/
 │   ├── docker-compose.yml    the 5-service stack
 │   ├── nginx/default.conf    the jobs-review static stub
@@ -137,8 +138,9 @@ applying → applied → responded | rejected | skipped | error`.
 ## Key design decisions
 
 - **The canonical résumé is DB-backed and editable.** `resume_versions`
-  (latest row = current); `resume.json` is the seed + git-export target +
-  bundled fallback (CI/PDF). The `/resume` route renders it and offers a
+  (latest row = current); `data/resume.json` (repo root) is the seed +
+  git-export target + bundled fallback (CI/PDF); `pnpm export-seed` refreshes
+  it from the live DB. The `/resume` route renders it and offers a
   structured editor (drag reorder, rephrase, delete) + JSON + Print tabs +
   Export/Import, saving new versions via `PUT /api/resume` (full history). No
   profiles — a single résumé; per-job section selection lives only in the

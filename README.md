@@ -42,12 +42,13 @@ Two ways:
    with a **JSON** tab and a **Print** tab. **Export/Import** download/load the
    résumé as JSON (a DB-independent backup). Saving writes a new version — the
    canonical résumé is **DB-backed** (`resume_versions`, full history; restore
-   any version). `packages/renderer/src/data/resume.json` is the **seed +
+   any version). `data/resume.json` (repo root) is the **seed +
    git-export target + offline fallback**, not the live source.
+   `pnpm export-seed` pulls the live résumé from the API and rewrites it.
 
-2. **Edit the seed file** `packages/renderer/src/data/resume.json` directly
-   (e.g. via git), then `pnpm validate && pnpm test`. Use this to sync the
-   committed seed with edits you exported from the web editor.
+2. **Edit the seed file** `data/resume.json` directly (e.g. via git), then
+   `pnpm validate && pnpm test`. Use this to sync the committed seed with
+   edits you exported from the web editor (or just run `pnpm export-seed`).
 
 ### `x-` extensions
 
@@ -97,8 +98,9 @@ selection/tailoring lives in application *overlays* (see ARCHITECTURE.md).
 ## How the renderer works
 
 ```
+data/resume.json          canonical content (JSON Resume + x-)  ← seed (repo root)
 packages/renderer/src/
-  data/resume.json        canonical content (JSON Resume + x-)  ← seed
+  data/master.json        bullet bank (RAG grounding) + *.schema.json
   data/adapter.js         resume.json → component view models (key contract)
   data/profiles.js        buildProfileFrom: assemble selected sections (used by overlay)
   data/overlay.js         applyOverlay: patch a CLONE, rebuild, never mutate the canonical

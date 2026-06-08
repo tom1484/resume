@@ -2,7 +2,7 @@
 // pointer actually resolves into resume.json (a renamed/removed highlight
 // must break this test, not silently orphan the bullet).
 import { describe, expect, it } from 'vitest';
-import resume from './resume.json';
+import resume from '../../../../data/resume.json';
 import master from './master.json';
 
 const resolvePointer = (doc, pointer) =>

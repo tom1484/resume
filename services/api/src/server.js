@@ -16,8 +16,9 @@ const app = Fastify({ logger: true });
 
 // Canonical data + overlay schema (mounted read-only at DATA_DIR) — used to
 // validate reviewer-edited overlays before persisting them.
-const dataDir = process.env.DATA_DIR ?? '/data';
-const resume = JSON.parse(readFileSync(join(dataDir, 'resume.json'), 'utf8'));
+const dataDir = process.env.DATA_DIR ?? '/data';                       // schemas (renderer pkg)
+const seedFile = process.env.RESUME_SEED ?? '/seed/resume.json';       // canonical résumé seed
+const resume = JSON.parse(readFileSync(seedFile, 'utf8'));
 const overlaySchema = JSON.parse(readFileSync(join(dataDir, 'overlay.schema.json'), 'utf8'));
 const validateOverlay = new Ajv({ allErrors: true }).compile(overlaySchema);
 

@@ -10,7 +10,7 @@
 // `title` for overlay exclude/order; bullet edits serialize as a whole-array
 // replace (overlay) or written straight into highlights (resume).
 import jsonpatch from 'fast-json-patch';
-import bundledResume from './resume.json';
+import bundledResume from '../../../../data/resume.json';
 
 const SECTIONS = [
   { key: 'personalInfo', label: 'Header', list: false },

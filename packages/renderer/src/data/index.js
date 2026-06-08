@@ -2,7 +2,7 @@
 // of: the canonical résumé (registerResume, /resume route), an application
 // overlay (registerApplication, ?application=<id>), or — as a fallback for
 // standalone/PDF/CI builds with no API — the bundled resume.json seed.
-import bundledResume from './resume.json';
+import bundledResume from '../../../../data/resume.json';
 import { buildViewModels } from './adapter';
 import { applyOverlay } from './overlay';
 
