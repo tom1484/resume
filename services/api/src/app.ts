@@ -352,7 +352,9 @@ export function createApp(deps: AppDeps): FastifyInstance {
   // ONE unified dashboard SPA at / (apps/dashboard/build — built later by the
   // dashboard agent; just wire the root + SPA fallback). PLUS the bare résumé
   // render path (apps/site/build) at /resume/ for print/PDF/preview.
-  app.get('/resume', (_req, reply) => reply.redirect('/resume/'));
+  // NOTE: no `/resume` (no trailing slash) redirect — that path belongs to the
+  // dashboard SPA's own /resume route (it falls through to the SPA below). The
+  // bare résumé host owns ONLY `/resume/...` (trailing slash).
   app.register(fastifyStatic, {
     root: resumeRenderDir,
     prefix: '/resume/',
@@ -365,13 +367,15 @@ export function createApp(deps: AppDeps): FastifyInstance {
   });
 
   // SPA fallback for the dashboard's client-side routes. /api/*, /applications/*,
-  // and the /resume print path are exempt — never fall back to the dashboard SPA.
+  // and the bare-host /resume/ path are exempt — never fall back to the SPA.
+  // The exemption uses '/resume/' (trailing slash) so a hard nav to the
+  // dashboard's own '/resume' route falls through to the SPA.
   app.setNotFoundHandler((req, reply) => {
     const u = req.raw.url ?? '';
     if (
       u.startsWith('/api/') ||
       u.startsWith('/applications/') ||
-      u.startsWith('/resume')
+      u.startsWith('/resume/')
     ) {
       return reply.code(404).send({ error: 'not found' });
     }
