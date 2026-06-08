@@ -2,7 +2,9 @@
 // the mechanical validity gate (schema + patch dry-run + section rules).
 import { describe, expect, it } from 'vitest';
 import { overlayProblems, toOverlay } from './tailor.js';
-import { resume } from './profile.js';
+import { getResume } from './profile.js';
+
+const resume = getResume();
 
 const job = { id: 'gh-acme-1', company_flags: [] };
 const modelOut = {

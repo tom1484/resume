@@ -8,7 +8,7 @@ import { z } from 'zod';
 import Ajv from 'ajv';
 import jsonpatch from 'fast-json-patch';
 import { structuredCall } from './llm.js';
-import { master, resume } from './profile.js';
+import { master, getResume } from './profile.js';
 
 const dataDir = process.env.DATA_DIR ?? new URL('../../../packages/renderer/src/data', import.meta.url).pathname;
 const overlaySchema = JSON.parse(readFileSync(`${dataDir}/overlay.schema.json`, 'utf8'));
@@ -47,7 +47,7 @@ const TailorSchema = z.object({
 
 // Patchable surface: every highlight with its JSON Pointer + current text,
 // so the model targets real paths (and we can verify them mechanically).
-function patchableMap() {
+function patchableMap(resume) {
   const lines = [];
   const walk = (base, arr, nameKey) =>
     arr.forEach((entry, i) =>
@@ -61,9 +61,12 @@ function patchableMap() {
   return lines.join('\n');
 }
 
-const availableTags = [...new Set(resume.projects.flatMap((p) => p.keywords ?? []))];
-
-const SYSTEM = `You tailor a resume to a specific job by producing a structured overlay.
+// Built per call from the CURRENT résumé (so it matches what the renderer
+// applies and what overlayProblems validates against).
+function buildSystem() {
+  const resume = getResume();
+  const availableTags = [...new Set(resume.projects.flatMap((p) => p.keywords ?? []))];
+  return `You tailor a resume to a specific job by producing a structured overlay.
 You may ONLY rephrase, reorder, or quantify accomplishments that are explicitly
 present in the MASTER BANK below. You may NOT invent metrics, technologies,
 dates, titles, or responsibilities. If the job requires a skill the candidate
@@ -90,13 +93,14 @@ MASTER BANK (the complete set of claims you may use):
 ${master.bullets.map((b) => `[${b.id}] (${b.context}) ${b.text}`).join('\n')}
 
 PATCHABLE HIGHLIGHTS (path | entry | current text):
-${patchableMap()}`;
+${patchableMap(resume)}`;
+}
 
 export async function tailor(job) {
   const model = job.company_flags?.includes('dream') ? TAILOR_MODEL_DREAM : TAILOR_MODEL;
   const result = await structuredCall({
     model,
-    system: SYSTEM,
+    system: buildSystem(),
     user: `Tailor for this job:
 Title: ${job.title}
 Company: ${job.company}
@@ -151,7 +155,7 @@ export function overlayProblems(overlay) {
   if (!validateOverlay(overlay)) {
     problems.push(...validateOverlay.errors.map((e) => `${e.instancePath} ${e.message}`));
   }
-  const patchError = jsonpatch.validate(overlay.patches ?? [], resume);
+  const patchError = jsonpatch.validate(overlay.patches ?? [], getResume());
   if (patchError) {
     problems.push(`patch #${patchError.index} ${patchError.name} at ${patchError.operation?.path}`);
   }

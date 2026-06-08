@@ -4,7 +4,7 @@
 import { query } from './db.js';
 import { costUsd } from './llm.js';
 import { parseJd } from './parseJd.js';
-import { candidateTerms } from './profile.js';
+import { candidateTerms, refreshResume } from './profile.js';
 import { keywordScore, llmFit, structuralScore, combine } from './score.js';
 import { batchSummary, sendTelegram } from './notify.js';
 import { tailorJob } from './tailorJob.js';
@@ -12,7 +12,6 @@ import { tailorJob } from './tailorJob.js';
 export const POLL_MS = Number(process.env.POLL_INTERVAL_MS ?? 60_000);
 export const BATCH = Number(process.env.BATCH_SIZE ?? 10);
 export const THRESHOLD = Number(process.env.SCORE_THRESHOLD ?? 0.65);
-const TERMS = candidateTerms();
 
 async function logEvent(jobId, stage, { ok, model, usage, durationMs, detail }) {
   await query(
@@ -32,9 +31,10 @@ export async function processJob(job) {
   const parsed = await parseJd(job);
   await logEvent(job.id, 'parse_jd', { ok: true, ...parsed });
 
-  // structural + keyword are code; llmFit is one Haiku call
+  // structural + keyword are code; llmFit is one Haiku call.
+  // candidateTerms() reflects the current résumé (refreshed at cycle start).
   const structural = structuralScore(parsed.output);
-  const keyword = keywordScore(parsed.output, TERMS);
+  const keyword = keywordScore(parsed.output, candidateTerms());
   const fit = await llmFit(job, parsed.output);
   await logEvent(job.id, 'score', {
     ok: true, model: fit.model, usage: fit.usage, durationMs: fit.durationMs,
@@ -70,6 +70,7 @@ async function claimBatch() {
 }
 
 export async function cycle() {
+  await refreshResume(); // pick up any web edits to the canonical résumé
   const jobs = await claimBatch();
   if (jobs.length === 0) return;
   console.log(`processing ${jobs.length} job(s)`);

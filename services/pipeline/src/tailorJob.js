@@ -7,7 +7,7 @@
 import jsonpatch from 'fast-json-patch';
 import { query } from './db.js';
 import { costUsd } from './llm.js';
-import { resume } from './profile.js';
+import { getResume } from './profile.js';
 import { tailor } from './tailor.js';
 import { verifyClaims } from './verify.js';
 
@@ -48,7 +48,7 @@ export async function tailorJob(job) {
   };
 
   // Sanity: kept patches must still apply cleanly
-  const patchErr = jsonpatch.validate(overlay.patches, resume);
+  const patchErr = jsonpatch.validate(overlay.patches, getResume());
   if (patchErr) throw new Error(`kept patches invalid: ${patchErr.name} at ${patchErr.operation?.path}`);
 
   await query(

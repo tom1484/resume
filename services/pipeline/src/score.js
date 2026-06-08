@@ -83,7 +83,7 @@ const FitSchema = z.object({
   redFlags: z.array(z.string()),
 });
 
-const FIT_SYSTEM = `${profileText()}
+const FIT_INSTRUCTIONS = `
 
 You judge how well THIS candidate fits a job. Consider depth of overlap between
 the candidate's accomplishment bank and the job's actual responsibilities (not
@@ -93,8 +93,9 @@ Return fit in [0,1]: 0.9+ exceptional alignment, 0.7 strong, 0.5 plausible,
 domain mismatch, location/term conflicts).`;
 
 export async function llmFit(job, parsed) {
+  // built per call from the current résumé (identical within a batch → cached)
   return structuredCall({
-    system: FIT_SYSTEM,
+    system: `${profileText()}${FIT_INSTRUCTIONS}`,
     user: `Job: ${job.title} @ ${job.company} (${job.location ?? 'unknown'})
 Parsed requirements: ${JSON.stringify(parsed)}
 JD excerpt:

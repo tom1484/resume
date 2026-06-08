@@ -1,16 +1,34 @@
-// Candidate profile loaded from the canonical data (mounted read-only at
-// DATA_DIR). Produces: term set for keyword matching + a stable profile text
-// for the LLM fit call (stable => prompt-cacheable).
+// Candidate profile. The canonical résumé is DB-backed (resume_versions);
+// the bundled/mounted file is the seed + fallback. refreshResume() pulls the
+// current version so tailoring/scoring reflect web edits without a redeploy.
+// The bullet bank (master.json) stays file-based (grounding corpus).
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
+import { query } from './db.js';
 
 const dataDir = process.env.DATA_DIR ?? new URL('../../../packages/renderer/src/data', import.meta.url).pathname;
 
-export const resume = JSON.parse(readFileSync(join(dataDir, 'resume.json'), 'utf8'));
+const seedResume = JSON.parse(readFileSync(join(dataDir, 'resume.json'), 'utf8'));
 export const master = JSON.parse(readFileSync(join(dataDir, 'master.json'), 'utf8'));
+
+let _resume = seedResume;
+export const getResume = () => _resume;
+export const setResume = (doc) => { _resume = doc; };
+
+// Pull the current canonical résumé from the DB (latest version). On any
+// failure (no DB, empty table) keep whatever we have — the seed by default.
+export async function refreshResume() {
+  try {
+    const { rows } = await query('SELECT data FROM resume_versions ORDER BY id DESC LIMIT 1');
+    if (rows.length) _resume = rows[0].data;
+  } catch {
+    /* keep current */
+  }
+}
 
 // All skill/tag terms the candidate can legitimately claim
 export function candidateTerms() {
+  const resume = getResume();
   const terms = new Set();
   for (const group of resume.skills) for (const kw of group.keywords) terms.add(kw);
   for (const p of resume.projects) for (const kw of p.keywords ?? []) terms.add(kw);
@@ -19,8 +37,10 @@ export function candidateTerms() {
   return [...terms];
 }
 
-// Stable long-form profile text for fit judgment (system prompt, cached).
+// Stable long-form profile text for fit judgment (built per call from the
+// current résumé; identical within a batch → still prompt-cacheable).
 export function profileText() {
+  const resume = getResume();
   const basics = resume.basics;
   const edu = resume.education
     .map((e) => `- ${e.studyType ?? ''} ${e.area ?? ''}, ${e.institution} (${e['x-time'] ?? ''})`)
