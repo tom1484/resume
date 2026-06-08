@@ -5,7 +5,11 @@ a { color: #2563eb; text-decoration: none; }
 button { cursor: pointer; border: 1px solid #d0d3d9; background: #fff; border-radius: 6px; padding: 6px 12px; font: inherit; }
 button:disabled { opacity: 0.4; cursor: default; }
 
-.inbox, .detail { max-width: 1100px; margin: 0 auto; padding: 16px; }
+.inbox { max-width: 1100px; margin: 0 auto; padding: 16px; }
+/* Detail is full-width so the panes can grow past 1100px when the preview is
+   widened; header/actions stay centered at a readable width. */
+.detail { padding: 16px; }
+.detailhead, .actions { max-width: 1100px; margin-left: auto; margin-right: auto; }
 .inbox h1 { font-size: 20px; }
 .tabs { display: flex; gap: 6px; margin-bottom: 12px; flex-wrap: wrap; }
 .tab.active { background: #1a1a1a; color: #fff; border-color: #1a1a1a; }
@@ -36,7 +40,13 @@ button:disabled { opacity: 0.4; cursor: default; }
 .lab.on.bad { background: #c5221f; color: #fff; border-color: #c5221f; }
 .ext { margin-left: auto; font-size: 13px; }
 
-.panes { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+/* Flex, not grid: the preview pane sizes to the (resizable) résumé box and
+   the text pane keeps a stable width, so widening the preview grows the
+   whole row instead of squeezing the text. fit-content + auto margins keep
+   the row centered on the page. */
+.panes { display: flex; gap: 16px; align-items: flex-start; width: fit-content; max-width: 100%; margin: 0 auto; }
+.panes > section:first-child { flex: 0 0 auto; }    /* preview pane → résumé-box width */
+.panes > section:last-child { flex: 0 0 460px; }     /* text pane → stable, never shrinks */
 .pane { background: #fff; border: 1px solid #e6e8eb; border-radius: 8px; padding: 14px; }
 .pane h3 { font-size: 14px; margin: 14px 0 6px; }
 .pane h3:first-child { margin-top: 0; }
@@ -44,8 +54,11 @@ button:disabled { opacity: 0.4; cursor: default; }
 .zoom { display: flex; align-items: center; gap: 4px; font-size: 13px; }
 .zoom button { padding: 2px 8px; }
 .zoom span { min-width: 38px; text-align: center; font-variant-numeric: tabular-nums; }
-.resumebox { width: 100%; height: 640px; min-height: 240px; min-width: 280px; max-width: 100%;
-  overflow: auto; border: 1px solid #e6e8eb; border-radius: 6px; resize: both; background: #fff; }
+/* Definite default size (the box drives the preview-pane width); resizable
+   both ways. overflow:hidden so the ONLY scrollbar is the iframe's own inner
+   vertical one — no outer vertical/horizontal bars on the box. */
+.resumebox { width: 680px; height: 860px; min-height: 240px; min-width: 280px; max-width: 95vw;
+  overflow: hidden; border: 1px solid #e6e8eb; border-radius: 6px; resize: both; background: #fff; }
 .resume { display: block; border: 0; }
 .jsoneditor .muted { font-size: 12px; margin: 0 0 8px; }
 .json { width: 100%; height: 60vh; font: 12px/1.5 ui-monospace, SFMono-Regular, Menlo, monospace;
@@ -62,7 +75,11 @@ button:disabled { opacity: 0.4; cursor: default; }
 .cover { white-space: pre-wrap; background: #fafbfc; border: 1px solid #eee; border-radius: 6px; padding: 10px; font: inherit; }
 .jd { white-space: pre-wrap; max-height: 400px; overflow: auto; font-size: 13px; color: #444; }
 
-@media (max-width: 760px) { .panes { grid-template-columns: 1fr; } .resume { height: 60vh; } }
+@media (max-width: 760px) {
+  .panes { flex-direction: column; width: auto; }
+  .panes > section:first-child, .panes > section:last-child { flex: 1 1 auto; }
+  .resumebox { width: 100%; height: 70vh; }
+}
 
 .answerslink { font-size: 13px; font-weight: 400; margin-left: 12px; }
 .answer { background: #fff; border: 1px solid #e6e8eb; border-radius: 8px; padding: 12px; margin-bottom: 10px; }
