@@ -18,7 +18,7 @@ function ExperienceItem({
   isLast = false,
   showTags = true,
   showHighlight = true,
-  showLinks = true,
+  showLinks: _showLinks = true,
   ...props
 }) {
   const { theme } = useTheme();
@@ -122,7 +122,7 @@ function ExperienceItem({
   );
 }
 
-export default function Experiences({ title: sectionTitle, data, selectedTitles, config = {} }) {
+export default function Experiences({ title: _sectionTitle, data, selectedTitles, config = {} }) {
   return (
     <SectionList
       data={data}

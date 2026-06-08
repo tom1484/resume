@@ -27,6 +27,9 @@ jobs:
       - name: Validate resume.json (JSON Resume + extensions)
         run: pnpm validate
 
+      - name: Lint
+        run: pnpm lint
+
       - name: Run tests
         run: pnpm test
 

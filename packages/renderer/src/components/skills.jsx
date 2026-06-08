@@ -18,7 +18,7 @@ export default function Skills({ data }) {
   return (
     <Container variant="section" width="section">
       <div className={theme.components.skills.wrapper}>
-        {Object.entries(skillsByCategory).map(([category, skills], index) => (
+        {Object.entries(skillsByCategory).map(([category, skills]) => (
           <div key={category}>
             <span className={theme.components.skills.category}>{category}:</span>{' '}
             <span className={theme.components.skills.text}>{skills.join(', ')}</span>

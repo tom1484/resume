@@ -99,7 +99,7 @@ resume/
 ├── deploy/
 │   ├── docker-compose.yml    the 4-service stack (db, discovery, pipeline, api)
 │   └── .env                  secrets (gitignored): DB pw, ANTHROPIC_API_KEY, Telegram
-├── .github/workflows/ci.yml  validate + vitest + build + PDFs; discovery (uv/ruff/pytest)
+├── .github/workflows/ci.yml  validate + lint (eslint) + vitest + build + PDF; discovery (uv/ruff/pytest)
 └── CLAUDE.md  PLAN.md  PREPARE.md  PROPOSALS.md
 ```
 

@@ -15,10 +15,10 @@ function PublicationItem({
   content = [],
   tags = [],
   showTags = true,
-  showLinks = true,
+  showLinks: _showLinks = true,
   isLast = false,
   className = '',
-  config = {},
+  config: _config = {},
   ...props
 }) {
   const { theme } = useTheme();
@@ -81,7 +81,7 @@ function PublicationItem({
   );
 }
 
-export default function Publications({ title: sectionTitle, data, selectedTitles, config = {} }) {
+export default function Publications({ title: _sectionTitle, data, selectedTitles, config = {} }) {
   return (
     <SectionList
       data={data}
