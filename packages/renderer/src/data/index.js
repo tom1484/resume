@@ -20,12 +20,17 @@ export const experienceConfigs = {
 export const publicationsConfig = {};
 
 let activeData = buildViewModels(bundledResume);
+let activeDoc = bundledResume; // the résumé document behind activeData (for the editor)
 
 // Render the canonical résumé (optionally an edited document)
 export const registerResume = (doc) => {
+  activeDoc = doc;
   activeData = buildViewModels(doc);
   return activeData;
 };
+
+// The résumé document currently rendered (used by the /resume editor)
+export const getResumeDoc = () => activeDoc;
 
 // Render an application overlay against a base résumé document
 export const registerApplication = (overlay, baseDoc = bundledResume) => {

@@ -40,7 +40,7 @@ async function bootstrap() {
 
   root.render(
     <React.StrictMode>
-      <App />
+      <App editable={!applicationId} />
     </React.StrictMode>
   );
 }
