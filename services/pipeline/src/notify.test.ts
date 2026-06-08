@@ -9,8 +9,12 @@ describe('batchSummary', () => {
       reviewBase: 'https://jobs.churong.cc',
       tailored: [
         {
-          id: 'gh-figure-1', score: 0.81, company: 'Figure', company_flags: ['dream', 'startup'],
-          title: 'Embedded <SW> Intern', patches: 2,
+          id: 'gh-figure-1',
+          score: 0.81,
+          company: 'Figure',
+          company_flags: ['dream', 'startup'],
+          title: 'Embedded <SW> Intern',
+          patches: 2,
         },
       ],
     });
