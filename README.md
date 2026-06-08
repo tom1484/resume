@@ -88,6 +88,15 @@ One sharp edge: components spread view-model items onto DOM elements, so the
 adapter must emit exactly the known keys — `src/data/adapter.test.js` enforces
 this.
 
+## Job pipeline
+
+This repo is also the base of a self-hosted job-application pipeline
+(discovery → scoring → LLM tailoring → human review → apply). See
+[ARCHITECTURE.md](ARCHITECTURE.md) for the system design,
+[PROPOSALS.md](PROPOSALS.md) for the plan, and [PLAN.md](PLAN.md) for
+progress. The résumé itself (everything below) is the pipeline's canonical
+data source.
+
 ## CI
 
 `.github/workflows/ci.yml` validates the data, runs tests, builds, and
