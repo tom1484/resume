@@ -14,7 +14,6 @@ export const master = JSON.parse(readFileSync(join(dataDir, 'master.json'), 'utf
 
 let _resume = seedResume;
 export const getResume = () => _resume;
-export const setResume = (doc) => { _resume = doc; };
 
 // Pull the current canonical résumé from the DB (latest version). On any
 // failure (no DB, empty table) keep whatever we have — the seed by default.

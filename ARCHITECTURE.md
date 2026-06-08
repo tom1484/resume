@@ -97,8 +97,7 @@ resume/
 │
 ├── scripts/                  validate.mjs (schemas + overlays) · print-pdf.mjs · capture.mjs · export-seed.mjs (DB → data/resume.json)
 ├── deploy/
-│   ├── docker-compose.yml    the 5-service stack
-│   ├── nginx/default.conf    the jobs-review static stub
+│   ├── docker-compose.yml    the 4-service stack (db, discovery, pipeline, api)
 │   └── .env                  secrets (gitignored): DB pw, ANTHROPIC_API_KEY, Telegram
 ├── .github/workflows/ci.yml  validate + vitest + build + PDFs; discovery (uv/ruff/pytest)
 └── CLAUDE.md  PLAN.md  PREPARE.md  PROPOSALS.md
@@ -112,7 +111,6 @@ resume/
 | `jobs-discovery` | nightly cron discovery (supercronic, `init: true`) | internal | no |
 | `jobs-pipeline` | poller: parse → score → tailor → verify | internal | no |
 | `jobs-api` | review API + SPA + résumé renderer | internal + nginx | via NPM (auth) |
-| `jobs-review` | legacy static stub (unused; NPM now points at `jobs-api`) | internal + nginx | — |
 
 Web exposure is exclusively through nginx-proxy-manager on the external
 `nginx` network; **no service publishes host ports**. `jobs.churong.cc` →

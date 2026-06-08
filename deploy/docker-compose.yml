@@ -91,20 +91,3 @@ services:
     depends_on:
       db:
         condition: service_healthy
-
-  # Phase 1 stub: public resume at jobs.churong.cc (the renderer is also
-  # served by `api` at /site/; this stub stays until P3.7 repoints NPM).
-  review:
-    image: nginx:alpine
-    container_name: jobs-review
-    restart: unless-stopped
-    networks: [internal, nginx]
-    volumes:
-      - ../apps/site/build:/usr/share/nginx/html:ro
-      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
-    healthcheck:
-      # 127.0.0.1, not localhost: busybox wget prefers ::1 and nginx binds IPv4
-      test: ['CMD', 'wget', '-q', '-O', '/dev/null', 'http://127.0.0.1:8080/healthz']
-      interval: 15s
-      timeout: 5s
-      retries: 3

@@ -137,5 +137,3 @@ export function treeToResume(tree, baseDoc) {
   }
   return out;
 }
-
-export { SECTION_KEYS };
