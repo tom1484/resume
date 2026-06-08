@@ -2,9 +2,19 @@
 
 Personal resume site (React + Vite + Tailwind) being extended into a
 self-hosted job application pipeline. Plan of record: `PROPOSALS.md`.
-**Current phase: 2 done (discovery cron + scoring pipeline live; nightly
-jobs → scored → Telegram) — Phase 3 (tailoring + review app) next.**
+**Current phase: 3 functionally done (tailor → verify → in_review →
+review app + answers bank, all live on the internal net) — only P3.7
+remains: Tom enables the NPM access list so the review UI can go public
+(steps in PREPARE.md). Phase 4 (local apply agent) is next.**
 Update this line as phases complete.
+
+Services: `services/discovery` (Python), `services/pipeline` (Node ESM:
+parse/score/tailor/verify/poller), `services/api` (Fastify review API +
+SPA host, container `review-api`). Frontends: `apps/site` (renderer),
+`apps/review` (review SPA). Migrations in `services/pipeline/migrations`.
+Anti-fabrication is load-bearing: verify.js numeric tripwire + skeptic,
+drop-unsupported-patches policy in tailorJob.js — never weaken without
+re-running `eval/run-verify-eval.js`.
 
 LLM stages run on Haiku (`claude-haiku-4-5`) per the approved cost plan;
 golden-set eval: `services/pipeline/eval/run-parse-eval.js` (live API,
