@@ -148,13 +148,6 @@ app.post('/api/resume/restore/:id', async (req, reply) => {
   return { ok: true, version: ins.rows[0].id };
 });
 
-// Export current résumé as a downloadable JSON (commit to git to sync the seed)
-app.get('/api/resume/export', async (req, reply) => {
-  const cur = await currentResume();
-  reply.header('Content-Disposition', 'attachment; filename="resume.json"');
-  return cur.data;
-});
-
 app.get('/api/answers', async () => (await pool.query('SELECT key, question, answer FROM answers ORDER BY key')).rows);
 
 app.put('/api/answers/:key', async (req) => {

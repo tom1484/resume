@@ -122,11 +122,10 @@ function ExperienceItem({
   );
 }
 
-export default function Experiences({ title: _sectionTitle, data, selectedTitles, config = {} }) {
+export default function Experiences({ title: _sectionTitle, data, config = {} }) {
   return (
     <SectionList
       data={data}
-      selectedTitles={selectedTitles}
       renderItem={(item, idx, isLast) => (
         <ExperienceItem
           key={idx}

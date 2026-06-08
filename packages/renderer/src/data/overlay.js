@@ -7,8 +7,7 @@ import resume from '../../../../data/resume.json';
 import { buildViewModels } from './adapter';
 import { buildProfileFrom } from './profiles';
 
-// Apply an overlay to a resume document; returns a profile object with the
-// same shape getProfile() returns ({ id, name, description, data }).
+// Apply an overlay to a resume document; returns { id, name, description, data }.
 // Throws on a patch that doesn't apply cleanly or an unknown section key.
 export function applyOverlay(overlay, resumeDoc = resume) {
   const patches = overlay.patches ?? [];

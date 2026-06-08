@@ -40,9 +40,6 @@ export const registerApplication = (overlay, baseDoc = bundledResume) => {
   return activeData;
 };
 
-// Current view models (object: section key -> items)
-export const getResumeData = () => activeData;
-
 // Items for one section key
 export const getData = (dataKey) => {
   const data = activeData[dataKey];

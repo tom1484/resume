@@ -16,9 +16,7 @@ export default defineConfig({
       '@components': path.join(renderer, 'components'),
       '@config': path.join(renderer, 'config'),
       '@contexts': path.join(renderer, 'contexts'),
-      '@hooks': path.join(renderer, 'hooks'),
       '@data': path.join(renderer, 'data'),
-      '@utils': path.join(renderer, 'utils'),
     },
   },
   build: {

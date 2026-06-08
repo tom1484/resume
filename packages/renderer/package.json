@@ -2,8 +2,7 @@
   "name": "@resume/renderer",
   "version": "0.1.0",
   "private": true,
-  "description": "Resume renderer: components, themes, adapter, profiles, and canonical data (source package, consumed via Vite aliases)",
-  "main": "src/index.js",
+  "description": "Resume renderer: components, themes, adapter, overlay/editor data layer (source package, consumed via Vite aliases and deep subpath imports — no main entry)",
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",
     "@dnd-kit/sortable": "^10.0.0",

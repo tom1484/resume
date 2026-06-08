@@ -81,11 +81,10 @@ function PublicationItem({
   );
 }
 
-export default function Publications({ title: _sectionTitle, data, selectedTitles, config = {} }) {
+export default function Publications({ title: _sectionTitle, data, config = {} }) {
   return (
     <SectionList
       data={data}
-      selectedTitles={selectedTitles}
       renderItem={(item, idx, isLast) => (
         <PublicationItem
           key={idx}

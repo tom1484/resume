@@ -9,9 +9,7 @@
       "@components/*": ["../../packages/renderer/src/components/*"],
       "@config/*": ["../../packages/renderer/src/config/*"],
       "@contexts/*": ["../../packages/renderer/src/contexts/*"],
-      "@hooks/*": ["../../packages/renderer/src/hooks/*"],
-      "@data/*": ["../../packages/renderer/src/data/*"],
-      "@utils/*": ["../../packages/renderer/src/utils/*"]
+      "@data/*": ["../../packages/renderer/src/data/*"]
     }
   },
   "include": ["src", "../../packages/renderer/src"]

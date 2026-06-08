@@ -25,7 +25,6 @@ export const sectionsConfig = [
     dataKey: 'academics',
     props: {
       title: 'Academic Experience',
-      selectedTitles: [],
       config: experienceConfigs.academics
     }
   },
@@ -47,7 +46,6 @@ export const sectionsConfig = [
     dataKey: 'working',
     props: {
       title: 'Work Experience',
-      selectedTitles: [],
       config: experienceConfigs.working
     }
   },
@@ -59,7 +57,6 @@ export const sectionsConfig = [
     dataKey: 'competitions',
     props: {
       title: 'Competition Experience',
-      selectedTitles: [],
       config: experienceConfigs.competitions
     }
   },
@@ -71,7 +68,6 @@ export const sectionsConfig = [
     dataKey: 'projects',
     props: {
       title: 'Projects',
-      selectedTitles: [],
       config: experienceConfigs.projects
     }
   },
@@ -83,7 +79,6 @@ export const sectionsConfig = [
     dataKey: 'extracurriculars',
     props: {
       title: 'Extracurricular',
-      selectedTitles: [],
       config: experienceConfigs.extracurriculars
     }
   },
