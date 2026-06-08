@@ -1,0 +1,35 @@
+{
+  "name": "@resume/contracts",
+  "version": "0.1.0",
+  "private": true,
+  "description": "v2 single-source-of-truth Zod contracts: section registry, resume/view-model/overlay/master schemas, pipeline + scoring, config, db projections, api DTOs (+ overlayProblems), events ledger (+ costUsd), discovery jobs-row, anti-fabrication invariants. Emits JSON Schema for Ajv consumers.",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./schemas/*": "./dist/schemas/*"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "test": "vitest run",
+    "gen:schemas": "node ./dist/scripts/gen-schemas.js"
+  },
+  "dependencies": {
+    "fast-json-patch": "^3.1.1",
+    "zod": "^4.4.3"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.2",
+    "ajv": "^8.20.0",
+    "ajv-formats": "^3.0.1",
+    "typescript": "^5.7.2",
+    "vitest": "^4.1.8"
+  }
+}
