@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { approve, getAnswers, getJob, label, listJobs, reject, saveAnswer } from './api.js';
-import { Editor } from './Editor.jsx';
+import { EditorModal } from './Editor.jsx';
 
 // Hash routing: #/ (inbox) | #/app/<id> (detail). No router dep.
 function useHashRoute() {
@@ -83,8 +83,8 @@ function Inbox() {
 function Detail({ id }) {
   const [job, setJob] = useState(null);
   const [busy, setBusy] = useState(false);
-  const [view, setView] = useState('rendered'); // rendered | edit
-  const [rev, setRev] = useState(0);             // iframe cache-bust after save
+  const [editing, setEditing] = useState(false); // overlay editor modal
+  const [rev, setRev] = useState(0);              // iframe cache-bust after save
   const reload = () => getJob(id).then(setJob).catch(() => setJob(false));
   useEffect(() => { reload(); }, [id]);
 
@@ -92,7 +92,7 @@ function Detail({ id }) {
   if (!job) return <Shell><p className="muted">Loading…</p></Shell>;
 
   const act = (fn) => async () => { setBusy(true); try { await fn(); await reload(); } finally { setBusy(false); } };
-  const onSaved = async () => { await reload(); setRev((r) => r + 1); setView('rendered'); };
+  const onSaved = async () => { await reload(); setRev((r) => r + 1); setEditing(false); };
   const bd = job.score_breakdown ?? {};
   const patches = job.overlay?.patches ?? [];
 
@@ -113,21 +113,16 @@ function Detail({ id }) {
           <button key={v} className={job.label === v ? `lab ${v} on` : `lab ${v}`} disabled={busy}
             onClick={act(() => label(id, job.label === v ? null : v))}>{v}</button>
         ))}
+        <button className="editbtn" disabled={busy} onClick={() => setEditing(true)}>✎ Edit overlay</button>
         {job.url && <a className="ext" href={job.url} target="_blank" rel="noreferrer">open posting ↗</a>}
       </div>
 
+      {editing && <EditorModal job={job} onClose={() => setEditing(false)} onSaved={onSaved} />}
+
       <div className="panes">
         <section className="pane">
-          <div className="panehead">
-            <h3>Tailored résumé {patches.length > 0 && <span className="muted">({patches.length} edits)</span>}</h3>
-            <span className="viewtoggle">
-              <button className={view === 'rendered' ? 'on' : ''} onClick={() => setView('rendered')}>Rendered</button>
-              <button className={view === 'edit' ? 'on' : ''} onClick={() => setView('edit')}>Edit</button>
-            </span>
-          </div>
-          {view === 'edit'
-            ? <Editor job={job} onSaved={onSaved} />
-            : <iframe className="resume" title="tailored resume" src={`/site/?application=${encodeURIComponent(id)}&rev=${rev}`} />}
+          <h3>Tailored résumé {patches.length > 0 && <span className="muted">({patches.length} edits)</span>}</h3>
+          <iframe className="resume" title="tailored resume" src={`/site/?application=${encodeURIComponent(id)}&rev=${rev}`} />
         </section>
 
         <section className="pane">
