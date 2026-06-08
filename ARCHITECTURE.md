@@ -125,8 +125,9 @@ discovery, and the pipeline are unreachable from outside the host.
   return-path), `label` (good/bad, calibration), `status`, `dedupe_key`.
 - **events** — one row per pipeline stage per job: stage, model, tokens,
   `cost_usd`, duration, ok, detail. The cost/observability ledger.
-- **answers** — templated application answers (work auth, salary, …),
-  edited in the review UI, read by the future apply agent.
+- **answers** — application answers (work auth, salary, …): a seeded set
+  plus custom Q&A added/edited/deleted in the review UI (`/answers`), read
+  by the future apply agent.
 - **resume_versions** — the canonical résumé, one row per save (latest =
   current; full history). Seeded from `resume.json` on first read.
 

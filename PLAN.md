@@ -118,3 +118,4 @@ was dropped — it was vestigial/never wired to layout.)
 | F1 | Move résumé renderer to `/resume/` (was `/site/`); review board stays default `/`; `/resume` redirect; review iframe → `/resume/?application=` | live: `/resume/` renders+edits, `/resume`→redirect, `/`=review board | [x] |
 | F2 | Print config `meta.print` (paper size, margins mm, scale) — global, applications inherit; Print tab in the résumé editor; `@page` rule (browser) + Playwright `page.pdf` opts (pipeline); defaults reproduce prior output | live: Print tab saves meta.print, drives `@page` (Letter+15mm), persists in DB; default PDF unchanged; tests pass | [x] |
 | F3 | Bullet bank regen-from-résumé (master.json drifts from a heavily web-edited résumé) | — | deferred |
+| F4 | Answers bank: add + delete custom Q&A from the `/answers` UI (`POST /api/answers` auto-slugs a unique key; `DELETE /api/answers/:key`) | live: add via UI (+1 row), key-collision suffix, empty→400, delete works | [x] |
