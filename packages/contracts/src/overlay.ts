@@ -95,7 +95,10 @@ export const Overlay = z
         name: z.string().optional(),
         description: z.string().optional(),
         sections: z.array(SectionKey).min(1), // §1 enum
-        filters: z.record(SectionKey, OverlayFilter).optional(), // keys validated against §1
+        // PARTIAL record: only some sections carry a filter. z.record with an
+        // enum key is EXHAUSTIVE in Zod v4 (requires all 9 keys) — partialRecord
+        // is the correct shape. Keys still validated against §1 (SectionKey).
+        filters: z.partialRecord(SectionKey, OverlayFilter).optional(),
       })
       .strict(),
     patches: z.array(Patch).default([]),
