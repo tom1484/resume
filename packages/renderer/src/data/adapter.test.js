@@ -4,7 +4,7 @@
 import { describe, expect, it } from 'vitest';
 import resume from '../../../../data/resume.json';
 import { buildViewModels } from './adapter';
-import { buildProfileFrom } from './profiles';
+import { buildProfileFrom } from './overlay';
 
 const vm = buildViewModels(resume);
 
