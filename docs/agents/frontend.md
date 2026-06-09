@@ -27,10 +27,14 @@ Served by `services/api` (`app.ts`, container `jobs-api`), same-origin. See
 | `/resume/` (trailing slash) | bare host build (`apps/site/build` → `/app/site`) | `app.ts` `@fastify/static` prefix `/resume/` (`VITE_BASE=/resume/`) |
 | `/api/*`, `/applications/*`, `/resume/` | exempt from SPA fallback (404 JSON) | `setNotFoundHandler` |
 
-> Seam (flagged in `apps/dashboard/src/router.tsx`): the fallback exempts any URL
-> starting with `/resume/` (trailing slash), so a **hard** nav/refresh to the
-> dashboard's own `/resume` route is shadowed by the bare host. Client-side nav (the
-> sidebar) works. Recommend the API keep the `/resume/` (slash) exemption exact.
+> `/resume` (no slash) vs `/resume/` (slash) — RESOLVED (commit `40c5c4d`): the
+> fallback exempts ONLY `/resume/` (trailing slash) and there is no `GET /resume`
+> redirect, so a **hard** nav/refresh/deep-link to the dashboard's own `/resume`
+> route falls through to the SPA (renders `ResumePage`), while `/resume/` and
+> `/resume/?application=<id>` keep serving the bare host. Locked by
+> `services/api/test/app.test.ts` ("static routing: /resume (SPA route) vs
+> /resume/ (bare host)"). Keep the exemption exact — never widen it to bare
+> `/resume`, that re-shadows the SPA route.
 
 ---
 

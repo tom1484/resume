@@ -9,12 +9,13 @@ import { PreferencesPage } from '@/routes/PreferencesPage';
 import { ConstraintsPage } from '@/routes/ConstraintsPage';
 import { AnswersPage } from '@/routes/AnswersPage';
 
-// NOTE for the integrator: the API serves the bare résumé host (apps/site) at
-// /resume/ and exempts any URL starting with /resume from the SPA fallback
-// (app.ts setNotFoundHandler). So a HARD navigation/refresh to the dashboard's
-// /resume route is shadowed by the bare host. Client-side nav (the sidebar) works
-// fine. Flagged in the report — recommend the API tighten the exemption to
-// `/resume/` (with the trailing slash) so the dashboard's /resume deep-links work.
+// Routing note: the dashboard owns `/resume` (no slash) as a CLIENT route; the
+// bare résumé host (apps/site) is static-served at `/resume/` (TRAILING slash).
+// The API (app.ts) exempts ONLY `/resume/` (trailing slash) from the SPA
+// fallback, so a hard nav/refresh/deep-link to `/resume` falls through to this
+// SPA and renders ResumePage. Locked by services/api/test/app.test.ts
+// ("static routing: /resume (SPA route) vs /resume/ (bare host)"). Do not widen
+// the exemption to bare `/resume` — that re-shadows this route.
 export const router = createBrowserRouter([
   {
     path: '/',

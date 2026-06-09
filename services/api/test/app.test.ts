@@ -2,7 +2,10 @@
 // Exercises projections, validation paths (ResumeDoc / overlayProblems /
 // parseConfig), config CRUD, dashboard, events, ops-flag gating, and the SPA
 // fallback exemptions.
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect, beforeEach, afterAll } from 'vitest';
+import { mkdtempSync, mkdirSync, writeFileSync, rmSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
 import type { FastifyInstance } from 'fastify';
 import { createApp } from '../src/app.js';
 import { MockPool, type QueryCall } from './mockPool.js';
@@ -424,5 +427,84 @@ describe('healthz + SPA fallback exemptions', () => {
     const res = await app.inject({ method: 'GET', url: '/api/does-not-exist' });
     expect(res.statusCode).toBe(404);
     expect(res.json().error).toBe('not found');
+  });
+});
+
+// Regression: the /resume (no slash) vs /resume/ (slash) routing seam.
+// The dashboard SPA (react-router) owns `/resume` as a CLIENT route; the bare
+// résumé host (apps/site) is static-served at `/resume/` (trailing slash) by the
+// API. The danger is a hard nav / refresh / deep-link to `/resume` (no slash)
+// being shadowed by the bare host. Fixed in 40c5c4d by (a) removing the old
+// `GET /resume` redirect and (b) tightening the setNotFoundHandler exemption to
+// `/resume/` (trailing slash) so the bare slash path falls through to the SPA.
+// These assertions LOCK that: `/resume` → dashboard index.html, `/resume/` →
+// bare host. Uses distinguishable temp static dirs so the assertion is on which
+// build serves, not just status codes.
+describe('static routing: /resume (SPA route) vs /resume/ (bare host)', () => {
+  const tmpRoot = mkdtempSync(join(tmpdir(), 'api-static-'));
+  const dashboardDir = join(tmpRoot, 'dashboard');
+  const resumeRenderDir = join(tmpRoot, 'site');
+  mkdirSync(dashboardDir, { recursive: true });
+  mkdirSync(resumeRenderDir, { recursive: true });
+  // Sentinel markers mirror the real <title>s so a regression points at the
+  // wrong build the way the live curl check does.
+  writeFileSync(
+    join(dashboardDir, 'index.html'),
+    '<!doctype html><title>Job Pipeline · Dashboard</title>'
+  );
+  writeFileSync(
+    join(resumeRenderDir, 'index.html'),
+    "<!doctype html><title>Chu-Rong Chen's Resume</title>"
+  );
+
+  afterAll(() => rmSync(tmpRoot, { recursive: true, force: true }));
+
+  function staticApp(): FastifyInstance {
+    return createApp({
+      pool: new MockPool(),
+      resumeSeed: RESUME,
+      dashboardDir,
+      resumeRenderDir,
+      logger: false,
+    });
+  }
+
+  it('GET /resume (no slash) falls through to the dashboard SPA index.html', async () => {
+    const app = staticApp();
+    const res = await app.inject({ method: 'GET', url: '/resume' });
+    expect(res.statusCode).toBe(200);
+    // The dashboard build, NOT the bare host — this is the seam being locked.
+    expect(res.body).toContain('Job Pipeline · Dashboard');
+    expect(res.body).not.toContain("Chu-Rong Chen's Resume");
+  });
+
+  it('GET /resume/ (trailing slash) serves the bare résumé host', async () => {
+    const app = staticApp();
+    const res = await app.inject({ method: 'GET', url: '/resume/' });
+    expect(res.statusCode).toBe(200);
+    expect(res.body).toContain("Chu-Rong Chen's Resume");
+    expect(res.body).not.toContain('Job Pipeline · Dashboard');
+  });
+
+  it('GET /resume/index.html (the iframe/PDF target) serves the bare host', async () => {
+    const app = staticApp();
+    const res = await app.inject({ method: 'GET', url: '/resume/index.html' });
+    expect(res.statusCode).toBe(200);
+    expect(res.body).toContain("Chu-Rong Chen's Resume");
+  });
+
+  it('setNotFoundHandler exempts /resume/ (slash) but NOT /resume', async () => {
+    // A bare-host asset miss must 404 (exempt), never fall back to the SPA…
+    const app = staticApp();
+    const miss = await app.inject({
+      method: 'GET',
+      url: '/resume/does-not-exist.js',
+    });
+    expect(miss.statusCode).toBe(404);
+    expect(miss.json().error).toBe('not found');
+    // …while an unknown dashboard client route DOES fall back to the SPA.
+    const spa = await app.inject({ method: 'GET', url: '/resume-not-a-route' });
+    expect(spa.statusCode).toBe(200);
+    expect(spa.body).toContain('Job Pipeline · Dashboard');
   });
 });

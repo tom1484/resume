@@ -225,9 +225,12 @@ already-v2-shaped input through, so re-running it is safe; but prefer a clean v2
   the `nginx` network. A port bypasses the access list and leaks PII.
 - **Cloudflare Flexible SSL + NPM ForceSSL → redirect loop.** Set the Cloudflare SSL
   mode to **Full** for the `jobs.churong.cc` host.
-- **`/resume` (no slash) shadowing.** The bare host owns `/resume/` (trailing slash);
-  a hard nav to the dashboard's own `/resume` route is shadowed (client-side nav is
-  fine). Flagged in `apps/dashboard/src/router.tsx`.
+- **`/resume` (no slash) vs `/resume/` (slash) — RESOLVED (`40c5c4d`).** The bare host
+  owns ONLY `/resume/` (trailing slash); the SPA-fallback exemption and the (removed)
+  `GET /resume` redirect were tightened so a hard nav/refresh to the dashboard's own
+  `/resume` route falls through to the SPA. Keep the `setNotFoundHandler` exemption
+  exact (`/resume/`, not bare `/resume`) — widening it re-shadows the SPA route.
+  Locked by `services/api/test/app.test.ts`.
 - **The pipeline does NOT migrate** — if you bring up `pipeline` before `api` on a
   fresh DB, it has no schema. Always bring up `api` (which migrates) first/together.
 

@@ -195,9 +195,10 @@ shared with nginx proxy manager).
   the dashboard SPA's own `/resume` route.
 - `/` and unmatched → built `dashboard` SPA; `setNotFoundHandler` falls back to the
   dashboard `index.html`, EXCEPT for `/api/`, `/applications/`, and `/resume/`
-  prefixes which 404 as JSON. (Known seam: a *hard* navigation to the dashboard's
-  own `/resume` is shadowed by the bare host's `/resume/`; client-side nav works.
-  Flagged in `router.tsx`.)
+  prefixes which 404 as JSON. (The exemption is exact — `/resume/` with the trailing
+  slash, NOT bare `/resume` — so a *hard* navigation/refresh to the dashboard's own
+  `/resume` route falls through to the SPA. Resolved in `40c5c4d`; locked by
+  `services/api/test/app.test.ts`. Don't widen the exemption to bare `/resume`.)
 
 ## Cross-references
 - Contract shapes (résumé/overlay/view-model/pipeline/config/db/events) →
