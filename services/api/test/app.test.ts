@@ -348,7 +348,24 @@ describe('dashboard + events (§9)', () => {
     pool.on('FROM events', (_p, call) => {
       expect(call.sql).toMatch(/stage = \$1/);
       expect(call.sql).toMatch(/ok = \$2/);
-      return { rows: [{ id: 5, stage: 'score', ok: true }], rowCount: 1 };
+      return {
+        rows: [
+          {
+            id: 5,
+            job_id: null,
+            stage: 'score',
+            model: null,
+            input_tokens: null,
+            output_tokens: null,
+            cost_usd: null,
+            duration_ms: null,
+            ok: true,
+            detail: null,
+            created_at: '2026-06-09T10:00:00+00',
+          },
+        ],
+        rowCount: 1,
+      };
     });
     const app = appWith(pool);
     const res = await app.inject({
@@ -357,6 +374,40 @@ describe('dashboard + events (§9)', () => {
     });
     expect(res.statusCode).toBe(200);
     expect(res.json()[0].id).toBe(5);
+  });
+
+  // Regression: pg returns numeric(cost_usd) and bigint(id) as JS STRINGS.
+  // Before the fix the route returned them verbatim, so the client did
+  // `cost_usd.toFixed(...)` → "e.toFixed is not a function" white-screen.
+  // The route must coerce to numbers AND satisfy the EventRow z.number()
+  // contract (it validates on the way out).
+  it('GET /api/events coerces pg numeric/bigint STRINGS to numbers', async () => {
+    const pool = new MockPool();
+    pool.on('FROM events', [
+      {
+        id: '119', // bigint → string from pg
+        job_id: null,
+        stage: 'tailor',
+        model: 'claude-sonnet-4-6',
+        input_tokens: 4591,
+        output_tokens: 486,
+        cost_usd: '0.007021', // numeric(10,6) → string from pg
+        duration_ms: 7832,
+        ok: true,
+        detail: null,
+        created_at: '2026-06-09T12:00:00+00',
+      },
+    ]);
+    const app = appWith(pool);
+    const res = await app.inject({ method: 'GET', url: '/api/events?limit=50' });
+    expect(res.statusCode).toBe(200);
+    const row = res.json()[0];
+    // The bug was these arriving as strings; assert they are now numbers.
+    expect(row.id).toBe(119);
+    expect(typeof row.id).toBe('number');
+    expect(row.cost_usd).toBe(0.007021);
+    expect(typeof row.cost_usd).toBe('number');
+    expect(typeof row.input_tokens).toBe('number');
   });
 });
 

@@ -74,4 +74,37 @@ describe('DashboardPage', () => {
     );
     expect(screen.getByText('1200')).toBeInTheDocument();
   });
+
+  // Defense in depth: if a string-typed number slips past the API (the original
+  // pg numeric-as-string bug), the page must NOT hard-crash with
+  // "e.toFixed is not a function" — fmtUsd coerces/guards instead.
+  it('does not crash when the API returns string-shaped numbers', async () => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn((url: string) => {
+        const stringSummary = {
+          costByStage: [{ stage: 'parse_jd', costUsd: '0.12', calls: '4' }],
+          costByModel: [{ model: 'claude-haiku-4-5', costUsd: '0.46' }],
+          totalsByDay: [{ day: '2026-06-08', costUsd: '0.46' }],
+          funnel: [{ status: 'in_review', count: '3' }],
+          failures: [{ stage: 'verify_claims', count: '1' }],
+        };
+        const stringEvents = [{ ...events[0], id: '2', cost_usd: '0.001' }];
+        const body = url.startsWith('/api/dashboard/summary')
+          ? stringSummary
+          : stringEvents;
+        return new Response(JSON.stringify(body), {
+          status: 200,
+          headers: { 'content-type': 'application/json' },
+        });
+      }) as unknown as typeof fetch
+    );
+
+    render(<DashboardPage />);
+    // Renders without throwing; fmtUsd formats the coerced value.
+    await waitFor(() =>
+      expect(screen.getByText('Recent events')).toBeInTheDocument()
+    );
+    expect(screen.getByText('Cost by stage')).toBeInTheDocument();
+  });
 });

@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { costUsd, logEventRow } from './events.js';
+import { costUsd, logEventRow, DashboardSummary, EventRow } from './events.js';
 
 describe('costUsd (§9) — matches v1 llm.js', () => {
   it('computes haiku cost for a sample usage', () => {
@@ -55,5 +55,55 @@ describe('logEventRow (§9) — typed row builder', () => {
     expect(row.input_tokens).toBeNull();
     expect(row.job_id).toBeNull();
     expect(row.ok).toBe(false);
+  });
+});
+
+// The contracts already declared these as z.number(), but the API wasn't
+// enforcing them on its OWN output — pg returns numeric/bigint as strings, so
+// strings flowed to the client and `.toFixed()` crashed the dashboard. These
+// tests pin the contract as the boundary guard: the string-shaped objects pg
+// produces MUST be rejected, and the API must coerce before returning.
+describe('numeric-as-string boundary (the dashboard .toFixed crash)', () => {
+  it('DashboardSummary.parse rejects pg string-shaped numbers', () => {
+    const stringShaped = {
+      costByStage: [{ stage: 'parse_jd', costUsd: '0.5', calls: '3' }],
+      costByModel: [{ model: 'claude-haiku-4-5', costUsd: '0.4' }],
+      totalsByDay: [{ day: '2026-06-09', costUsd: '0.5' }],
+      funnel: [{ status: 'in_review', count: '4' }],
+      failures: [{ stage: 'verify_claims', count: '1' }],
+    };
+    expect(() => DashboardSummary.parse(stringShaped)).toThrow();
+
+    // ...and accepts the coerced (numeric) shape the API must produce.
+    const numeric = {
+      costByStage: [{ stage: 'parse_jd' as const, costUsd: 0.5, calls: 3 }],
+      costByModel: [{ model: 'claude-haiku-4-5', costUsd: 0.4 }],
+      totalsByDay: [{ day: '2026-06-09', costUsd: 0.5 }],
+      funnel: [{ status: 'in_review', count: 4 }],
+      failures: [{ stage: 'verify_claims' as const, count: 1 }],
+    };
+    expect(() => DashboardSummary.parse(numeric)).not.toThrow();
+  });
+
+  it('EventRow.parse rejects pg string id/cost_usd', () => {
+    const base = {
+      job_id: null,
+      stage: 'tailor' as const,
+      model: 'claude-sonnet-4-6',
+      input_tokens: 4591,
+      output_tokens: 486,
+      duration_ms: 7832,
+      ok: true,
+      detail: null,
+      created_at: '2026-06-09T12:00:00+00',
+    };
+    // id + cost_usd as strings (the exact shape pg hands back) → rejected.
+    expect(() =>
+      EventRow.parse({ ...base, id: '119', cost_usd: '0.007021' })
+    ).toThrow();
+    // coerced numbers → accepted.
+    expect(() =>
+      EventRow.parse({ ...base, id: 119, cost_usd: 0.007021 })
+    ).not.toThrow();
   });
 });

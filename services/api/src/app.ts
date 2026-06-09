@@ -10,7 +10,7 @@ import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import Fastify, { type FastifyInstance } from 'fastify';
 import fastifyStatic from '@fastify/static';
-import { ResumeDoc, overlayProblems, parseConfig } from '@resume/contracts';
+import { ResumeDoc, overlayProblems, parseConfig, EventRow } from '@resume/contracts';
 import type { Queryable } from './pool.js';
 import { getConfig, isConfigNs, CONFIG_NS } from './config.js';
 import { dashboardSummary } from './dashboard.js';
@@ -343,7 +343,20 @@ export function createApp(deps: AppDeps): FastifyInstance {
          FROM events ${whereSql} ORDER BY id DESC LIMIT $${params.length}`,
       params
     );
-    return rows; // EventRow[]
+    // pg returns numeric/bigint columns as JS STRINGS (id is bigserial, cost_usd
+    // is numeric(10,6)). Coerce to real numbers so the EventRow z.number()
+    // contract holds — and validate on the way out so a string→number regression
+    // is caught at the boundary, not in the client's .toFixed().
+    const toNum = (v: unknown): number | null => (v == null ? null : Number(v));
+    const events = rows.map((r) => ({
+      ...r,
+      id: Number(r.id),
+      input_tokens: toNum(r.input_tokens),
+      output_tokens: toNum(r.output_tokens),
+      cost_usd: toNum(r.cost_usd),
+      duration_ms: toNum(r.duration_ms),
+    }));
+    return EventRow.array().parse(events); // EventRow[]
   });
 
   app.get('/healthz', async () => 'ok');
