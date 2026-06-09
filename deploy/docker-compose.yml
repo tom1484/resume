@@ -32,13 +32,15 @@ services:
       timeout: 5s
       retries: 5
 
-  # Long-running cron daemon (supercronic, nightly --all). Manual run:
-  #   docker compose run --rm discovery uv run --no-sync python -m discovery.main --boards
+  # In-process DB-driven scheduler (v2): a long-running process that reads
+  # ScheduleConfig from the `config` table each tick and runs discovery when due
+  # (a UI schedule edit takes effect next tick, no restart). Replaces supercronic.
+  # Manual one-shot: docker compose run --rm discovery uv run --no-sync python -m discovery.main --boards
   discovery:
     build: ../services/discovery
     container_name: jobs-discovery
     restart: unless-stopped
-    init: true   # supercronic's reaper fatals as PID 1; let tini own PID 1
+    init: true   # tini owns PID 1 (clean signal handling / zombie reaping)
     networks: [internal]
     environment:
       DATABASE_URL: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
@@ -48,7 +50,9 @@ services:
         condition: service_healthy
 
   pipeline:
-    build: ../services/pipeline
+    build:
+      context: ..                                  # repo root — image needs @resume/contracts
+      dockerfile: services/pipeline/Dockerfile
     container_name: jobs-pipeline
     restart: unless-stopped
     networks: [internal]

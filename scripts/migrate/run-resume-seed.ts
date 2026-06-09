@@ -14,5 +14,5 @@ const seedPath = join(root, 'data', 'resume.json');
 const old = JSON.parse(readFileSync(seedPath, 'utf8'));
 const migrated = migrateResumeV1ToV2(old);
 writeFileSync(seedPath, JSON.stringify(migrated, null, 2) + '\n');
-// eslint-disable-next-line no-console
+ 
 console.log(`migrated ${seedPath} → v2 ResumeDoc (validated)`);

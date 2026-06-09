@@ -13,6 +13,6 @@ for (const name of Object.keys(JSON_SCHEMA_TARGETS)) {
   const schema = toJsonSchema(name as keyof typeof JSON_SCHEMA_TARGETS);
   const file = join(outDir, `${name}.json`);
   writeFileSync(file, JSON.stringify(schema, null, 2) + '\n');
-  // eslint-disable-next-line no-console
+   
   console.log(`wrote ${file}`);
 }

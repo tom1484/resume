@@ -509,7 +509,7 @@ async function applyMigration(result: MigrationResult): Promise<void> {
 async function main(): Promise<void> {
   const args = parseArgs(process.argv.slice(2));
   if (!args.exportDir) {
-    // eslint-disable-next-line no-console
+     
     console.error(
       'usage: migrate-v1-to-v2 --export <dir> [--dry-run] [--apply] [--out <file>]'
     );
@@ -517,7 +517,7 @@ async function main(): Promise<void> {
   }
   const result = buildMigration(args.exportDir);
 
-  // eslint-disable-next-line no-console
+   
   console.log(JSON.stringify(result.report, null, 2));
 
   if (args.out) {
@@ -535,24 +535,24 @@ async function main(): Promise<void> {
         2
       ) + '\n'
     );
-    // eslint-disable-next-line no-console
+     
     console.log(`wrote migrated payload → ${args.out}`);
   }
 
   if (args.dryRun) {
-    // eslint-disable-next-line no-console
+     
     console.log('\n[dry-run] no DB writes. Pass --apply to write to DATABASE_URL.');
     return;
   }
   await applyMigration(result);
-  // eslint-disable-next-line no-console
+   
   console.log('[apply] migration written to DATABASE_URL.');
 }
 
 // Run as CLI only (importable for tests).
 if (process.argv[1] && import.meta.url === `file://${process.argv[1]}`) {
   main().catch((err) => {
-    // eslint-disable-next-line no-console
+     
     console.error(err);
     process.exit(1);
   });

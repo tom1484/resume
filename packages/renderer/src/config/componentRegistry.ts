@@ -18,7 +18,7 @@ export const getComponent = (
 ): ComponentType<Record<string, unknown>> | null => {
   const Component = componentRegistry[componentName];
   if (!Component) {
-    // eslint-disable-next-line no-console
+     
     console.warn(`Component "${componentName}" not found in registry`);
     return null;
   }

@@ -25,7 +25,7 @@ export default function Container({
   const { theme } = useTheme();
   
   const getContainerStyles = () => {
-    let styles = [];
+    const styles = [];
     
     // Width variants
     switch (width) {

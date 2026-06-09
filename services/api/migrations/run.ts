@@ -54,7 +54,7 @@ export async function runMigrations(
         [file]
       );
       if ((rowCount ?? 0) > 0) continue;
-      // eslint-disable-next-line no-console
+       
       console.log(`applying ${file}`);
       await client.query('BEGIN');
       try {
@@ -69,7 +69,7 @@ export async function runMigrations(
         throw err;
       }
     }
-    // eslint-disable-next-line no-console
+     
     console.log('migrations up to date');
     return applied;
   } finally {
@@ -84,7 +84,7 @@ if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
   runMigrations(pool)
     .then(() => pool.end())
     .catch((err) => {
-      // eslint-disable-next-line no-console
+       
       console.error(err);
       process.exit(1);
     });

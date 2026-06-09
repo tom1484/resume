@@ -63,7 +63,7 @@ buildPayload()
     );
   })
   .catch((err) => {
-    // eslint-disable-next-line no-console
+     
     console.error(err);
     root.render(
       <div className="m-8 rounded border-2 border-red-600 bg-red-50 p-6 font-sans text-red-800">

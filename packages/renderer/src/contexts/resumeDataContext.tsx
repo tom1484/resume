@@ -40,7 +40,7 @@ export function useSection(dataKey: string): unknown {
   const { data } = useResumeData();
   const section = (data as Record<string, unknown>)[dataKey];
   if (section === undefined) {
-    // eslint-disable-next-line no-console
+     
     console.warn(`Data key "${dataKey}" not found in resume data`);
     return null;
   }
