@@ -63,6 +63,14 @@ const tags = (raw: unknown): { tags: string[] } | Record<string, never> =>
  * that silently produces an invalid doc is never acceptable (§12.3).
  */
 export function migrateResumeV1ToV2(oldDoc: unknown): ResumeDocT {
+  // Pass-through if the input already conforms to v2 ResumeDoc. The repo SEED
+  // (data/resume.json) is `x-`-prefixed and needs the map below, but the LIVE
+  // DB résumé (resume_versions) is already un-prefixed / v2-shaped — reshaping
+  // it would read absent `x-` fields and produce `undefined`. Validate-first
+  // handles both shapes safely.
+  const asIs = ResumeDoc.safeParse(oldDoc);
+  if (asIs.success) return asIs.data;
+
   const d = (oldDoc ?? {}) as V1Resume;
   const b = d.basics ?? {};
 
