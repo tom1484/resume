@@ -1,92 +1,122 @@
-# Agent docs — start here
+# Agent docs — start here (v2)
 
 Dense reference for an AI agent picking up this repo. Read this file first
-(2 min), then jump to the topic doc for your task. For always-on invariants
-see the repo-root `CLAUDE.md`; for the human-oriented overview see
-`ARCHITECTURE.md`. These docs are the **deep, exhaustive** layer.
+(2 min), then jump to the topic doc for your task. For always-on invariants see
+the repo-root `CLAUDE.md`. These docs are the **deep, exhaustive** layer.
 
-> Accuracy rule: this repo has changed a lot over time. Trust the **code on
-> disk**, not stale memory. Every path/route/symbol below is meant to be
-> real — if one doesn't resolve, fix the doc.
+> **This is v2.** A clean TypeScript/pnpm reimplementation that **replaced v1 and
+> is LIVE**. Trust the **code on disk** + `docs/v2/CONTRACTS.md` (authoritative
+> Zod spec) + `docs/v2/DECISIONS.md` (rebuild record). Anything that mentions
+> `apps/review`, `x-`-prefixed résumé fields, `MODEL_*` env vars, a supercronic
+> crontab, or Ajv-as-source-of-truth is **v1 and stale** — ignore it. Every
+> path/route/symbol below is meant to resolve in the v2 code; if one doesn't, fix
+> the doc.
 
 ## What this is (60-second model)
 
 A data-driven résumé (`packages/renderer`) extended into a **self-hosted job
-application pipeline**. The loop:
+application pipeline**, with one **Zod contracts package** (`@resume/contracts`)
+as the single source of truth that every other subsystem imports. The loop:
 
 ```
-discovery (nightly) → jobs table → pipeline (poll): parse_jd → score → gate
-  → tailor → verify(anti-fabrication) → status=in_review → Telegram
-        → you review/edit/approve at https://jobs.churong.cc (review SPA)
+discovery (scheduled) → jobs table → pipeline (poll): parse_jd → score(two lists)
+  → gate → tailor → verify(anti-fabrication) → status=in_review → Telegram
+        → you review/edit/approve + tune config + edit the résumé in the
+          dashboard SPA at https://jobs.churong.cc
         → [Phase 4, not built] local apply agent submits approved apps
 ```
 
-- **Canonical résumé is DB-backed** (`resume_versions` table; latest row =
-  current). `data/resume.json` (repo root) is the seed + export target +
-  offline fallback — **not** the live source.
-- **No profiles.** One résumé; per-job customization is an **overlay**
-  (section selection + filters + RFC-6902 patches), never a mutation of the
-  base. Tailoring and the review editor both produce overlays.
-- **Anti-fabrication is load-bearing**: `verify.js` (numeric tripwire +
-  Haiku skeptic) + drop-unsupported-patches in `tailorJob.js`. Reviewer
-  edits are trusted; only LLM-written patches are verified.
+What changed from v1 (so you don't trust the old mental model):
+
+- **Contracts SSoT.** `packages/contracts` defines every shape once in Zod;
+  JSON Schema (for Ajv) is **emitted** from Zod, not hand-written. v1's 6 copies
+  of the section-key list, two diverged `overlayProblems`, and untyped
+  `score_breakdown` are gone.
+- **One SPA + a bare host.** `apps/dashboard` (shadcn/ui + react-router) is the
+  single admin UI at `/` with tabs `/dashboard /review /resume /scrawling /llm
+  /preferences /constraints /answers`. `apps/site` is the chrome-less **bare
+  résumé render host** at `/resume/` (print/PDF target + the review preview,
+  iframed). v1's `apps/review` is GONE.
+- **Un-prefixed v2 résumé fields** (`time, info, tags, links, venue, authors,
+  track, kind, badge`) — no `x-`, no JSON-Resume conformance.
+- **DB-backed config layer.** Every non-secret setting is a `config` table row,
+  UI-editable, Zod-validated; services read it at runtime (`getConfig(ns)`).
+  Secrets stay in env. v1's `MODEL_*`/`SCORE_THRESHOLD`/crontab knobs are gone.
+- **Two-list scoring.** Deterministic **Constraints** (vs parsed-JD fields; the
+  F-1 rules are seeded config now) + **Preferences** (priority 1–10, injected into
+  the LLM fit prompt). v1's hard-coded F-1 `structuralScore` is gone.
+- **In-process DB-driven scheduler** in `services/discovery` (`scheduler.py`) —
+  supercronic is gone.
+- **Anti-fabrication preserved verbatim** (the one thing that did NOT change).
 
 ## Doc map
 
 | Doc | Read it when |
 |---|---|
-| [architecture.md](./architecture.md) | You need the system map / how components connect / the end-to-end flows |
-| [data-contracts.md](./data-contracts.md) | You touch résumé JSON, the overlay shape, DB tables, or API routes |
-| [pipeline.md](./pipeline.md) | You change discovery, scoring, tailoring, verification, or evals |
-| [frontend.md](./frontend.md) | You change the renderer, either app, the editor, or PDF/print |
-| [operations.md](./operations.md) | You deploy, add env/secrets, run commands, or debug the stack |
+| [architecture.md](./architecture.md) | You need the system map / how the contracts pkg + SPA + bare host + 3 services + DB connect / the two end-to-end flows / container topology |
+| [data-contracts.md](./data-contracts.md) | You touch any shape — short index; points to `docs/v2/CONTRACTS.md` (authoritative) |
+| [pipeline.md](./pipeline.md) | You change discovery, the scheduler, scoring (two lists), tailoring, verification, config knobs, or evals |
+| [frontend.md](./frontend.md) | You change the dashboard SPA, the renderer, the editor, the bare host, print/PDF, or Vite/build |
+| [operations.md](./operations.md) | You deploy, run the migration, seed config, touch env/secrets, or read the cutover/rollback runbook + Lessons |
 
 ## Task router — "I need to…"
 
 | Task | Go to |
 |---|---|
-| Change what the résumé renders / add a section component | frontend.md → render path; data-contracts.md → adapter key contract |
-| Change the tailoring prompt / model | pipeline.md → tailor; **then run `eval/run-parse-eval.js` + `run-verify-eval.js`** (CLAUDE.md gate) |
-| Adjust the match score / gate | pipeline.md → score; env `SCORE_THRESHOLD` |
-| Add a discovery source / company / search | pipeline.md → discovery; `services/discovery/config/*.yml` |
-| Add/alter a DB column or table | data-contracts.md → DB; add a `services/pipeline/migrations/00N_*.sql` |
-| Add an API route or review-UI feature | data-contracts.md → API; frontend.md → apps/review |
-| Deploy / redeploy / read logs / env | operations.md |
-| Refactor the renderer safely | use the `render-check` skill (DOM-diff must be empty) |
+| Add/rename a shape (résumé field, overlay key, config field, DB column) | data-contracts.md → then `packages/contracts/src/*`; **rebuild + gen:schemas + `pnpm validate`** |
+| Change what the résumé renders / add a section component | frontend.md → renderer; **then `render-check` skill (empty DOM diff)** |
+| Change the tailoring/parse/fit/verify prompt or model | pipeline.md; models come from the `llm` config, NOT env; **then run the matching `eval/*`** (CLAUDE.md gate) |
+| Adjust the match score / gate / weights | pipeline.md → score; the `llm` config (`scoreThreshold`, `weights`) — UI-editable |
+| Add/edit a hard constraint or soft preference | pipeline.md → two-list scoring; `constraints`/`preferences` config (UI tabs) |
+| Add a discovery source / company / search | pipeline.md → discovery; the `discovery` config (UI tab) — NOT the YAMLs |
+| Change the schedule | the `schedule` config (UI tab); pipeline.md → scheduler |
+| Add/alter a DB column or table | data-contracts.md → DB; add `services/api/migrations/00N_*.sql` (API applies them) |
+| Add an API route / dashboard tab / config UI | architecture.md + frontend.md; the route in `services/api/src/app.ts` |
+| Deploy / migrate v1→v2 / env / runbook | operations.md |
+| Refactor the renderer safely | use the `render-check` skill (DOM diff must be empty) |
 
 ## Repo coordinates
 
-- **Workspace** (pnpm): `apps/site` (renderer, served `/resume/`), `apps/review`
-  (review SPA, served `/`), `packages/renderer` (`@resume/renderer`: components +
-  config + contexts + data layer; consumed via Vite aliases `@components/@config/
-  @contexts/@data` and deep subpath imports — no package barrel),
-  `services/{discovery,pipeline,api}`, `scripts/`, `deploy/`.
-- **Commands** (root): `pnpm validate` (Ajv: résumé + extensions + overlays +
-  master), `pnpm test` (vitest, all packages), `pnpm lint` (eslint flat config),
-  `pnpm build` (validate + site build → `apps/site/build`), `pnpm pdf`,
-  `pnpm export-seed` (DB → `data/resume.json`). Python: `cd services/discovery &&
-  uv run pytest`.
+- **Workspace** (pnpm; `pnpm-workspace.yaml` globs `apps/* packages/* services/*`):
+  `packages/contracts` (`@resume/contracts`, TS, the SSoT, emits
+  `dist/schemas/*.json`), `packages/renderer` (`@resume/renderer`, TSX source
+  package — Vite aliases `@components/@config/@contexts/@data` for `apps/site`,
+  deep subpath imports for the dashboard, no barrel), `apps/dashboard` (`dashboard`,
+  Vite SPA), `apps/site` (`site`, Vite bare host), `services/{discovery,pipeline,
+  api}`, `scripts/`, `deploy/`.
+- **Commands** (root): `pnpm validate / test / lint / build`,
+  `pnpm contracts:build` (tsc + gen:schemas), `pnpm pdf`, `pnpm export-seed`.
+  Python: `cd services/discovery && uv run pytest`.
 - **Live**: `https://jobs.churong.cc` behind nginx-proxy-manager access list →
   `jobs-api:8080`. Containers: `jobs-db / jobs-discovery / jobs-pipeline /
   jobs-api` (compose project `job-pipeline`). No host ports; web only via NPM.
-- **Plans/state**: `PROPOSALS.md` (plan of record), `PLAN.md` (per-task progress),
-  `PREPARE.md` (operator setup + owed items). Phases 1–3 + review-editor done;
-  Phase 4 (local apply agent) not built.
+- **Plans/state**: `docs/v2/DECISIONS.md` (the rebuild brief/record),
+  `docs/v2/CONTRACTS.md` (authoritative Zod contract spec). The v1 planning docs
+  (`PROPOSALS.md`/`PLAN.md`/`PREPARE.md`) were removed at the v2 cutover. Phase 4
+  (local apply agent) is not built.
 
 ## Glossary
 
+- **contracts (`@resume/contracts`)** — the Zod single source of truth. One file
+  per concern in `packages/contracts/src/` (`sections, resume, viewModel, overlay,
+  master, pipeline, scoring, config, db, api, events, jobRow, antifab, print,
+  schemas`); barrel `index.ts`. Emits Ajv JSON Schemas via `schemas.ts`.
+- **section registry** — `sections.ts` `SECTION_REGISTRY`: THE one list of the 9
+  section keys (+ `source/list/editable/titleKey/pick`). Derives the overlay enum,
+  the TailorSchema enum, the editor tree, `sectionsConfig`, and `sectionOrder`
+  validation. The work/projects split lives only in its `pick` predicates.
 - **overlay** — per-job tailoring artifact: `{ profile{sections,filters}, patches
-  (RFC-6902), coverLetter, audit }`. Applied to a clone of the résumé at render
-  time (`overlay.js#applyOverlay`). Schema: `overlay.schema.json`.
+  (RFC-6902 replace-only for LLM), coverLetter, audit }`. Applied to a clone of the
+  résumé. `overlayProblems(overlay, resumeDoc)` (`api.ts`) is the ONE validator.
 - **master bank** — `packages/renderer/src/data/master.json`: every accomplishment
   as a stable-id bullet; the grounding corpus for tailoring/verification.
-- **company_flags** — `dream` (high-effort tier → Opus tailoring), `startup`,
-  `return-path`. On the `jobs` row.
-- **tailor / verify** — `tailor.js` generates the overlay (Sonnet, Opus for
-  `dream`); `verify.js` audits each patch (numeric tripwire + skeptic);
-  `tailorJob.js` drops unsupported patches so review only sees grounded edits.
-- **adapter key contract** — `adapter.js#buildViewModels` must emit exactly the
-  known view-model keys (components spread them onto DOM); `adapter.test.js`
-  enforces it.
-- **editor model** — `editorModel.js` bridges résumé/overlay ⇄ a section/item/
-  bullet tree for the dnd-kit editor (`editor/ResumeTree.jsx`).
+  File-based (not DB); ids immutable once referenced; `groundedIn` refs are bare
+  `<id>`.
+- **two-list scoring** — Constraints (hard, deterministic, `evaluateConstraints`)
+  + Preferences (soft, priority 1–10, `preferenceBlock` into the fit prompt).
+- **company_flags** — `dream` (→ Opus tailoring), `startup`, `return-path`.
+- **bare host** — `apps/site`: chrome-less résumé render at `/resume/`; the
+  print/PDF target and the dashboard's review preview (iframed by `ResumeCanvas`).
+- **getConfig(ns)** — best-effort DB config read with schema-default fallback
+  (the resilient `refreshResume` pattern, generalized). TS: `services/*/config.ts`;
+  Python: `services/discovery/src/discovery/config.py` (kept in lockstep).

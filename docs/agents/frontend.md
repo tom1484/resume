@@ -1,226 +1,241 @@
-# Frontends & the editor model
+# Frontends, renderer & the editor model (v2)
 
 ## Scope
-Two Vite SPAs plus the shared `@resume/renderer` source package. `apps/site`
-renders the résumé (read-only `/resume` view, tailored `?application=<id>`
-view, and the canonical-résumé editor). `apps/review` is the job-review board
-(inbox/detail/answers) with an overlay editor. Both reuse one structured
-editor (`editor/ResumeTree.jsx`) and one bridge (`data/editorModel.js`).
+The **one dashboard SPA** (`apps/dashboard` — shadcn/ui + react-router admin UI),
+the **bare résumé render host** (`apps/site` — chrome-less, the print/PDF target +
+review preview), and the shared `@resume/renderer` source package (components +
+`data/` layer + the `editor/ResumeTree`). v1's two-SPA model (`apps/site` renderer
+at `/resume/` + `apps/review` at `/`, with an iframe) is replaced by: ONE SPA at `/`
++ a bare host at `/resume/` that the SPA iframes for previews. `apps/review` is GONE.
 
 ## Read this when
 - Adding/changing a résumé section, item field, or how it renders.
-- Touching the render path (`adapter.js` view-model keys, components, sections).
+- Touching the render path (`adapter.ts` view-model keys, components).
 - Editing the structured editor (drag/reorder/delete/exclude/hide/rephrase).
-- Changing what the résumé editor saves (`PUT /api/resume`) or the overlay
-  editor saves (`PUT /api/jobs/:id/overlay`).
-- Changing print/PDF config (paper size, margins, scale).
-- Adding/changing a review-board route, API client call, or answers UI.
-- Debugging Vite aliases or the `@resume/renderer/src/*` deep-import rule.
+- Changing what the résumé editor saves (`PUT /api/resume`) or the overlay editor
+  saves (`PUT /api/jobs/:id/overlay`).
+- Changing print/PDF config (paper size, margins, scale) or print isolation.
+- Adding/changing a dashboard route, tab, config UI, or the API client.
+- Debugging Vite aliases / the renderer deep-import rule / the bare-host iframe.
 
 ## Serve paths (production)
-Served by `services/api` (`services/api/src/server.js`, container `jobs-api`),
-same-origin. See ./architecture.md (static routing) and ./operations.md.
-| URL prefix | Serves | server.js |
+Served by `services/api` (`app.ts`, container `jobs-api`), same-origin. See
+[./architecture.md](./architecture.md) (static routing) + [./operations.md](./operations.md).
+| URL prefix | Serves | Where |
 |---|---|---|
-| `/` | review SPA build (`apps/review/build`) | server.js:189 |
-| `/resume` → `301 /resume/` | redirect | server.js:187 |
-| `/resume/` | résumé renderer build (`apps/site/build`) | server.js:188 |
-| SPA fallback | review `index.html` (NOT for `/api/`, `/applications/`, `/resume`) | server.js:194-199 |
+| `/` and unmatched | dashboard SPA build (`apps/dashboard/build` → `/app/dashboard`) | `app.ts` `@fastify/static` prefix `/` + `setNotFoundHandler` fallback to `index.html` |
+| `/resume/` (trailing slash) | bare host build (`apps/site/build` → `/app/site`) | `app.ts` `@fastify/static` prefix `/resume/` (`VITE_BASE=/resume/`) |
+| `/api/*`, `/applications/*`, `/resume/` | exempt from SPA fallback (404 JSON) | `setNotFoundHandler` |
 
-Site build base path is `VITE_BASE=/resume/` (apps/site/vite.config.mjs:11).
+> Seam (flagged in `apps/dashboard/src/router.tsx`): the fallback exempts any URL
+> starting with `/resume/` (trailing slash), so a **hard** nav/refresh to the
+> dashboard's own `/resume` route is shadowed by the bare host. Client-side nav (the
+> sidebar) works. Recommend the API keep the `/resume/` (slash) exemption exact.
 
-## Entry points
-| File | Role |
-|---|---|
-| `apps/site/src/index.jsx` | Bootstrap. Reads `?application`, fetches data, calls `registerResume`/`registerApplication`, renders `<App editable={!applicationId}/>`. |
-| `apps/site/src/App.jsx` | `App`→`AppContent`→`ResumeView`. Render path + `usePageStyle` (@page) + Edit toggle. |
-| `apps/site/src/ResumeEditor.jsx` | Canonical-résumé editor (Structured/JSON/Print tabs, Export/Import). |
-| `apps/review/src/main.jsx` | Bootstrap `<App/>`. |
-| `apps/review/src/App.jsx` | Hash router + `Inbox`/`Detail`/`Answers`. |
-| `apps/review/src/Editor.jsx` | `EditorModal` overlay editor (modal over Detail). |
-| `apps/review/src/api.js` | API client functions. |
-| `packages/renderer/src/data/index.js` | `@data` API (register/get). |
-| `packages/renderer/src/data/editorModel.js` | Tree bridge (both editors). |
-| `packages/renderer/src/editor/ResumeTree.jsx` | Shared dnd-kit editor tree. |
+---
 
-## apps/site routes (index.jsx)
-Single canonical résumé; **no profiles** (`?profile`/`meta.x-profiles` removed).
-- `?application=<id>` → `fetchJson('/applications/<id>/overlay.json')`, then
-  `fetchJson('/api/resume')` as base (falls back to bundled seed on failure),
-  then `registerApplication(overlay, base)`. Rendered read-only (`editable=false`).
-  Used inside the review Detail iframe.
-- otherwise (`/resume`) → `registerResume(await fetchJson('/api/resume'))`;
-  on fetch failure `registerResume` already defaults to the bundled seed
-  (standalone build / PDF / CI). Rendered editable.
-- Bootstrap failure renders a red error box (index.jsx:48-56).
+## apps/dashboard — the unified SPA
 
-## apps/review hash routes (App.jsx)
-No router dep — `useHashRoute` listens to `hashchange` (App.jsx:6-14).
-| Hash | Component |
-|---|---|
-| `#/` (default) | `Inbox` — tabs: `in_review`/`approved`/`scored`/`rejected`; clicking a job → `#/app/<id>` |
-| `#/app/<id>` | `Detail` — actions (approve/reject/label/edit overlay), tailored-résumé iframe, score breakdown, patch diff, cover letter, JD |
-| `#/answers` | `Answers` — CRUD over the answers bank |
+Stack: React 18, **react-router v6** (`createBrowserRouter`), **shadcn/ui** (Radix +
+Tailwind: `components/ui/*` + `lucide-react` icons), Vite 6. `@` → `src` (the shadcn
+convention); the renderer is NOT aliased here (it's deep-imported, see below).
 
-`Detail` iframe src: `/resume/?application=<id>&rev=<n>`; `rev` is bumped on
-overlay save (`onSaved`, App.jsx:117) to cache-bust the iframe.
+### Entry + routing
+- `src/main.tsx` → `<RouterProvider router={router}>`.
+- `src/router.tsx` → `createBrowserRouter` with `Shell` (sidebar/topbar nav) as the
+  layout and these child routes (the §2 tab set):
 
-## @data API (packages/renderer/src/data/index.js)
-Module-level singleton `activeData` (view models) + `activeDoc` (the document
-behind them). Default = `buildViewModels(bundledResume)` where `bundledResume`
-is repo-root `data/resume.json` (the **seed/fallback**, NOT the live source).
-| Export | Effect |
-|---|---|
-| `registerResume(doc)` | set `activeDoc=doc`; `activeData=buildViewModels(doc)` |
-| `registerApplication(overlay, baseDoc=bundled)` | `activeDoc=baseDoc`; `activeData=applyOverlay(overlay, baseDoc).data` (meta/print inherited from base) |
-| `getResumeDoc()` | current `activeDoc` (used by editor + `usePageStyle` + `orderedSections`) |
-| `getData(dataKey)` | items for one section key; `console.warn`+`null` if missing |
-| `experienceConfigs`, `publicationsConfig` | per-section presentation flags consumed by `config/sections.js` (e.g. `projects.showTags:false`) |
+| Route | Component | Role |
+|---|---|---|
+| `/dashboard` (index → here) | `routes/DashboardPage` | events/cost ledger: cost-by-stage/model, totals-by-day, status funnel, failures, recent events |
+| `/review`, `/review/:id` | `routes/ReviewPage` | inbox (status tabs) + detail (approve/reject/label, score breakdown, overlay editor, tailored preview, patch diff, cover letter, JD) |
+| `/resume` | `routes/ResumePage` | canonical résumé editor (Structured/JSON/Print tabs) + live preview |
+| `/scrawling` | `routes/ScrawlingPage` | `schedule` + `discovery` config (cron/tz/mode, JobSpy sites/defaults, exclude lists, searches, companies) |
+| `/llm` | `routes/LlmPage` | `llm` config (per-stage models, threshold, weights, batch, poll, truncation) |
+| `/preferences` | `routes/PreferencesPage` | `preferences` config (soft, priority 1–10) |
+| `/constraints` | `routes/ConstraintsPage` | `constraints` config (hard, deterministic) |
+| `/answers` | `routes/AnswersPage` | answers-bank CRUD |
 
-## Render path (App.jsx → registry → component → adapter)
-1. `ResumeView` calls `orderedSections(getResumeDoc())`: sorts `sectionsConfig`
-   (config/sections.js) by `doc.meta.sectionOrder` (unknown keys → rank 99).
-2. For each section: `getComponent(section.component)` from
-   `config/componentRegistry.js` (`PersonalInfo`/`Education`/`Experiences`/
-   `Publications`/`Skills`), `getData(section.dataKey)`. Empty/`null` data →
-   section skipped; non-null renders `<Title>` (if `section.title`) + component.
-3. Components (e.g. `components/experiences.jsx:130-136`) **spread each view-model
-   item onto props** (`{...item}`). The adapter therefore must emit exactly the
-   known keys — see ./data-contracts.md.
+`Shell.tsx` is the sidebar (desktop) / topbar (mobile) nav; chrome is marked
+`print-hide`.
 
-### adapter.js (buildViewModels) — KEY CONTRACT
-Maps the JSON-Resume doc + `x-` extensions → view models. Optional keys are
-**omitted** (via `opt()`), never set to `undefined`. Output keys (the section
-data keys): `personalInfo, education, academics, working, publications,
-competitions, projects, extracurriculars, skills`. `work[]` splits into
-`working`/`academics` by `x-section==='academic'`; `projects[]` splits into
-`projects`/`competitions` by `x-type==='competition'`. Enforced by
-`packages/renderer/src/data/adapter.test.js` — do NOT add keys casually.
+### Typed API client (`src/api.ts`)
+Same-origin `fetch`; every shape comes from `@resume/contracts` (never restated).
+`request<T>` throws `ApiError` (carrying the server's `{error, problems}`) on non-2xx.
+Methods: `jobs/job/approve/reject/label/putOverlay`, `resume/putResume`,
+`answers/putAnswer/addAnswer/deleteAnswer`, `config<NS>/putConfig<NS>` (typed by
+`ConfigNamespace`/`ConfigValue<NS>`), `dashboardSummary/events`. `api.test.ts` covers
+it.
 
-### overlay.js (applyOverlay)
+### Config UIs (client-side Zod validation)
+`hooks/useConfig.ts` `useConfig(ns)` loads a namespace via `api.config(ns)`, holds an
+editable draft, and **validates with `parseConfig(ns, value)` (the contracts Zod)
+BEFORE PUT** (brief requirement) — surfacing `parsed.error.issues` in the `SaveBar`.
+`LlmPage`/`PreferencesPage`/`ConstraintsPage`/`ScrawlingPage` are thin forms over it.
+The Résumé editor (`ResumePage`) validates with `ResumeDoc.safeParse` before
+`putResume`. `LlmPage.test.tsx`/`DashboardPage.test.tsx` cover representative pages
+(jsdom; the dashboard runs under its own `vitest.config.ts`).
+
+### The résumé canvas is an IFRAME of the bare host (`components/ResumeCanvas.tsx`)
+The dashboard does NOT render the résumé in-app. `ResumeCanvas` iframes the bare host
+(`/resume/` for the canonical résumé, `/resume/?application=<jobId>` for a tailored
+preview), `rev`-bumped to cache-bust after a save. Why: the renderer canvas is
+pixel-stable and is the Playwright PDF target — iframing the SAME host keeps the
+preview byte-identical to the PDF and isolates the renderer's Tailwind preflight from
+shadcn/ui's. The in-frame "Print résumé" button drives the iframe's own print context
+(only the résumé prints). `index.css` adds a `@media print` `.print-isolating` /
+`.print-canvas` fallback for `Cmd+P` on the page.
+
+---
+
+## apps/site — the bare host
+
+Chrome-less render of the canonical résumé (or an applied overlay). The print/PDF
+target and the dashboard's review preview. No editor UI lives here (the editors moved
+to the dashboard).
+
+### Entry (`src/index.tsx`) — routes by `?application`
+- `?application=<id>` → `fetchJson('/applications/<id>/overlay.json')` + `fetchJson(
+  '/api/resume')` (base; falls back to `bundledSeed` on failure) → `applicationPayload(
+  overlay, base)` → render read-only. (This is what `ResumeCanvas` iframes.)
+- otherwise → `resumePayload(await fetchJson('/api/resume'))`; on failure
+  `resumePayload(bundledSeed)` (standalone build / PDF / CI).
+- Bootstrap failure renders a red error box.
+
+### Render path (`src/App.tsx`) — data via the provider (NOT a singleton)
+v1's mutable `activeData`/`activeDoc` module singleton is **gone**. The host builds a
+`RenderPayload` (`{ doc, data }`) once and passes it to `<App payload>`, which
+provides it via `ResumeDataProvider` (`contexts/resumeDataContext.tsx`); components
+read it through `useSection(key)` (one section's items, mirroring v1 `getData`) and
+`useResumeDoc()` (the doc, for print config + section order).
+1. `ResumeView` → `orderedSections(useResumeDoc())`: sorts `sectionsConfig`
+   (`config/sections.ts`) by `doc.meta.sectionOrder` (unknown keys → rank 99).
+2. Per section: `getComponent(section.component)` (`config/componentRegistry.ts` —
+   `PersonalInfo`/`Education`/`Experiences`/`Publications`/`Skills`),
+   `useSection(section.dataKey)`. Empty/null data → skipped; else `<Title>` (if
+   `section.title`) + `<Component data={data} {...section.props}/>`.
+3. Components spread each view-model item onto props (`{...item}`), so the adapter
+   must emit exactly the known keys — see the view-model contract below.
+4. `usePageStyle(payload.doc)` injects the `@page` rule into `<head>` (browser print
+   / Save-as-PDF), kept out of `#root`.
+
+`config/sections.ts` `sectionsConfig` is built from the §1 `SECTION_REGISTRY` (keys +
+order are NOT restated) — only the renderer-presentation facts the registry doesn't
+carry: the component name, the displayed `<Title>` text (intentionally NOT the
+registry `label` — header text is byte-stable from v1: "Academic Experience"/"Work
+Experience"/"Competition Experience"/"Projects"/"Extracurricular"), and the one real
+prop (`projects.showTags` via `SECTION_PROPS`).
+
+### adapter.ts (`buildViewModels`) — KEY CONTRACT
+Maps `ResumeDoc` (§2) → `ViewModels` (§3). Optional keys are **omitted** (via `opt()`),
+never set to `undefined`. Reads the **v2 un-prefixed fields** (`time, info, courses,
+tags, links, badge, footnote, location, authors, venue, status, headline`). The
+work/projects split is NOT restated here — it consumes the §1 registry `pick`
+predicates (`pickFor(key)`). The §2/§3 publications-`link` fix is here (the adapter now
+emits `link` from `publications[].links`; the seed has none, so the rendered DOM is
+unchanged). Enforced by `ViewModels.parse` (`.strict()` + no-`undefined` guard) over
+ALL sections, asserted in `adapter.test.ts`.
+
+### overlay.ts (`applyOverlay`)
 `applyOverlay(overlay, resumeDoc)` validates RFC-6902 patches against the doc
-(`jsonpatch.validate`; throws citing `patchError.index/name/operation.path` on failure),
-applies them to a **deep clone** (never mutates), rebuilds view models, checks
-each `profile.sections` key exists, then `buildProfileFrom`. `applyFilter`
-supports `tagsAnyOf`, `titleIn`, `exclude`, `order`, `limit` — items keyed by
-`title`. Profile *variants* are gone; this only serves per-job overlays.
+(`jsonpatch.validate`; throws on failure), applies them to a **deep clone** (never
+mutates), rebuilds view models, checks each `profile.sections` key, then
+`buildProfileFrom`. `applyFilter` supports `tagsAnyOf → titleIn → exclude → order →
+limit` — items keyed by `title`. `overlay.test.ts` covers it.
 
-## The editor bridge (editorModel.js) — ONE tree, TWO modes
-Tree shape: `{ sections: [ { key, label, list, editable, enabled,
-items: [ { id, title, enabled, source, index, path, bullets:[{id,text,hidden?}] } ] } ] }`.
-`SECTIONS` (editorModel.js:15-25) defines source array + `titleKey` + `pick`
-per section (e.g. `working` = `work` where `x-section!=='academic'`). `id`s are
-stable per session (dnd-kit keys). `editable` sections expose bullets
-(`highlights`); non-editable sections (Header, Education, Publications, Skills)
-have no bullets.
+---
+
+## The editor bridge (`packages/renderer/src/data/editorModel.ts`) — ONE tree, TWO modes
+Tree: `{ sections:[{ key, label, list, editable, enabled, items:[{ id, title,
+enabled, source, index, path, bullets:[{id,text,hidden?}] }] }] }`. The section list
++ work/projects split derive from the §1 `SECTION_REGISTRY` (`SECTIONS`) — never
+restated. ids are stable per session (dnd-kit keys); editable sections expose bullets
+(`highlights`), non-editable (Header/Education/Publications/Skills) don't.
 
 | Function | Direction | Used by |
 |---|---|---|
 | `buildEditorModel(overlay={}, doc, sectionOrderKeys=null)` | doc(+overlay) → tree | both editors |
-| `treeToResume(tree, baseDoc)` | tree → new résumé doc | résumé editor |
-| `editorTreeToOverlay(tree, jobId, coverLetter, doc)` | tree → overlay | overlay editor |
+| `treeToResume(tree, baseDoc)` | tree → new résumé doc | résumé editor (ResumePage) |
+| `editorTreeToOverlay(tree, jobId, coverLetter, doc)` | tree → overlay | overlay editor (ReviewPage) |
 
-- `buildEditorModel`: reflects `overlay.profile.sections` (→ `enabled`),
-  `filters` (`exclude`→item `enabled`, `order`→item sort), and applies
-  `overlay.patches` to a clone so bullet text shows tailored content. Section
-  display order = `sectionOrderKeys ?? profile.sections ?? SECTION_KEYS`.
-- `treeToResume`: writes reorder/delete/bullet-edits **into the source arrays**;
-  saves order to `doc.meta.sectionOrder`. Rebuilds each source array slot-by-slot
-  per section queue so a **no-op save reproduces the array exactly** and existing
-  overlays' positional patches stay valid (editorModel.js:121-137).
+- `buildEditorModel`: reflects `overlay.profile.sections` (→ `enabled`), `filters`
+  (`exclude`→item `enabled`, `order`→item sort), and applies `overlay.patches` to a
+  clone so bullet text shows tailored content. Display order = `sectionOrderKeys ??
+  profile.sections ?? SECTION_KEYS`.
+- `treeToResume`: writes reorder/delete/bullet-edits into the source arrays; saves
+  order to `meta.sectionOrder`. **Slot-preservation invariant (§2):** rebuilds each
+  source array slot-by-slot per section queue so a no-op save reproduces the array
+  positionally → existing overlays' patch paths stay valid.
 - `editorTreeToOverlay`: enabled sections → `profile.sections`; disabled items →
-  `filters[key].exclude`; item order → `filters[key].order`; bullet changes
-  (vs `doc[source][index].highlights`) → `{op:'replace', path:'/<source>/<i>/highlights', value:[...]}`
-  patches. Sets `audit:{claims:[],unsupported:[]}` (reviewer edits are trusted;
-  they bypass the fabrication verify — see ./pipeline.md).
+  `filters[key].exclude`; item order → `filters[key].order`; bullet changes (vs
+  `doc[source][index].highlights`) → `{op:'replace', path:'/<source>/<i>/highlights',
+  value:[...]}` patches. Sets `audit:{claims:[],unsupported:[]}` — **reviewer edits
+  are trusted; they bypass the fabrication verify** (see [./pipeline.md](./pipeline.md)).
+  `editorModel.test.ts` covers it.
 
-### ResumeTree.jsx (shared dnd-kit editor)
-Controlled: `<ResumeTree tree onChange mode />`. `mode='resume'` shows trash
-(delete) on items+bullets, no toggles. `mode='overlay'` shows include/exclude
-checkboxes on sections+items and a per-bullet "show in this application" hide
-checkbox, no delete. Three-level vertical drag-reorder (Pointer/Touch/Keyboard
-sensors). Pure: never calls the API.
+### ResumeTree.tsx (shared dnd-kit editor)
+Controlled: `<ResumeTree tree onChange mode />`. `mode='resume'` shows trash on
+items+bullets, no toggles. `mode='overlay'` shows include/exclude checkboxes on
+sections+items + a per-bullet "show in this application" hide checkbox, no delete.
+Three-level vertical drag-reorder. Pure — never calls the API.
 
-## ResumeEditor.jsx (canonical résumé)
-Tabs: **Structured** (`ResumeTree mode='resume'`), **JSON** (raw doc textarea),
-**Print** (paper/margins/scale form). `edited = treeToResume(tree, baseDoc)`
-with `meta.print` merged in. Save → `PUT /api/resume` with `currentDoc()`
-(JSON tab parses textarea; else `edited`); server snapshots a new
-`resume_versions` row. `onSaved` (App.jsx:64) re-fetches `/api/resume`,
-re-`registerResume`, bumps `rev`. **Export** downloads current doc as
-`resume-<date>.json` (not persisted until Save). **Import** loads a JSON file
-(requires `basics` + `work[]`), rebuilds tree+print — review, then Save.
+## print (`packages/renderer/src/data/print.ts`)
+`PRINT_DEFAULTS`: A4, margins 0mm, scale 1. `PAPER_SIZES` comes from the §2.3
+`PrintConfig` (contracts). `getPrint(doc)` reads `doc.meta.print` (clamps/defaults).
+Two consumers: `pageCss(print)` → `@page { size; margin }` injected by
+`usePageStyle` (browser print); `pdfOptions(print)` → Playwright `page.pdf()` opts
+used by `scripts/print-pdf.mjs`. Applications inherit print config (overlays apply
+onto the base résumé, whose `meta` the payload carries).
 
-## Editor.jsx (overlay, review)
-`EditorModal` over Detail. On open, fetches `/api/resume` as `base`, builds
-`buildEditorModel(job.overlay ?? {}, base)` so paths/base-text match what the
-server validates. `overlay = editorTreeToOverlay(tree, job.id, coverLetter,
-base)`. Save → `saveOverlay(job.id, overlay)` (JSON tab parses textarea). Has a
-cover-letter textarea. `onSaved` reloads job + bumps iframe `rev`.
+## Renderer reuse from the dashboard — the deep-import rule
+The dashboard reuses ONLY the renderer's **alias-free** surface via
+`apps/dashboard/src/resumeEditor.ts`, which re-exports from package deep subpaths:
+`@resume/renderer/src/data/editorModel`, `@resume/renderer/src/editor/ResumeTree`,
+`@resume/renderer/src/data/print`. Those modules import only `@resume/contracts` +
+`fast-json-patch` + `dnd-kit` + `react` — NO internal `@components/@config/@contexts`
+aliases — so they bundle cleanly in the dashboard (which doesn't mirror the renderer's
+Vite aliases). The résumé CANVAS, which DOES need those aliases, is iframed from the
+bare host instead (`ResumeCanvas`). The renderer package has no `main`/`exports` and
+no barrel; `apps/site/vite.config.mjs` aliases `@css/@components/@config/@contexts/
+@data` into `packages/renderer/src`.
 
-## print.js (meta.print → @page + PDF)
-`PRINT_DEFAULTS`: A4, margins 0mm, scale 1. `PAPER_SIZES`:
-`A4,Letter,Legal,A3,A5`. `getPrint(doc)` reads `doc.meta.print` (clamps/defaults).
-Two consumers: `pageCss(print)` → `@page { size; margin }` injected into `<head>`
-by `usePageStyle` (App.jsx:14-23, browser print / Save-as-PDF; re-applied on `rev`);
-`pdfOptions(print)` → Playwright `page.pdf()` opts (format/margin/scale/
-printBackground) used by `scripts/print-pdf.mjs`. Applications inherit print
-config because overlays apply onto the base résumé.
-
-## api.js (review client)
-Same-origin `fetch`; `json()` throws `body.problems.join('; ')` or `body.error`.
-`listJobs(status)`, `getJob(id)`, `approve(id)`, `reject(id,reason)`,
-`label(id,value)`, `saveOverlay(id,overlay)` (PUT), `getAnswers()`,
-`saveAnswer(key,question,answer)` (PUT), `addAnswer(question,answer)` (POST),
-`deleteAnswer(key)` (DELETE). Routes documented in ./architecture.md.
-
-## Vite aliases & deep-import rule
-`apps/site/vite.config.mjs` aliases into `packages/renderer/src`:
-`@css`(site src/css), `@components`, `@config`, `@contexts`, `@data`. The
-renderer is a **source package, no `main`/`exports` and no barrel** (renderer
-package.json). `apps/review` has **no aliases** (vite.config.mjs is minimal);
-it imports the renderer by package deep subpaths resolved through the pnpm
-workspace symlink: `@resume/renderer/src/editor/ResumeTree` and
-`@resume/renderer/src/data/editorModel` (Editor.jsx). (`apps/site`'s
-`ResumeEditor.jsx` deep-imports the same two plus `data/print`.) Many renderer
-modules internally use `@components/@config/@contexts` aliases — so **review
-may only deep-import the alias-free modules** (`editor/ResumeTree`,
-`data/editorModel`, `data/print`), NOT component-pulling modules. Importing
-`@data` from review would break (it pulls `adapter`/`overlay`, which are
-alias-free, but `@data` is resolved only via the `apps/site` alias, not as a
-deep subpath — review imports `editorModel` directly instead).
+## Vite / build
+- `apps/site/vite.config.mjs`: `base = VITE_BASE ?? '/'` (built with
+  `VITE_BASE=/resume/`); aliases as above; outDir `build`.
+- `apps/dashboard/vite.config.ts`: `base = '/'`; alias `@` → `src`; outDir `build`.
+- Root `pnpm build` = `pnpm validate` then build `site` (with `VITE_BASE=/resume/`) +
+  `dashboard`. The API Dockerfile builds both inside the image (no committed build
+  output). `pnpm dev`/`start` runs the `site` Vite dev server.
 
 ## Invariants & gotchas
-- Render is driven by module singletons (`activeData`/`activeDoc`). Components
-  call `getData`/`getResumeDoc` at render time — `register*` must run BEFORE
-  `root.render` (index.jsx does). `ResumeView key={rev}` forces a fresh tree.
-- adapter must emit EXACTLY the known keys (spread onto DOM). Adding a key
-  fails `adapter.test.js`. Optional keys are omitted, never `undefined`.
-- `overlay.js` and `editorModel.js` `import data/resume.json` (the seed) as the
-  default doc — but live editors always pass the fetched `/api/resume` doc.
-- `editorModel.SECTIONS` and `config/sections.js`/`componentRegistry` are
-  separate maps; both must agree on the section data keys.
-- Reviewer edits (résumé or overlay) are trusted; the fabrication verify only
-  guards LLM-written patches (./pipeline.md).
-- Before any renderer/structure refactor: use the `render-check` skill (capture
-  baseline, then empty DOM diff). PDF bytes always differ (timestamps).
-- `data/resume.json` is seed + git-export target + bundled fallback; refresh
-  from live DB with `pnpm export-seed` (./data-contracts.md).
+- **Render is provider-driven, not singleton-driven** — the host must build the
+  `RenderPayload` before `<App payload>`; components read it via the context hooks.
+- **adapter must emit EXACTLY the known keys** (spread onto DOM). Adding a key fails
+  `ViewModels.parse`/`adapter.test.ts`; optional keys are omitted, never `undefined`.
+- **Reviewer edits (résumé or overlay) are trusted**; the fabrication verify only
+  guards LLM-written patches.
+- **Before any renderer/structure refactor: `render-check` skill** (baseline, then
+  empty DOM diff). PDF bytes always differ (timestamps); DOM diff is authoritative.
+- **The dashboard validates config/résumé client-side with the same contracts Zod**
+  the server enforces — keep them aligned via `@resume/contracts`, never a local copy.
+- **The preview is an iframe of the bare host** — it reflects the last SAVED doc (the
+  host fetches `/api/resume`/the overlay); bump `rev` to refresh after a save.
+- `data/resume.json` is seed + git-export target + bundled fallback; refresh from the
+  live DB with `pnpm export-seed`.
 
 ## Where to change X
 | Task | File(s) |
 |---|---|
-| Add/rename a section data key | `data/adapter.js` + `data/adapter.test.js`, `config/sections.js`, `config/componentRegistry.js`, `data/editorModel.js` (`SECTIONS`) |
-| Change a view-model item field | `data/adapter.js` (`toExperience`/`buildViewModels`) + component that spreads it (`components/*.jsx`) + `adapter.test.js` |
-| New render component | add `components/X.jsx`, register in `config/componentRegistry.js`, reference in `config/sections.js` |
-| Section display order behavior | `App.jsx` `orderedSections` (reads `meta.sectionOrder`); editor writes it via `treeToResume` |
-| Structured editor affordances | `editor/ResumeTree.jsx` (mode flags) |
-| What résumé editor saves | `ResumeEditor.jsx` + `editorModel.treeToResume`; persisted by `PUT /api/resume` (./architecture.md) |
-| What overlay editor saves | `Editor.jsx` + `editorModel.editorTreeToOverlay`; `PUT /api/jobs/:id/overlay` |
-| Overlay filter semantics | `data/overlay.js` `applyFilter` + `data/overlay.schema.json` |
-| Print/PDF (paper/margins/scale) | `data/print.js`; UI in `ResumeEditor.jsx` Print tab; PDF in `scripts/print-pdf.mjs` |
-| Review routes / inbox tabs | `apps/review/src/App.jsx` |
-| Review API calls | `apps/review/src/api.js` |
-| Answers bank UI | `apps/review/src/App.jsx` `Answers` |
-| Vite aliases / base path | `apps/site/vite.config.mjs` (`VITE_BASE`) |
-| Serve paths / SPA fallback | `services/api/src/server.js:185-199` |
+| Add/rename a section key | `packages/contracts/src/sections.ts` (`SECTION_REGISTRY`) → flows to adapter/editor/tailor/sectionsConfig; then `config/sections.ts` presentation + `config/componentRegistry.ts`; **`render-check`** |
+| Change a view-model item field | `packages/contracts/src/viewModel.ts` + `data/adapter.ts` + the spreading component (`components/*.tsx`) + `adapter.test.ts` |
+| New render component | add `components/X.tsx`, register in `config/componentRegistry.ts`, reference in `config/sections.ts` |
+| What the résumé editor saves | `apps/dashboard/src/routes/ResumePage.tsx` + `editorModel.treeToResume`; `PUT /api/resume` |
+| What the overlay editor saves | `apps/dashboard/src/routes/ReviewPage.tsx` (`OverlayEditor`) + `editorModel.editorTreeToOverlay`; `PUT /api/jobs/:id/overlay` |
+| Overlay filter semantics | `data/overlay.ts` `applyFilter` + the `Overlay` Zod (`contracts/overlay.ts`) |
+| Print/PDF | `data/print.ts` + `contracts/print.ts`; UI in `ResumePage` Print tab; PDF in `scripts/print-pdf.mjs` |
+| A config UI | `apps/dashboard/src/routes/<NS>Page.tsx` + `hooks/useConfig.ts`; shape in `contracts/config.ts` |
+| Dashboard routes/tabs | `apps/dashboard/src/router.tsx` + `components/Shell.tsx` |
+| API client call | `apps/dashboard/src/api.ts` |
+| Bare-host iframe / print isolation | `apps/dashboard/src/components/ResumeCanvas.tsx` + `src/index.css` |
+| Serve paths / SPA fallback | `services/api/src/app.ts` (static + `setNotFoundHandler`) |
+| Vite aliases / base path | `apps/site/vite.config.mjs` (`VITE_BASE`) / `apps/dashboard/vite.config.ts` |
