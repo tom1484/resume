@@ -21,7 +21,7 @@ describe('batchSummary', () => {
     expect(text).toContain('3 jobs scored, 1 tailored');
     expect(text).toContain('<b>0.81</b>');
     expect(text).toContain('[dream,startup]');
-    expect(text).toContain('https://jobs.churong.cc/#/app/gh-figure-1');
+    expect(text).toContain('https://jobs.churong.cc/review/gh-figure-1');
     expect(text).toContain('2 edits');
     expect(text).toContain('Embedded &lt;SW&gt; Intern'); // HTML-escaped
   });

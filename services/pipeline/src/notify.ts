@@ -40,7 +40,8 @@ export interface TailoredSummaryItem {
 }
 
 // Summary of a scoring cycle. `tailored` jobs are linked to their review page
-// (reviewBase + #/app/<id>); the resume is ready to approve there.
+// (reviewBase + /review/<id> — the v2 dashboard react-router path, NOT the v1
+// `#/app/<id>` hash route); the résumé is ready to approve there.
 export function batchSummary({
   scored,
   threshold,
@@ -54,7 +55,7 @@ export function batchSummary({
 }): string {
   const lines = tailored.map((j) => {
     const flags = j.company_flags?.length ? ` [${j.company_flags.join(',')}]` : '';
-    const link = `${reviewBase}/#/app/${encodeURIComponent(j.id)}`;
+    const link = `${reviewBase}/review/${encodeURIComponent(j.id)}`;
     const edits =
       j.patches != null ? ` · ${j.patches} edit${j.patches === 1 ? '' : 's'}` : '';
     return `• <b>${j.score.toFixed(2)}</b> ${esc(j.company)}${flags} — <a href="${esc(
