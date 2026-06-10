@@ -106,8 +106,8 @@ export function PreviewModal({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="flex h-[90vh] max-w-[min(95vw,1100px)] flex-col p-0">
-        <DialogHeader className="flex flex-row items-center justify-between gap-4 border-b p-4 pr-12 text-left">
+      <DialogContent className="flex h-[90vh] max-w-[min(95vw,1100px)] flex-col gap-0 p-0">
+        <DialogHeader className="flex h-12 flex-row items-center justify-between gap-4 space-y-0 border-b pl-4 pr-12 text-left">
           <DialogTitle>Preview</DialogTitle>
           <label className="flex items-center gap-2 text-sm font-normal">
             <span className="text-muted-foreground">Continuous</span>
