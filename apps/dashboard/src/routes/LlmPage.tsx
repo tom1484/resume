@@ -5,7 +5,16 @@ import { SaveBar } from '@/components/SaveBar';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import type { LlmConfig } from '@resume/contracts';
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from '@/components/ui/select';
+import { FieldWarning } from '@/components/ui/field-error';
+import { weightsSumWarning } from '@/lib/validators';
+import { KNOWN_MODELS, type LlmConfig } from '@resume/contracts';
 
 const MODEL_STAGES: { key: keyof LlmConfig['models']; label: string }[] = [
   { key: 'parse', label: 'parse_jd' },
@@ -14,6 +23,48 @@ const MODEL_STAGES: { key: keyof LlmConfig['models']; label: string }[] = [
   { key: 'tailorDream', label: 'tailor (dream)' },
   { key: 'verify', label: 'verify' },
 ];
+
+const CUSTOM = '__custom__';
+
+// Model picker: a Select over the known model IDs plus a "Custom…" escape hatch.
+// When the current value is not a known model (or the user picks Custom), an
+// Input is shown to type a free-form id. The contract field stays a string.
+function ModelPicker({
+  value,
+  onChange,
+}: {
+  value: string;
+  onChange: (next: string) => void;
+}) {
+  const known = (KNOWN_MODELS as readonly string[]).includes(value);
+  return (
+    <div className="space-y-1.5">
+      <Select
+        value={known ? value : CUSTOM}
+        onValueChange={(next) => onChange(next === CUSTOM ? '' : next)}
+      >
+        <SelectTrigger>
+          <SelectValue placeholder="Select model…" />
+        </SelectTrigger>
+        <SelectContent>
+          {(KNOWN_MODELS as readonly string[]).map((m) => (
+            <SelectItem key={m} value={m}>
+              {m}
+            </SelectItem>
+          ))}
+          <SelectItem value={CUSTOM}>Custom…</SelectItem>
+        </SelectContent>
+      </Select>
+      {!known && (
+        <Input
+          value={value}
+          placeholder="custom-model-id"
+          onChange={(e) => onChange(e.target.value)}
+        />
+      )}
+    </div>
+  );
+}
 
 export function LlmPage() {
   const cfg = useConfig('llm');
@@ -44,11 +95,11 @@ export function LlmPage() {
                     {MODEL_STAGES.map((m) => (
                       <div key={m.key} className="space-y-1.5">
                         <Label>{m.label}</Label>
-                        <Input
+                        <ModelPicker
                           value={v.models[m.key]}
-                          onChange={(e) =>
+                          onChange={(next) =>
                             set({
-                              models: { ...v.models, [m.key]: e.target.value },
+                              models: { ...v.models, [m.key]: next },
                             })
                           }
                         />
@@ -99,6 +150,7 @@ export function LlmPage() {
                         </div>
                       ))}
                     </div>
+                    <FieldWarning message={weightsSumWarning(v.weights)} />
                     <p className="text-xs text-muted-foreground">
                       score = w.keyword·keyword + w.llmFit·llmFit +
                       w.structural·structural

@@ -9,7 +9,22 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Button } from '@/components/ui/button';
-import type { ConstraintsConfig, Constraint, ConstraintField } from '@resume/contracts';
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from '@/components/ui/select';
+import {
+  JdSchema,
+  type ConstraintsConfig,
+  type Constraint,
+  type ConstraintField,
+} from '@resume/contracts';
+
+const SENIORITY_OPTIONS = JdSchema.shape.seniority.options;
+const SPONSORSHIP_OPTIONS = JdSchema.shape.sponsorshipAvailable.options;
 
 const FIELDS: ConstraintField[] = [
   'citizenshipOrClearanceRequired',
@@ -115,67 +130,105 @@ export function ConstraintsPage() {
                     <div className="grid gap-3 sm:grid-cols-3">
                       <div className="space-y-1">
                         <Label className="text-xs">Field</Label>
-                        <select
-                          className="flex h-9 w-full rounded-md border border-input bg-transparent px-2 text-sm shadow-sm"
+                        <Select
                           value={c.field}
-                          onChange={(e) =>
-                            upd(i, { field: e.target.value as ConstraintField })
+                          onValueChange={(next) =>
+                            upd(i, { field: next as ConstraintField })
                           }
                         >
-                          {FIELDS.map((f) => (
-                            <option key={f} value={f}>
-                              {f}
-                            </option>
-                          ))}
-                        </select>
+                          <SelectTrigger>
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {FIELDS.map((f) => (
+                              <SelectItem key={f} value={f}>
+                                {f}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
                       </div>
 
                       <div className="space-y-1">
                         <Label className="text-xs">Test</Label>
-                        <select
-                          className="flex h-9 w-full rounded-md border border-input bg-transparent px-2 text-sm shadow-sm"
+                        <Select
                           value={c.test.kind}
-                          onChange={(e) =>
-                            upd(i, { test: defaultTest(e.target.value as TestKind) })
+                          onValueChange={(next) =>
+                            upd(i, { test: defaultTest(next as TestKind) })
                           }
                         >
-                          {TEST_KINDS.map((k) => (
-                            <option key={k} value={k}>
-                              {k}
-                            </option>
-                          ))}
-                        </select>
+                          <SelectTrigger>
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {TEST_KINDS.map((k) => (
+                              <SelectItem key={k} value={k}>
+                                {k}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
                       </div>
 
                       <div className="space-y-1">
                         <Label className="text-xs">Effect</Label>
-                        <select
-                          className="flex h-9 w-full rounded-md border border-input bg-transparent px-2 text-sm shadow-sm"
+                        <Select
                           value={c.effect.kind}
-                          onChange={(e) =>
+                          onValueChange={(next) =>
                             upd(i, {
-                              effect: defaultEffect(e.target.value as EffectKind),
+                              effect: defaultEffect(next as EffectKind),
                             })
                           }
                         >
-                          {EFFECT_KINDS.map((k) => (
-                            <option key={k} value={k}>
-                              {k}
-                            </option>
-                          ))}
-                        </select>
+                          <SelectTrigger>
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {EFFECT_KINDS.map((k) => (
+                              <SelectItem key={k} value={k}>
+                                {k}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
                       </div>
                     </div>
 
                     {c.test.kind === 'equals' && (
                       <div className="space-y-1">
                         <Label className="text-xs">Equals value</Label>
-                        <Input
-                          value={c.test.value}
-                          onChange={(e) =>
-                            upd(i, { test: { kind: 'equals', value: e.target.value } })
-                          }
-                        />
+                        {c.field === 'seniority' ||
+                        c.field === 'sponsorshipAvailable' ? (
+                          <Select
+                            value={c.test.value}
+                            onValueChange={(next) =>
+                              upd(i, { test: { kind: 'equals', value: next } })
+                            }
+                          >
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select value…" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {(c.field === 'seniority'
+                                ? SENIORITY_OPTIONS
+                                : SPONSORSHIP_OPTIONS
+                              ).map((o) => (
+                                <SelectItem key={o} value={o}>
+                                  {o}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        ) : (
+                          <Input
+                            value={c.test.value}
+                            onChange={(e) =>
+                              upd(i, {
+                                test: { kind: 'equals', value: e.target.value },
+                              })
+                            }
+                          />
+                        )}
                       </div>
                     )}
                     {c.test.kind === 'notIn' && (

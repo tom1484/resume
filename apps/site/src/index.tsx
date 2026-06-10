@@ -8,7 +8,7 @@ import {
   type RenderPayload,
 } from '@data';
 import type { Overlay, ResumeDoc } from '@resume/contracts';
-import App from './App';
+import PreviewRoot from './PreviewRoot';
 
 // Routes (single canonical résumé — no profiles):
 //   ?application=<id> → fetch overlay + base résumé, render the TAILORED résumé
@@ -17,7 +17,13 @@ import App from './App';
 //   otherwise         → fetch the canonical résumé from /api/resume and render
 //                       it. Falls back to the bundled seed when no API is
 //                       reachable (standalone build, PDF, CI).
+//
+// ?preview=<1|paper> layers a LIVE preview on top of any of the above: the host
+// becomes an iframe child that swaps its render on postMessage from the
+// dashboard (see PreviewRoot). With no `preview` param the render is the exact
+// static <App payload/> tree as before (byte-identical invariant).
 const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement);
+const preview = new URLSearchParams(window.location.search).get('preview');
 
 async function fetchJson(url: string): Promise<unknown> {
   const r = await fetch(url);
@@ -30,12 +36,6 @@ async function buildPayload(): Promise<RenderPayload> {
   const applicationId = params.get('application');
 
   if (applicationId) {
-    const overlay = (await fetchJson(
-      `/applications/${encodeURIComponent(applicationId)}/overlay.json`
-    )) as Overlay;
-    if (!overlay?.jobId || !overlay?.profile) {
-      throw new Error(`overlay ${applicationId} is malformed`);
-    }
     // base résumé the overlay applies onto (current canonical); fall back to seed
     let base: ResumeDoc = bundledSeed;
     try {
@@ -43,7 +43,21 @@ async function buildPayload(): Promise<RenderPayload> {
     } catch {
       /* keep bundled seed */
     }
-    return applicationPayload(overlay, base);
+    try {
+      const overlay = (await fetchJson(
+        `/applications/${encodeURIComponent(applicationId)}/overlay.json`
+      )) as Overlay;
+      if (!overlay?.jobId || !overlay?.profile) {
+        throw new Error(`overlay ${applicationId} is malformed`);
+      }
+      return applicationPayload(overlay, base);
+    } catch (err) {
+      // Preview-before-first-save: when previewing, a missing/malformed overlay
+      // is expected — render the base résumé and let the dashboard post the live
+      // overlay. Outside preview, keep the strict (throwing) behavior.
+      if (!preview) throw err;
+      return resumePayload(base);
+    }
   }
 
   // canonical résumé from the API; bundled seed if unavailable
@@ -58,7 +72,7 @@ buildPayload()
   .then((payload) => {
     root.render(
       <React.StrictMode>
-        <App payload={payload} />
+        <PreviewRoot initial={payload} preview={preview} />
       </React.StrictMode>
     );
   })

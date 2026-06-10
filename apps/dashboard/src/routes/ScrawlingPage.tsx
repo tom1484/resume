@@ -9,6 +9,18 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Button } from '@/components/ui/button';
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from '@/components/ui/select';
+import { Combobox } from '@/components/ui/combobox';
+import { FieldError } from '@/components/ui/field-error';
+import { validateCron, isValidTimeZone } from '@/lib/validators';
+import { timeZones, JOBSPY_COUNTRIES } from '@/lib/lists';
+import { JobType } from '@resume/contracts';
 import type {
   DiscoveryConfig,
   ScheduleConfig,
@@ -20,6 +32,47 @@ const SITES = ['indeed', 'linkedin'] as const;
 const COMPANY_FLAGS = ['dream', 'startup', 'return-path'] as const;
 const PROVIDERS = ['greenhouse', 'lever', 'ashby'] as const;
 const MODES = ['boards', 'jobspy', 'all'] as const;
+const CUSTOM = '__custom__';
+
+// Country picker: a Select over the curated JobSpy country names plus a "Custom…"
+// escape hatch. JobSpy's `country` stays a free-text string in the contract, so a
+// value outside the list (or an explicit Custom pick) reveals a free-form Input.
+function CountryPicker({
+  value,
+  onChange,
+}: {
+  value: string;
+  onChange: (next: string) => void;
+}) {
+  const known = JOBSPY_COUNTRIES.includes(value);
+  return (
+    <div className="space-y-1.5">
+      <Select
+        value={known ? value : CUSTOM}
+        onValueChange={(next) => onChange(next === CUSTOM ? '' : next)}
+      >
+        <SelectTrigger>
+          <SelectValue placeholder="Select country…" />
+        </SelectTrigger>
+        <SelectContent>
+          {JOBSPY_COUNTRIES.map((c) => (
+            <SelectItem key={c} value={c}>
+              {c}
+            </SelectItem>
+          ))}
+          <SelectItem value={CUSTOM}>Custom…</SelectItem>
+        </SelectContent>
+      </Select>
+      {!known && (
+        <Input
+          value={value}
+          placeholder="country name"
+          onChange={(e) => onChange(e.target.value)}
+        />
+      )}
+    </div>
+  );
+}
 
 function ScheduleCard({
   v,
@@ -31,6 +84,8 @@ function ScheduleCard({
   const d = v.discovery;
   const set = (patch: Partial<ScheduleConfig['discovery']>) =>
     onChange({ ...v, discovery: { ...d, ...patch } });
+  const cronErr = validateCron(d.cron);
+  const tzOk = isValidTimeZone(d.tz);
   return (
     <Card>
       <CardHeader>
@@ -47,28 +102,48 @@ function ScheduleCard({
         <div className="grid grid-cols-2 gap-3">
           <div className="space-y-1.5">
             <Label>Cron</Label>
-            <Input value={d.cron} onChange={(e) => set({ cron: e.target.value })} />
+            <Input
+              value={d.cron}
+              aria-invalid={!!cronErr}
+              onChange={(e) => set({ cron: e.target.value })}
+            />
+            <FieldError message={cronErr} />
+            <p className="text-xs text-muted-foreground">
+              5 fields: min hour day-of-month month day-of-week · e.g. 0 9 * * *
+            </p>
           </div>
           <div className="space-y-1.5">
             <Label>Timezone</Label>
-            <Input value={d.tz} onChange={(e) => set({ tz: e.target.value })} />
+            <Combobox
+              value={d.tz}
+              onChange={(tz) => set({ tz })}
+              options={timeZones()}
+              placeholder="Select timezone…"
+              searchPlaceholder="Search zones…"
+              ariaInvalid={!tzOk}
+            />
+            <FieldError message={tzOk ? undefined : 'Unknown IANA timezone'} />
           </div>
         </div>
         <div className="space-y-1.5">
           <Label>Mode</Label>
-          <select
-            className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 text-sm shadow-sm"
+          <Select
             value={d.mode}
-            onChange={(e) =>
-              set({ mode: e.target.value as ScheduleConfig['discovery']['mode'] })
+            onValueChange={(next) =>
+              set({ mode: next as ScheduleConfig['discovery']['mode'] })
             }
           >
-            {MODES.map((m) => (
-              <option key={m} value={m}>
-                {m}
-              </option>
-            ))}
-          </select>
+            <SelectTrigger>
+              <SelectValue placeholder="Select mode…" />
+            </SelectTrigger>
+            <SelectContent>
+              {MODES.map((m) => (
+                <SelectItem key={m} value={m}>
+                  {m}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
         <p className="text-xs text-muted-foreground">
           The in-process scheduler reads this each tick — an edit takes effect next
@@ -204,30 +279,32 @@ function CompaniesCard({
             <div className="flex flex-wrap items-end gap-2">
               <div className="space-y-1">
                 <Label className="text-xs">Board provider</Label>
-                <select
-                  className="flex h-9 rounded-md border border-input bg-transparent px-2 text-sm shadow-sm"
-                  value={c.board?.provider ?? ''}
-                  onChange={(e) =>
+                <Select
+                  value={c.board?.provider ?? 'none'}
+                  onValueChange={(next) =>
                     upd(i, {
-                      board: e.target.value
-                        ? {
-                            provider:
-                              e.target.value as DiscoveryCompany['board'] extends null
-                                ? never
-                                : (typeof PROVIDERS)[number],
-                            slug: c.board?.slug ?? '',
-                          }
-                        : null,
+                      board:
+                        next === 'none'
+                          ? null
+                          : {
+                              provider: next as (typeof PROVIDERS)[number],
+                              slug: c.board?.slug ?? '',
+                            },
                     })
                   }
                 >
-                  <option value="">none</option>
-                  {PROVIDERS.map((p) => (
-                    <option key={p} value={p}>
-                      {p}
-                    </option>
-                  ))}
-                </select>
+                  <SelectTrigger className="w-[8rem]">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="none">none</SelectItem>
+                    {PROVIDERS.map((p) => (
+                      <SelectItem key={p} value={p}>
+                        {p}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
               {c.board && (
                 <div className="min-w-[8rem] flex-1 space-y-1">
@@ -378,13 +455,38 @@ export function ScrawlingPage() {
                           </div>
                           <div className="space-y-1">
                             <Label className="text-xs">Job type</Label>
-                            <Input
+                            <Select
                               value={v.jobspyDefaults.jobType}
-                              onChange={(e) =>
+                              onValueChange={(next) =>
                                 set({
                                   jobspyDefaults: {
                                     ...v.jobspyDefaults,
-                                    jobType: e.target.value,
+                                    jobType: next as JobType,
+                                  },
+                                })
+                              }
+                            >
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select type…" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {JobType.options.map((t) => (
+                                  <SelectItem key={t} value={t}>
+                                    {t}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          </div>
+                          <div className="space-y-1">
+                            <Label className="text-xs">Country</Label>
+                            <CountryPicker
+                              value={v.jobspyDefaults.country}
+                              onChange={(country) =>
+                                set({
+                                  jobspyDefaults: {
+                                    ...v.jobspyDefaults,
+                                    country,
                                   },
                                 })
                               }

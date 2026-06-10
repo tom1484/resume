@@ -5,9 +5,19 @@
 // Defaults reproduce the prior behavior (A4, no margins, scale 1) so nothing
 // changes until the user edits it. PAPER_SIZES comes from §2.3 PrintConfig (the
 // one list); getPrint/pageCss/pdfOptions port KEEP verbatim from v1.
-import { PAPER_SIZES } from '@resume/contracts';
+import { PAPER_SIZES, PAPER_DIMENSIONS } from '@resume/contracts';
 
-export { PAPER_SIZES };
+export { PAPER_SIZES, PAPER_DIMENSIONS };
+
+// CSS px per millimetre at the browser's default print resolution (96 dpi, so
+// 1in = 96px and 1in = 25.4mm). The on-screen paper-accurate preview uses this
+// to size the page wrapper / margins from PAPER_DIMENSIONS (mm). Kept beside
+// pageCss/pdfOptions as a pure function (the data layer), not in contracts.
+export const MM_TO_PX = 96 / 25.4;
+
+export function mmToPx(mm: number): number {
+  return mm * MM_TO_PX;
+}
 
 export interface PrintSettings {
   paperSize: string;

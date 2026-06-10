@@ -12,6 +12,19 @@
 import { z } from 'zod';
 import { Constraint, Preference } from './scoring.js';
 
+// JobSpy's accepted `job_type` values (jobspy_search.py passes it straight to
+// scrape_jobs). Tightened from a bare z.string() so the UI can offer a dropdown
+// and a bad value is rejected at the write boundary. The Python mirror
+// (services/discovery/.../config.py) keeps the same default ('internship') and
+// only passes the value through — no Python enforcement needed.
+export const JobType = z.enum([
+  'fulltime',
+  'parttime',
+  'internship',
+  'contract',
+]);
+export type JobType = z.infer<typeof JobType>;
+
 // --- LLM (per-stage model + tuning) — replaces MODEL_* / SCORE_THRESHOLD /
 //     BATCH_SIZE / POLL_INTERVAL_MS env (operations.md:79-86) ---
 export const LlmConfig = z
@@ -102,7 +115,7 @@ export const DiscoveryConfig = z
       .object({
         resultsWanted: z.number().int().default(25),
         hoursOld: z.number().int().default(72),
-        jobType: z.string().default('internship'),
+        jobType: JobType.default('internship'),
         country: z.string().default('USA'),
         location: z.string().default('United States'), // was hard-coded (jobspy_search.py:61)
       })

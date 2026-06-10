@@ -63,6 +63,15 @@ export const PRICES: Record<string, { in: number; out: number }> = {
   'claude-opus-4-8': { in: 5, out: 25 },
 };
 
+/**
+ * The Claude model IDs the cost ledger knows how to price — i.e. the canonical
+ * set of selectable models. Derived from PRICES so the two never drift; the
+ * dashboard's per-stage model dropdowns (LlmPage) consume this. NOT a Zod enum:
+ * `LlmConfig.models.*` stays `z.string()` so a brand-new model can be entered
+ * (custom-entry escape hatch) before this list is rebuilt.
+ */
+export const KNOWN_MODELS = Object.keys(PRICES) as readonly string[];
+
 /** Token usage as returned by the Anthropic SDK (the fields costUsd reads). */
 export interface Usage {
   input_tokens?: number;

@@ -33,9 +33,11 @@ describe('LlmPage', () => {
     mockConfig(put);
     render(<LlmPage />);
 
-    // default models render into inputs (parse/fit/verify all default to haiku)
+    // default models render as Select trigger text (parse/fit/verify all
+    // default to haiku). Radix Select shows the chosen value as the trigger
+    // TEXT, not as an input value, so query the visible text.
     await waitFor(() =>
-      expect(screen.getAllByDisplayValue('claude-haiku-4-5').length).toBe(3)
+      expect(screen.getAllByText('claude-haiku-4-5').length).toBe(3)
     );
 
     fireEvent.click(screen.getByRole('button', { name: /save/i }));

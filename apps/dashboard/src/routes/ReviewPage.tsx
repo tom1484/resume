@@ -1,12 +1,12 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, Eye } from 'lucide-react';
 import { api, ApiError } from '@/api';
 import { useAsync } from '@/hooks/useAsync';
 import { fmtScore } from '@/lib/utils';
 import { AsyncBoundary, ErrorBanner } from '@/components/AsyncBoundary';
 import { PageHeader } from '@/components/PageHeader';
-import { ResumeCanvas } from '@/components/ResumeCanvas';
+import { PreviewModal } from '@/components/PreviewModal';
 import { SaveBar, type SaveStatus } from '@/components/SaveBar';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -38,6 +38,7 @@ import type {
   JobDetail,
   ScoreBreakdown,
   ResumeDoc,
+  Overlay,
 } from '@resume/contracts';
 
 const STATUS_TABS: { value: JobStatus; label: string }[] = [
@@ -280,22 +281,31 @@ function OverlayEditor({
   job,
   resume,
   onSaved,
+  previewKey,
 }: {
   job: JobDetail;
   resume: ResumeDoc;
   onSaved: () => void;
+  previewKey: number;
 }) {
   const [tree, setTree] = useState<EditorTree>(() =>
     buildEditorModel(job.overlay ?? {}, resume)
   );
   const [cover, setCover] = useState(job.cover_letter ?? '');
   const [status, setStatus] = useState<SaveStatus>({ kind: 'idle' });
+  const [preview, setPreview] = useState(false);
+
+  // The SAME transform save() uses, computed live so the preview renders the
+  // current UNSAVED overlay (no save required before previewing).
+  const liveOverlay: Overlay = useMemo(
+    () => editorTreeToOverlay(tree, job.id, cover || null, resume),
+    [tree, cover, job.id, resume]
+  );
 
   const save = useCallback(async () => {
     setStatus({ kind: 'saving' });
     try {
-      const overlay = editorTreeToOverlay(tree, job.id, cover || null, resume);
-      await api.putOverlay(job.id, overlay);
+      await api.putOverlay(job.id, liveOverlay);
       setStatus({ kind: 'saved' });
       onSaved();
     } catch (e) {
@@ -303,7 +313,7 @@ function OverlayEditor({
         setStatus({ kind: 'error', message: e.message, problems: e.problems });
       else setStatus({ kind: 'error', message: String(e) });
     }
-  }, [tree, cover, job.id, resume, onSaved]);
+  }, [liveOverlay, job.id, onSaved]);
 
   return (
     <div className="space-y-4">
@@ -323,7 +333,21 @@ function OverlayEditor({
           rows={8}
         />
       </div>
-      <SaveBar status={status} onSave={save} label="Save overlay" />
+      <div className="flex items-center gap-2">
+        <SaveBar status={status} onSave={save} label="Save overlay" />
+        <Button variant="outline" onClick={() => setPreview(true)}>
+          <Eye className="size-4" /> Preview
+        </Button>
+      </div>
+      {preview && (
+        <PreviewModal
+          open={preview}
+          onOpenChange={setPreview}
+          applicationId={job.id}
+          overlay={liveOverlay}
+          reloadKey={previewKey}
+        />
+      )}
     </div>
   );
 }
@@ -448,104 +472,84 @@ function Detail({ id, onBack }: { id: string; onBack: () => void }) {
               </Card>
             )}
 
-            <div className="grid gap-6 xl:grid-cols-2">
-              <div className="space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>Score breakdown</CardTitle>
+              </CardHeader>
+              <CardContent>
+                {j.score_breakdown ? (
+                  <ScoreBreakdownView b={j.score_breakdown} />
+                ) : (
+                  <p className="text-sm text-muted-foreground">
+                    Not scored yet.
+                  </p>
+                )}
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>Overlay editor</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <AsyncBoundary
+                  loading={resume.loading}
+                  error={resume.error}
+                  data={resume.data}
+                  onRetry={resume.reload}
+                >
+                  {(doc: ResumeDoc) => (
+                    <OverlayEditor
+                      key={j.id}
+                      job={j}
+                      resume={doc}
+                      previewKey={rev}
+                      onSaved={() => {
+                        setRev((r) => r + 1);
+                        job.reload();
+                      }}
+                    />
+                  )}
+                </AsyncBoundary>
+              </CardContent>
+            </Card>
+
+            <Tabs defaultValue="patches">
+              <TabsList>
+                <TabsTrigger value="patches">Patch diff</TabsTrigger>
+                <TabsTrigger value="cover">Cover letter</TabsTrigger>
+                <TabsTrigger value="jd">JD</TabsTrigger>
+              </TabsList>
+              <TabsContent value="patches">
                 <Card>
-                  <CardHeader>
-                    <CardTitle>Score breakdown</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    {j.score_breakdown ? (
-                      <ScoreBreakdownView b={j.score_breakdown} />
-                    ) : (
-                      <p className="text-sm text-muted-foreground">
-                        Not scored yet.
-                      </p>
+                  <CardContent className="pt-6">
+                    <PatchDiff job={j} />
+                  </CardContent>
+                </Card>
+              </TabsContent>
+              <TabsContent value="cover">
+                <Card>
+                  <CardContent className="whitespace-pre-wrap pt-6 text-sm">
+                    {j.cover_letter || (
+                      <span className="text-muted-foreground">
+                        No cover letter.
+                      </span>
                     )}
                   </CardContent>
                 </Card>
-
+              </TabsContent>
+              <TabsContent value="jd">
                 <Card>
-                  <CardHeader>
-                    <CardTitle>Overlay editor</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <AsyncBoundary
-                      loading={resume.loading}
-                      error={resume.error}
-                      data={resume.data}
-                      onRetry={resume.reload}
-                    >
-                      {(doc: ResumeDoc) => (
-                        <OverlayEditor
-                          key={j.id}
-                          job={j}
-                          resume={doc}
-                          onSaved={() => {
-                            setRev((r) => r + 1);
-                            job.reload();
-                          }}
-                        />
-                      )}
-                    </AsyncBoundary>
-                  </CardContent>
-                </Card>
-              </div>
-
-              <div className="space-y-6">
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Tailored résumé preview</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    {j.overlay ? (
-                      <ResumeCanvas applicationId={j.id} reloadKey={rev} />
-                    ) : (
-                      <p className="text-sm text-muted-foreground">
-                        No overlay yet — save one in the editor to preview.
-                      </p>
+                  <CardContent className="max-h-[600px] overflow-auto whitespace-pre-wrap pt-6 font-mono text-xs">
+                    {j.jd_text || (
+                      <span className="text-muted-foreground">
+                        No JD text.
+                      </span>
                     )}
                   </CardContent>
                 </Card>
-
-                <Tabs defaultValue="patches">
-                  <TabsList>
-                    <TabsTrigger value="patches">Patch diff</TabsTrigger>
-                    <TabsTrigger value="cover">Cover letter</TabsTrigger>
-                    <TabsTrigger value="jd">JD</TabsTrigger>
-                  </TabsList>
-                  <TabsContent value="patches">
-                    <Card>
-                      <CardContent className="pt-6">
-                        <PatchDiff job={j} />
-                      </CardContent>
-                    </Card>
-                  </TabsContent>
-                  <TabsContent value="cover">
-                    <Card>
-                      <CardContent className="whitespace-pre-wrap pt-6 text-sm">
-                        {j.cover_letter || (
-                          <span className="text-muted-foreground">
-                            No cover letter.
-                          </span>
-                        )}
-                      </CardContent>
-                    </Card>
-                  </TabsContent>
-                  <TabsContent value="jd">
-                    <Card>
-                      <CardContent className="max-h-[600px] overflow-auto whitespace-pre-wrap pt-6 font-mono text-xs">
-                        {j.jd_text || (
-                          <span className="text-muted-foreground">
-                            No JD text.
-                          </span>
-                        )}
-                      </CardContent>
-                    </Card>
-                  </TabsContent>
-                </Tabs>
-              </div>
-            </div>
+              </TabsContent>
+            </Tabs>
           </div>
         )}
       </AsyncBoundary>

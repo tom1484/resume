@@ -1,5 +1,14 @@
 import { describe, it, expect } from 'vitest';
-import { costUsd, logEventRow, DashboardSummary, EventRow } from './events.js';
+import { costUsd, logEventRow, DashboardSummary, EventRow, KNOWN_MODELS, PRICES } from './events.js';
+
+describe('KNOWN_MODELS (§9) — the selectable-model SSoT', () => {
+  it('equals the PRICES key set (never drifts)', () => {
+    expect([...KNOWN_MODELS]).toEqual(Object.keys(PRICES));
+  });
+  it('includes the dream-tier Opus model', () => {
+    expect(KNOWN_MODELS).toContain('claude-opus-4-8');
+  });
+});
 
 describe('costUsd (§9) — matches v1 llm.js', () => {
   it('computes haiku cost for a sample usage', () => {

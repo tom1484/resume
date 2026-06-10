@@ -1,5 +1,15 @@
 import { describe, expect, it } from 'vitest';
-import { getPrint, pageCss, pdfOptions, PRINT_DEFAULTS } from './print';
+import { getPrint, pageCss, pdfOptions, PRINT_DEFAULTS, mmToPx, MM_TO_PX } from './print';
+
+describe('mmToPx — 96dpi paper→pixel conversion', () => {
+  it('maps 1 inch (25.4mm) to 96px', () => {
+    expect(mmToPx(25.4)).toBeCloseTo(96, 9);
+    expect(MM_TO_PX).toBeCloseTo(96 / 25.4, 12);
+  });
+  it('sizes an A4 width (210mm) to ~793.7px', () => {
+    expect(mmToPx(210)).toBeCloseTo(793.7, 1);
+  });
+});
 
 describe('getPrint', () => {
   it('defaults reproduce prior behavior when meta.print absent', () => {

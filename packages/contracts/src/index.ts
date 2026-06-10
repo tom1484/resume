@@ -2,6 +2,7 @@
 // Every other v2 subsystem imports from here; never restate a shape.
 export * from './sections.js';
 export * from './print.js';
+export * from './preview.js';
 export * from './resume.js';
 export * from './viewModel.js';
 export * from './overlay.js';

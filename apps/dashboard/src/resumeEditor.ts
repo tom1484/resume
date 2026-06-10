@@ -22,5 +22,8 @@ export {
   pageCss,
   PRINT_DEFAULTS,
   PAPER_SIZES,
+  PAPER_DIMENSIONS,
+  MM_TO_PX,
+  mmToPx,
   type PrintSettings,
 } from '@resume/renderer/src/data/print';

@@ -3,13 +3,22 @@ import { api, ApiError } from '@/api';
 import { useAsync } from '@/hooks/useAsync';
 import { AsyncBoundary } from '@/components/AsyncBoundary';
 import { PageHeader } from '@/components/PageHeader';
-import { ResumeCanvas } from '@/components/ResumeCanvas';
+import { PreviewModal } from '@/components/PreviewModal';
 import { SaveBar, type SaveStatus } from '@/components/SaveBar';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import { Button } from '@/components/ui/button';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { Eye } from 'lucide-react';
 import {
   buildEditorModel,
   treeToResume,
@@ -46,18 +55,21 @@ function PrintEditor({
     <div className="max-w-md space-y-4">
       <div className="space-y-1.5">
         <Label htmlFor="paper">Paper size</Label>
-        <select
-          id="paper"
-          className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 text-sm shadow-sm"
+        <Select
           value={print.paperSize}
-          onChange={(e) => set({ paperSize: e.target.value as PrintMeta['paperSize'] })}
+          onValueChange={(v) => set({ paperSize: v as PrintMeta['paperSize'] })}
         >
-          {PAPER_SIZES.map((p) => (
-            <option key={p} value={p}>
-              {p}
-            </option>
-          ))}
-        </select>
+          <SelectTrigger id="paper">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            {PAPER_SIZES.map((p) => (
+              <SelectItem key={p} value={p}>
+                {p}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       </div>
       <div>
         <Label>Margins (mm)</Label>
@@ -99,6 +111,7 @@ function Editor({ initial }: { initial: ResumeDocT }) {
   const [jsonErr, setJsonErr] = useState<string>();
   const [status, setStatus] = useState<SaveStatus>({ kind: 'idle' });
   const [rev, setRev] = useState(0);
+  const [preview, setPreview] = useState(false);
 
   // Structured edits → doc (treeToResume preserves slots, §2 invariant).
   const applyTree = useCallback(
@@ -164,58 +177,63 @@ function Editor({ initial }: { initial: ResumeDocT }) {
   }, [doc]);
 
   return (
-    <div className="grid gap-6 xl:grid-cols-2">
-      <div className="space-y-4">
+    <div className="space-y-4">
+      <div className="flex flex-wrap items-center justify-between gap-2">
         <SaveBar
           status={status}
           onSave={save}
           label="Save résumé"
           disabled={!!jsonErr}
         />
-        <Tabs defaultValue="structured">
-          <TabsList>
-            <TabsTrigger value="structured">Structured</TabsTrigger>
-            <TabsTrigger value="json">JSON</TabsTrigger>
-            <TabsTrigger value="print">Print</TabsTrigger>
-          </TabsList>
-          <TabsContent value="structured">
-            <Card>
-              <CardContent className="pt-6">
-                <ResumeTree tree={tree} onChange={applyTree} mode="resume" />
-              </CardContent>
-            </Card>
-          </TabsContent>
-          <TabsContent value="json">
-            <Card>
-              <CardContent className="space-y-2 pt-6">
-                {jsonErr && (
-                  <p className="font-mono text-xs text-destructive">{jsonErr}</p>
-                )}
-                <Textarea
-                  value={jsonText}
-                  onChange={(e) => applyJson(e.target.value)}
-                  className="min-h-[600px] font-mono text-xs"
-                  spellCheck={false}
-                />
-              </CardContent>
-            </Card>
-          </TabsContent>
-          <TabsContent value="print">
-            <Card>
-              <CardContent className="pt-6">
-                <PrintEditor doc={doc} onChange={updatePrint} />
-              </CardContent>
-            </Card>
-          </TabsContent>
-        </Tabs>
+        <Button variant="outline" onClick={() => setPreview(true)}>
+          <Eye className="mr-2 h-4 w-4" />
+          Preview
+        </Button>
       </div>
-      <div>
-        <ResumeCanvas reloadKey={rev} />
-        <p className="print-hide mt-2 text-xs text-muted-foreground">
-          The preview reflects the last SAVED résumé (it iframes the bare host).
-          Save to refresh. Cmd+P or "Print résumé" outputs only the résumé.
-        </p>
-      </div>
+      {preview && (
+        <PreviewModal
+          open={preview}
+          onOpenChange={setPreview}
+          doc={doc}
+          reloadKey={rev}
+        />
+      )}
+      <Tabs defaultValue="structured">
+        <TabsList>
+          <TabsTrigger value="structured">Structured</TabsTrigger>
+          <TabsTrigger value="json">JSON</TabsTrigger>
+          <TabsTrigger value="print">Print</TabsTrigger>
+        </TabsList>
+        <TabsContent value="structured">
+          <Card>
+            <CardContent className="pt-6">
+              <ResumeTree tree={tree} onChange={applyTree} mode="resume" />
+            </CardContent>
+          </Card>
+        </TabsContent>
+        <TabsContent value="json">
+          <Card>
+            <CardContent className="space-y-2 pt-6">
+              {jsonErr && (
+                <p className="font-mono text-xs text-destructive">{jsonErr}</p>
+              )}
+              <Textarea
+                value={jsonText}
+                onChange={(e) => applyJson(e.target.value)}
+                className="min-h-[600px] font-mono text-xs"
+                spellCheck={false}
+              />
+            </CardContent>
+          </Card>
+        </TabsContent>
+        <TabsContent value="print">
+          <Card>
+            <CardContent className="pt-6">
+              <PrintEditor doc={doc} onChange={updatePrint} />
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }
