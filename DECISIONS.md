@@ -3,6 +3,40 @@
 Dated decision log (newest first). This is the per-session handoff log
 `/orient` reads.
 
+## 2026-06-10b — Preview/print scale fix + modal topbar alignment
+
+- **Scale must scale CONTENT inside a fixed page, not the page itself.** The
+  shipped impl used `transform: scale()` on the whole pagedjs page stack — which
+  only visually shrank the paper (page count never changed; print ignored it).
+  Switched to CSS `zoom` everywhere: zoom reflows, so (a) pagedjs repaginates the
+  scaled content into fixed @page sheets — verified 4→2 pages at scale 0.6 with the
+  page box staying A4 794×1123 — and (b) zoom survives into print (transform got
+  reverted in @media print). Rejected `transform` (no reflow) and per-page font
+  scaling (fragile across pagedjs fragments).
+- **Multipage zooms the pagedjs SOURCE, not the rendered pages.** Wrap the source
+  in `{width: contentBox/scale, zoom: scale}` so the content is pre-scaled to full
+  page width before pagedjs reads `innerHTML` and paginates. Verified with a real
+  pagedjs@0.4.3 + chromium harness that the zoom wrapper survives fragmentation AND
+  the content fills the page width (paragraph right edge == content-box edge).
+- **Print margins: re-assert `@page` with `!important` to beat pagedjs.** pagedjs
+  injects `@page { size: letter; margin: 0 }` into `<head>` when it paginates —
+  AFTER App's `usePageStyle` @page (equal specificity → source order → pagedjs
+  wins → margins lost). `useFrameStyle` now appends a print-only `@page { size
+  !important; margin !important }`; !important out-ranks pagedjs's non-important
+  reset regardless of order (spec-guaranteed). Verified: our rule present + the
+  later pagedjs @page rules are non-important; PDF MediaBox = A4.
+- **Kept the Playwright PDF path authoritative + untouched.** `pnpm pdf` renders
+  the DEFAULT bare host (no `?preview`, no PaperFrame, no pagedjs) and feeds
+  `pdfOptions({format, margin, scale})` to `page.pdf()`. All preview/modal-print
+  changes are confined to `PaperFrame` (preview-only), so the byte-identical-DOM
+  invariant and the canonical PDF output are unaffected.
+- **Modal topbar: fixed via tailwind-merge gaps, not new markup.** shadcn
+  `DialogHeader` carries `space-y-1.5` and `DialogContent` carries `gap-4`; neither
+  is overridden when the modal flips grid→flex / p-6→p-0, so they leaked as a
+  phantom switch top-margin and a 32px topbar gap. Added `space-y-0` + `h-12` (row
+  centerline matches the auto-injected close button at 24px) and `gap-0`. CSS-only,
+  scoped to PreviewModal — shared `dialog.tsx` left alone so other dialogs are safe.
+
 ## 2026-06-10 — Dashboard UX: validation + preview modal + paper-accurate render
 
 - **Preview modal renders UNSAVED edits via postMessage; no auto-save.** Investigated
