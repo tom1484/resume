@@ -23,8 +23,8 @@ interface PagedModule {
 // Paper-accurate preview wrapper (preview modes only — NEVER on the default
 // render path; PreviewRoot only mounts this for ?preview=paper). Two engines:
 //   - continuous (robust fallback): one tall white sheet at the configured paper
-//     WIDTH + margins, content laid out at 1/scale of the content box then scaled
-//     up — replicating Playwright `scale` semantics.
+//     WIDTH + margins, content laid out at 1/scale of the content box then `zoom`ed
+//     back by scale — replicating Playwright `scale` semantics.
 //   - multipage (default): pagedjs paginates the SAME content into real
 //     .pagedjs_page sheets honoring the renderer's break-inside rules, sized to
 //     the @page rule. Pagedjs is dynamically imported so it never enters the
@@ -58,11 +58,7 @@ const FRAME_CSS = `
   box-sizing: border-box;
   overflow: hidden;
 }
-.paper-frame__inner {
-  transform-origin: top left;
-}
 .paper-frame__pages {
-  transform-origin: top center;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -86,11 +82,13 @@ const FRAME_CSS = `
   overflow: hidden;
 }
 /* Printing from the modal (iframe.contentWindow.print()): print ONLY the résumé,
-   browser-paginated by the @page rule that usePageStyle injects. The pagedjs
-   page-boxes are fixed-size sheets that would print as extra/trailing BLANK pages,
-   so hide them and reveal the off-screen source résumé in normal flow. For
-   continuous mode (no source — the résumé lives in __sheet/__inner) drop the sheet
-   sizing + the scale transform so the résumé flows naturally. */
+   browser-paginated by the @page rule (size + margins) that useFrameStyle injects
+   below with !important -- pagedjs injects its own @page margin:0 reset when it
+   runs, and ours must out-rank it. The pagedjs page-boxes are fixed-size sheets
+   that would print as extra/trailing BLANK pages, so hide them and reveal the
+   off-screen source résumé in normal flow. Scale is zoom on the content (NOT a
+   transform) so it survives into print and the browser paginates the scaled
+   content; we deliberately do NOT revert it here. */
 @media print {
   .paper-frame {
     background: none !important;
@@ -116,22 +114,26 @@ const FRAME_CSS = `
     padding: 0 !important;
     overflow: visible !important;
   }
-  .paper-frame__inner {
-    transform: none !important;
-    width: auto !important;
-  }
 }
 `;
 
-function useFrameStyle() {
+// Inject the frame CSS plus a print-only @page rule (size + margins) marked
+// !important so it out-ranks pagedjs's own `@page { margin: 0 }` reset (which it
+// appends to <head> when it paginates, after App's usePageStyle @page — equal
+// specificity, so source order would otherwise let pagedjs win and drop margins
+// from the printed output). Rebuilt on doc change so margin/size edits take hold.
+function useFrameStyle(doc: ResumeDoc) {
   useEffect(() => {
+    const print = getPrint(doc);
+    const m = print.margins;
+    const printPage = `@media print { @page { size: ${print.paperSize} !important; margin: ${m.top}mm ${m.right}mm ${m.bottom}mm ${m.left}mm !important; } }`;
     const el = document.createElement('style');
     el.id = 'paper-frame-css';
-    el.textContent = FRAME_CSS;
+    el.textContent = `${FRAME_CSS}\n${printPage}`;
     document.getElementById('paper-frame-css')?.remove();
     document.head.appendChild(el);
     return () => el.remove();
-  }, []);
+  }, [doc]);
 }
 
 interface Geometry {
@@ -172,7 +174,9 @@ function geometry(doc: ResumeDoc): Geometry {
 
 // Continuous engine: always works, no async deps. Content box at the paper
 // width minus margins; content laid out at innerWidth (= contentBox/scale) then
-// scaled up by `scale` — matching Playwright page.pdf({scale}) semantics.
+// `zoom`ed by `scale` so it reflows to fill the content box at the scaled size —
+// matching Playwright page.pdf({scale}) semantics. zoom (not transform) so the
+// scale also reflows + survives into print.
 function ContinuousSheet({
   doc,
   children,
@@ -197,7 +201,7 @@ function ContinuousSheet({
         className="paper-frame__inner"
         style={{
           width: g.innerWidthPx,
-          transform: `scale(${g.scale})`,
+          zoom: g.scale,
         }}
       >
         {children}
@@ -207,7 +211,11 @@ function ContinuousSheet({
 }
 
 // Multipage engine via pagedjs. Renders `children` (the résumé) into a hidden
-// source node, paginates its innerHTML into real pages, scales the page stack.
+// source node wrapped in a `zoom`ed box (width = contentBox/scale, zoom = scale)
+// so the SOURCE is already at the target scale + page width; pagedjs then reads
+// that innerHTML and repaginates the scaled content into real pages honoring the
+// @page rule. (zoom — not a stack transform — so scale changes page COUNT/density
+// like Playwright's scale, instead of just visually shrinking the whole stack.)
 // Falls back to continuous on any failure.
 function MultiPageSheet({
   doc,
@@ -275,16 +283,13 @@ function MultiPageSheet({
 
   return (
     <>
-      {/* hidden source the paginator reads innerHTML from */}
+      {/* hidden source the paginator reads innerHTML from — pre-scaled via zoom so
+          pagedjs paginates the scaled, full-page-width content */}
       <div className="paper-frame__source" ref={sourceRef} aria-hidden>
-        {children}
+        <div style={{ width: g.innerWidthPx, zoom: g.scale }}>{children}</div>
       </div>
-      {/* produced .pagedjs_page sheets, stacked + scaled */}
-      <div
-        className="paper-frame__pages"
-        ref={targetRef}
-        style={{ transform: `scale(${g.scale})` }}
-      />
+      {/* produced .pagedjs_page sheets, stacked at natural (paper) size */}
+      <div className="paper-frame__pages" ref={targetRef} />
     </>
   );
 }
@@ -298,7 +303,7 @@ export default function PaperFrame({
   layout: PreviewLayout;
   children: ReactNode;
 }) {
-  useFrameStyle();
+  useFrameStyle(doc);
   return (
     <div className="paper-frame">
       {layout === 'continuous' ? (
