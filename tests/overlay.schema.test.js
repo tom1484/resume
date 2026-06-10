@@ -1,8 +1,8 @@
 // Overlay schema contract: the valid fixture (and the committed test
 // overlay) must pass; each invalid fixture must fail for its specific
 // reason. Runs at the repo root so Ajv resolves from root devDependencies.
-// v2: validates against the single-source-of-truth Overlay schema emitted from
-// @resume/contracts (Zod → JSON Schema), not the removed v1 overlay.schema.json.
+// Validates against the single-source-of-truth Overlay schema emitted from
+// @resume/contracts (Zod → JSON Schema).
 import { describe, expect, it } from 'vitest';
 import { createRequire } from 'node:module';
 import { readFileSync } from 'node:fs';

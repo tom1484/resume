@@ -1,8 +1,7 @@
 // §7 DB schema — PII-minimized projections + lifecycle.
 //
-// Verdict: KEEP jobs/events/answers/resume_versions core; REDESIGN projections;
-// ADD config. v1's JOB_FIELDS (server.js:41-43) over-fetched
-// source/remote/posted_at/reject_reason/reviewed_at which the SPA never renders.
+// Core tables: jobs/events/answers/resume_versions/config. Projections are
+// PII-minimized — they fetch only the columns the SPA renders.
 import { z } from 'zod';
 import { ScoreBreakdown } from './pipeline.js';
 import { Overlay, Audit } from './overlay.js';
@@ -29,7 +28,7 @@ export type JobStatus = z.infer<typeof JobStatus>;
 export const CompanyFlag = z.enum(['dream', 'startup', 'return-path']);
 export type CompanyFlag = z.infer<typeof CompanyFlag>;
 
-// Inbox list projection — the ONLY columns /api/jobs (list) returns (server.js:49)
+// Inbox list projection — the ONLY columns /api/jobs (list) returns.
 export const JobListItem = z
   .object({
     id: z.string(),
@@ -68,7 +67,7 @@ export const JobDetail = z
   .strict();
 export type JobDetail = z.infer<typeof JobDetail>;
 
-// §7.3 answers (KEEP, 002:10-16; seed 003): {id, key UNIQUE, question, answer,
+// §7.3 answers (002:10-16; seed 003): {id, key UNIQUE, question, answer,
 // updated_at}. The CRUD body shape:
 export const Answer = z
   .object({

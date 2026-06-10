@@ -10,7 +10,7 @@ describe('KNOWN_MODELS (§9) — the selectable-model SSoT', () => {
   });
 });
 
-describe('costUsd (§9) — matches v1 llm.js', () => {
+describe('costUsd (§9)', () => {
   it('computes haiku cost for a sample usage', () => {
     // haiku {in:1, out:5} $/MTok; cache-read 0.1×in, cache-write 1.25×in.
     // (1000*1 + 500*5 + 2000*1*0.1 + 800*1*1.25) / 1e6

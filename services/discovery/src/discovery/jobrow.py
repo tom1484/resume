@@ -1,8 +1,7 @@
 """Typed discovery → jobs-row contract (§10), the Python mirror of
 @resume/contracts `DiscoveredJob` (jobRow.ts). Kept in LOCKSTEP with the Zod
-shape. Each record is validated against this BEFORE upsert, killing the v1 silent
-dict-slice drop (store.py:39 `row = {c: record.get(c) for c in COLUMNS}` dropped
-any normalizer key not in COLUMNS without warning).
+shape. Each record is validated against this BEFORE upsert, so a normalizer key
+not in COLUMNS is a loud error rather than a silent drop.
 """
 
 from __future__ import annotations

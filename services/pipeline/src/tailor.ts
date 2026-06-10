@@ -20,7 +20,7 @@ import type { Job, ScoredJob } from './types.js';
 import type { ResumeDoc } from '@resume/contracts';
 
 // Patchable surface: every highlight with its JSON Pointer + current text, so the
-// model targets real paths (and we can verify them mechanically). Reads the v2
+// model targets real paths (and we can verify them mechanically). Reads the
 // résumé shape (work/projects/volunteer highlights).
 function patchableMap(resume: ResumeDoc): string {
   const lines: string[] = [];

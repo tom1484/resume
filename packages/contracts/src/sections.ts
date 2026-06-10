@@ -1,23 +1,14 @@
 // §1 Section-key registry — THE one list.
 //
-// Verdict: REDESIGN (one registry replaces v1's 6 duplicated literals).
-// In v1 the nine section keys are restated independently in:
-//   overlay.schema.json sections enum (overlay.schema.json:25-35),
-//   tailor.js SECTIONS (tailor.js:20),
-//   editorModel.js SECTIONS (editorModel.js:15-25),
-//   adapter.js buildViewModels return object (adapter.js:83-93),
-//   config/sections.js sectionsConfig (sections.js:3-93),
-//   data/resume.json meta.sectionOrder (resume.json:563-573).
-// In v2 this single registry is the source for: the overlay `sections` enum,
-// the TailorSchema sections enum, the editor section tree, the renderer
+// This single registry is the source for: the overlay `sections` enum, the
+// TailorSchema sections enum, the editor section tree, the renderer
 // sectionsConfig, the adapter's emitted keys, and sectionOrder validation.
 import { z } from 'zod';
 
 /**
  * The minimal structural shapes the split `pick` predicates read. The §1 split
- * discriminator rename: v1 splits with x-section:'academic' (adapter.js:51) and
- * x-type:'competition' (adapter.js:55); v2 renames these to `track`/`kind` (§2).
- * The `pick` predicates here are the SINGLE place the split rule lives.
+ * discriminator is `track`/`kind` (§2). The `pick` predicates here are the
+ * SINGLE place the split rule lives.
  */
 export interface WorkPickInput {
   track?: 'academic' | 'industry';

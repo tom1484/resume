@@ -32,9 +32,9 @@ services:
       timeout: 5s
       retries: 5
 
-  # In-process DB-driven scheduler (v2): a long-running process that reads
+  # In-process DB-driven scheduler: a long-running process that reads
   # ScheduleConfig from the `config` table each tick and runs discovery when due
-  # (a UI schedule edit takes effect next tick, no restart). Replaces supercronic.
+  # (a UI schedule edit takes effect next tick, no restart).
   # Manual one-shot: docker compose run --rm discovery uv run --no-sync python -m discovery.main --boards
   discovery:
     build: ../services/discovery

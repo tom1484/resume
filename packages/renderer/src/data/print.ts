@@ -2,9 +2,8 @@
 // it since overlays apply onto the résumé). Two consumers:
 //   - the renderer injects pageCss() as an @page rule (browser print / Save-as-PDF)
 //   - the PDF pipeline feeds pdfOptions() to Playwright's page.pdf()
-// Defaults reproduce the prior behavior (A4, no margins, scale 1) so nothing
-// changes until the user edits it. PAPER_SIZES comes from §2.3 PrintConfig (the
-// one list); getPrint/pageCss/pdfOptions port KEEP verbatim from v1.
+// Defaults are A4, no margins, scale 1, so nothing changes until the user edits
+// it. PAPER_SIZES comes from §2.3 PrintConfig (the one list).
 import { PAPER_SIZES, PAPER_DIMENSIONS } from '@resume/contracts';
 
 export { PAPER_SIZES, PAPER_DIMENSIONS };

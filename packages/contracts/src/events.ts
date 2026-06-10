@@ -1,10 +1,8 @@
 // §9 events / cost ledger + dashboard read API.
 //
-// Verdict: KEEP table; ADD read API + dashboard surface (unconsumed in v1).
-// Pricing + costUsd port VERBATIM from v1 llm.js:12-28. The logEvent helper was
-// duplicated in cycle.js:16 and tailorJob.js:14 (and Python store.log_event) —
-// v2 folds the Node copies into one @contracts-typed logEvent ROW BUILDER (the
-// shape, not the DB call).
+// The events table feeds a read API + dashboard surface. The Node logEvent is one
+// @contracts-typed ROW BUILDER (the shape, not the DB call); the Python side has
+// its own store.log_event.
 import { z } from 'zod';
 
 export const EventStage = z.enum([
@@ -19,7 +17,7 @@ export type EventStage = z.infer<typeof EventStage>;
 
 export const EventRow = z
   .object({
-    // 001_init.sql:31-45 (KEEP shape)
+    // 001_init.sql:31-45
     id: z.number(),
     job_id: z.string().nullable(),
     stage: EventStage,
@@ -55,7 +53,7 @@ export const DashboardSummary = z
   .strict();
 export type DashboardSummary = z.infer<typeof DashboardSummary>;
 
-// --- Pricing + costUsd (KEEP verbatim, llm.js:12-28) ---
+// --- Pricing + costUsd ---
 // $/MTok; cache read = 0.1x base input, cache write (5m) = 1.25x base input.
 export const PRICES: Record<string, { in: number; out: number }> = {
   'claude-haiku-4-5': { in: 1, out: 5 },
@@ -82,7 +80,7 @@ export interface Usage {
 
 /**
  * Dollar cost of one LLM call. Returns null when the model is unknown or usage
- * is absent (llm.js:19: cost only computed when model+usage present).
+ * is absent (cost is only computed when model+usage are present).
  */
 export function costUsd(
   model: string,
@@ -104,9 +102,9 @@ export function costUsd(
 }
 
 // --- logEvent row builder (the shape, not the DB call) ---
-// The persisted events-table row, minus the DB-assigned id/created_at. Maps the
-// v1 INSERT column list (cycle.js:16-26): job_id, stage, model, input_tokens,
-// output_tokens, cost_usd, duration_ms, ok, detail.
+// The persisted events-table row, minus the DB-assigned id/created_at. The INSERT
+// column list: job_id, stage, model, input_tokens, output_tokens, cost_usd,
+// duration_ms, ok, detail.
 export interface LogEventInput {
   jobId: string | null;
   stage: EventStage;
@@ -131,8 +129,8 @@ export interface EventInsertRow {
 
 /**
  * Build the events-table insert row from a stage result. Cost is computed only
- * when both model and usage are present (llm.js:19). The actual INSERT is the
- * API/pipeline agent's job — this is the single typed row shape.
+ * when both model and usage are present. The actual INSERT is the API/pipeline
+ * agent's job — this is the single typed row shape.
  */
 export function logEventRow(input: LogEventInput): EventInsertRow {
   const { jobId, stage, ok, model, usage, durationMs, detail } = input;

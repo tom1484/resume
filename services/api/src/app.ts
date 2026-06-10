@@ -1,6 +1,6 @@
-// v2 review/config/dashboard API (Fastify 5). Ported from v1 server.js to TS,
-// with all validation routed through @resume/contracts Zod (no Ajv reimpl) and
-// the single imported overlayProblems. Built as a factory so unit tests inject a
+// Review/config/dashboard API (Fastify 5). All validation routes through
+// @resume/contracts Zod and the single imported overlayProblems. Built as a
+// factory so unit tests inject a
 // mocked pg pool (no live Postgres needed; DB integration is the integrator's
 // job at merge).
 //
@@ -34,8 +34,8 @@ export interface AppDeps {
 // --- column projections (§7) -------------------------------------------------
 // List: the ONLY columns /api/jobs returns (JobListItem).
 const JOB_LIST_FIELDS = `id, company, title, location, score, status, company_flags, label`;
-// Detail: JobDetail — PII-minimized. Drops source/remote/posted_at/reviewed_at
-// from v1's JOB_FIELDS; keeps reject_reason.
+// Detail: JobDetail — PII-minimized. Omits source/remote/posted_at/reviewed_at;
+// keeps reject_reason.
 const JOB_DETAIL_FIELDS = `id, company, title, location, url, status, score,
   score_breakdown, company_flags, label, reject_reason, parsed, jd_text,
   overlay, audit, cover_letter`;
@@ -98,7 +98,7 @@ export function createApp(deps: AppDeps): FastifyInstance {
     return rows[0]; // JobDetail
   });
 
-  // Bare print path data source (replaces the v1 iframe — DECISIONS req 3).
+  // Bare print path data source.
   app.get('/applications/:id/overlay.json', async (req, reply) => {
     const { id } = req.params as { id: string };
     const { rows } = await pool.query(
@@ -173,8 +173,7 @@ export function createApp(deps: AppDeps): FastifyInstance {
   app.get('/api/resume', async () => (await currentResume()).data);
 
   app.put('/api/resume', async (req, reply) => {
-    // v2: validate against @resume/contracts ResumeDoc (Zod safeParse), NOT the
-    // v1 two-field structural check (server.js:127).
+    // Validate against @resume/contracts ResumeDoc (Zod safeParse).
     const parsed = ResumeDoc.safeParse(req.body);
     if (!parsed.success) {
       return reply.code(400).send({
@@ -361,7 +360,7 @@ export function createApp(deps: AppDeps): FastifyInstance {
 
   app.get('/healthz', async () => 'ok');
 
-  // ====================== static hosting (§8 / DECISIONS req 2) ======================
+  // ====================== static hosting (§8) ======================
   // ONE unified dashboard SPA at / (apps/dashboard/build — built later by the
   // dashboard agent; just wire the root + SPA fallback). PLUS the bare résumé
   // render path (apps/site/build) at /resume/ for print/PDF/preview.

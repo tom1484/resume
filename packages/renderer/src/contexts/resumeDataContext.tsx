@@ -1,8 +1,7 @@
-// Résumé data context — the v2 replacement for the mutable `activeData`/
-// `activeDoc` module singleton (v1 data/index.js:22-23). The render host builds
-// a RenderPayload ({ doc, data }) once and provides it here; components read it
-// via `useSection(key)` (one section's items, mirroring v1 `getData`) and
-// `useResumeDoc()` (the doc behind the render, for print config / section order).
+// Résumé data context. The render host builds a RenderPayload ({ doc, data })
+// once and provides it here; components read it via `useSection(key)` (one
+// section's items) and `useResumeDoc()` (the doc behind the render, for print
+// config / section order).
 import React, { createContext, useContext } from 'react';
 import type { RenderPayload } from '../data/index.js';
 
@@ -35,7 +34,7 @@ export function useResumeDoc() {
   return useResumeData().doc;
 }
 
-/** Items for one section key (null + warn when absent — mirrors v1 getData). */
+/** Items for one section key (null + warn when absent). */
 export function useSection(dataKey: string): unknown {
   const { data } = useResumeData();
   const section = (data as Record<string, unknown>)[dataKey];

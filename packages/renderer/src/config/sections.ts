@@ -5,24 +5,24 @@
 // here: the component name, the displayed <Title> text, and real props.
 //
 // NOTE: the displayed title is intentionally NOT SECTION_REGISTRY.label — the
-// rendered DOM must stay byte-identical to v1, whose section headers were
+// rendered DOM must stay byte-identical, and the section headers are
 // "Academic Experience" / "Work Experience" / "Competition Experience" /
-// "Extracurricular" (sections.js v1), distinct from the registry's editor labels.
+// "Extracurricular", distinct from the registry's editor labels.
 import { SECTION_REGISTRY } from '@resume/contracts';
 import { SECTION_PROPS } from '@data';
 
 interface SectionPresentation {
   id: string;
   component: 'PersonalInfo' | 'Education' | 'Experiences' | 'Publications' | 'Skills';
-  /** Displayed section header (null = no header). Byte-stable from v1. */
+  /** Displayed section header (null = no header). Byte-stable. */
   title: string | null;
   /** Extra props passed to the component. */
   props: Record<string, unknown>;
 }
 
 // Per-section presentation, keyed by the §1 section key. Experience sections all
-// render via the shared Experiences component; the v1 `title` prop duplicated
-// the header text, kept here for parity.
+// render via the shared Experiences component; the `title` prop duplicates the
+// header text.
 const PRESENTATION: Record<string, SectionPresentation> = {
   personalInfo: { id: 'personal-info', component: 'PersonalInfo', title: null, props: {} },
   education: { id: 'education', component: 'Education', title: 'Education', props: {} },
@@ -41,9 +41,9 @@ export interface SectionConfig extends SectionPresentation {
 }
 
 // Build the config in the registry's declared order; dataKey === section key.
-// `config` carries the only real renderer prop kept from v1 (projects.showTags);
-// the Experiences component spreads `config` onto each item, so it must arrive
-// under `config` (not as a top-level prop) to reproduce v1 exactly.
+// `config` carries the one real renderer prop (projects.showTags); the
+// Experiences component spreads `config` onto each item, so it must arrive under
+// `config` (not as a top-level prop).
 export const sectionsConfig: SectionConfig[] = SECTION_REGISTRY.map((s) => {
   const p = PRESENTATION[s.key];
   const config = SECTION_PROPS[s.key];

@@ -4,7 +4,7 @@ export default {
   // Only the dashboard's own chrome. The résumé canvas is iframed (apps/site owns
   // its own Tailwind build), so the renderer's source is intentionally NOT in the
   // content globs — the renderer's utilities never leak into the dashboard bundle
-  // and the two Tailwind preflights never share a document (DECISIONS req 4).
+  // and the two Tailwind preflights never share a document.
   content: ['./index.html', './src/**/*.{ts,tsx}'],
   theme: {
     container: {

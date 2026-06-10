@@ -6,9 +6,8 @@ LLM-tailors your résumé per job (with strict anti-fabrication), and serves a
 review/config dashboard. Live behind nginx-proxy-manager auth at
 `jobs.churong.cc`.
 
-This is **v2** — a TypeScript **pnpm monorepo** with a Zod single-source-of-truth
-contracts package. (v1 was a JS résumé site + bolt-on services; it has been
-replaced.)
+A TypeScript **pnpm monorepo** with a Zod single-source-of-truth contracts
+package.
 
 ```
 packages/contracts/   @resume/contracts — Zod schemas = the single source of truth
@@ -16,7 +15,7 @@ packages/contracts/   @resume/contracts — Zod schemas = the single source of t
                       JSON Schema is emitted from Zod
 packages/renderer/    @resume/renderer — TS résumé renderer (components, adapter,
                       overlay, editor data layer + the dnd-kit ResumeTree)
-apps/dashboard/       the one admin SPA (React + react-router + shadcn/ui):
+apps/dashboard/       the admin SPA (React + react-router + shadcn/ui):
                       /dashboard /review /resume /scrawling /llm /preferences
                       /constraints /answers
 apps/site/            chrome-less bare résumé render host (print/PDF + the
@@ -31,8 +30,7 @@ scripts/ · deploy/    tooling · docker-compose stack + secrets (.env, gitignor
 **Docs for contributors / agents:** start at
 [`docs/agents/README.md`](docs/agents/README.md) (the deep per-subsystem
 reference). The authoritative contract spec is
-[`docs/v2/CONTRACTS.md`](docs/v2/CONTRACTS.md); the rebuild record is
-[`docs/v2/DECISIONS.md`](docs/v2/DECISIONS.md). Always-on rules: `CLAUDE.md`.
+[`docs/CONTRACTS.md`](docs/CONTRACTS.md). Always-on rules: `CLAUDE.md`.
 
 ## Quick start
 
@@ -63,7 +61,7 @@ The résumé shape is the **`ResumeDoc` Zod contract** in `@resume/contracts`
 `authors`, …; no JSON-Resume `x-` prefixes). Per-job tailoring never mutates the
 résumé — it's an **overlay** (section selection + filters + RFC-6902 patches),
 verified against the master bullet bank so the LLM can't fabricate. See
-[`docs/v2/CONTRACTS.md`](docs/v2/CONTRACTS.md) for every field.
+[`docs/CONTRACTS.md`](docs/CONTRACTS.md) for every field.
 
 ## Print / PDF
 
@@ -80,7 +78,7 @@ Print config lives in `meta.print` (the Print tab): paper size
 `services/api` (container `jobs-api`, port 8080) serves everything on one origin:
 the dashboard SPA at `/`, the bare résumé host at `/resume/`, and `/api/*` +
 `/applications/*` as JSON. It's the only web-facing service (behind the NPM
-access list — everything is PII). Deploy + the cutover/rollback runbook:
+access list — everything is PII). Deploy + the deploy/rollback runbook:
 [`docs/agents/operations.md`](docs/agents/operations.md).
 
 ## CI

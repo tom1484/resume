@@ -2,7 +2,7 @@
   "name": "@resume/contracts",
   "version": "0.1.0",
   "private": true,
-  "description": "v2 single-source-of-truth Zod contracts: section registry, resume/view-model/overlay/master schemas, pipeline + scoring, config, db projections, api DTOs (+ overlayProblems), events ledger (+ costUsd), discovery jobs-row, anti-fabrication invariants. Emits JSON Schema for Ajv consumers.",
+  "description": "Single-source-of-truth Zod contracts: section registry, resume/view-model/overlay/master schemas, pipeline + scoring, config, db projections, api DTOs (+ overlayProblems), events ledger (+ costUsd), discovery jobs-row, anti-fabrication invariants. Emits JSON Schema for Ajv consumers.",
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",

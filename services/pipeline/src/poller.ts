@@ -1,6 +1,6 @@
 // Long-running worker: cycle() forever, sleeping LlmConfig.pollIntervalMs
-// between cycles. The pipeline NO LONGER runs migrations — the API owns them
-// (v2 split); the schema (incl. the config table) is assumed to exist.
+// between cycles. The API owns migrations; the pipeline does not run them.
+// The schema (incl. the config table) is assumed to exist.
 import { pool } from './db.js';
 import { getConfig } from './config.js';
 import { cycle } from './cycle.js';

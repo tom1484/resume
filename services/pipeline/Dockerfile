@@ -1,7 +1,6 @@
-# Pipeline worker (TS). NOTE (integrator): this image needs the @resume/contracts
-# workspace package at build time. Build with the REPO ROOT as the docker context
-# (or a pre-built contracts dist mounted/copied in) — the v1 single-dir context is
-# no longer sufficient. The pipeline NO LONGER runs migrations (the API owns them).
+# Pipeline worker (TS). This image needs the @resume/contracts workspace package
+# at build time, so build with the REPO ROOT as the docker context (or a pre-built
+# contracts dist copied in). The API owns DB migrations; the pipeline does not run them.
 FROM node:22-alpine AS build
 WORKDIR /repo
 RUN npm install -g pnpm@9.12.0

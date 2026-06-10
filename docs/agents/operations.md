@@ -1,19 +1,19 @@
-# Operations: deploy, env, migration, runbook (v2)
+# Operations: deploy, env, migration, runbook
 
 ## Scope
-How to run, operate, and deploy the v2 stack: root `pnpm` commands, the three
+How to run, operate, and deploy the stack: root `pnpm` commands, the three
 Dockerfiles (build-from-repo-root), Docker Compose topology, the env/secrets
 boundary, DB migrations (**API-owned**), the **config seeding** layer, the
-in-process **scheduler**, the NPM exposure, the **v1→v2 cutover/rollback runbook**,
-and the **Lessons** that bit us in the real cutover. Source of truth for "how do I
+in-process **scheduler**, the NPM exposure, the **deploy/rollback runbook**,
+and the **Lessons**. Source of truth for "how do I
 run X" and "what controls Y".
 
 ## Read this when
 - Deploying or redeploying the stack (`docker compose build/up`).
 - Adding/changing an env var, secret, or volume mount.
-- Adding a DB migration, or running the one-time v1→v2 data migration.
-- Seeding or editing config (it's DB-backed + UI-editable now, not env/YAML).
-- Editing the discovery schedule (in-process scheduler, not cron).
+- Adding a DB migration.
+- Seeding or editing config (it's DB-backed + UI-editable).
+- Editing the discovery schedule (in-process scheduler).
 - Running an eval, a one-off pipeline cycle, a manual tailor, or `export-seed`.
 - Debugging the public exposure (NPM access list, Cloudflare SSL, healthcheck).
 
@@ -27,8 +27,6 @@ run X" and "what controls Y".
 | DB migrations runner | `services/api/migrations/run.ts` `runMigrations()` | applied at API startup; idempotent |
 | Pipeline poller | `services/pipeline/src/poller.ts` | container CMD; `cycle()` forever; **no migration** |
 | Discovery scheduler | `services/discovery/src/discovery/scheduler.py` | container CMD; per-minute DB-driven tick |
-| v1→v2 data migration | `services/api/scripts/migrate-v1-to-v2.ts` | one-time, against an EXPORT; `--dry-run` default |
-| Résumé seed reshape | `scripts/migrate/run-resume-seed.ts` | reshape repo-root `data/resume.json` to v2 (file only) |
 | Seed export | `scripts/export-seed.mjs` | `pnpm export-seed`; live DB → `data/resume.json` |
 
 ## Docker Compose services
@@ -65,7 +63,7 @@ picked up.
   CMD `node dist/src/poller.js`. **No migrations** (API owns them).
 - **`services/discovery/Dockerfile`** (context = its own dir). `uv:python3.12` slim;
   `uv sync --frozen`; CMD `["uv","run","--no-sync","python","-m","discovery.scheduler"]`
-  (the long-running scheduler — supercronic is gone). `tzdata` is a dep so the
+  (the long-running scheduler). `tzdata` is a dep so the
   scheduler tz resolves in the slim image.
 
 ## Public exposure (jobs.churong.cc)
@@ -79,7 +77,7 @@ picked up.
 
 ## Env / secrets boundary (binding)
 **Secrets live in `deploy/.env` (gitignored) and ONLY in env — never DB, never
-UI-editable.** Everything else that was env/YAML in v1 is now a DB `config` row
+UI-editable.** Everything else is a DB `config` row
 (below). The config CRUD API never reads/writes secrets; the dashboard has no field
 for them.
 
@@ -98,11 +96,11 @@ for them.
 | `ENABLE_RESUME_OPS` | api | no | `=1` exposes the ops-only `/api/resume/history` + `/restore/:id` (default off) |
 | `TZ` | discovery container | no | `Asia/Taipei`; the *scheduler's* tz is the `schedule` config |
 
-Everything formerly env/YAML — **models per stage, scoreThreshold, weights, batch,
+Non-secret settings — **models per stage, scoreThreshold, weights, batch,
 poll, JD truncation, the cron/tz/mode, JobSpy sites/defaults, searches, companies,
-exclude lists, constraints, preferences** — is now in the `config` table (§ below),
-edited in the dashboard. (This fixes the v1 finding that `MODEL_*` weren't even
-passed through compose and a model change needed a code change + image rebuild.)
+exclude lists, constraints, preferences** — live in the `config` table (§ below),
+edited in the dashboard. A model change takes effect next cycle/tick — no code
+change or image rebuild.
 
 ## Mounts: DATA_DIR and RESUME_SEED
 Both `pipeline` and `api` mount two read-only volumes:
@@ -122,8 +120,8 @@ Both `pipeline` and `api` mount two read-only volumes:
 - Runner: `services/api/migrations/run.ts` `runMigrations(pool)` — `CREATE TABLE IF
   NOT EXISTS schema_migrations`, read dir, filter `.sql`, **sort by filename**, apply
   each unseen one in its own transaction, record the name. Idempotent.
-- **Ownership move (v2):** the API applies migrations at startup (`server.ts`); the
-  pipeline no longer does. So a normal `docker compose up -d api` applies pending
+- **Migration ownership:** the API applies migrations at startup (`server.ts`); the
+  pipeline does not. So a normal `docker compose up -d api` applies pending
   migrations. Manual: `node services/api/dist/migrations/run.js` (or
   `pnpm --filter @resume/api migrate`) with `DATABASE_URL` set. The image copies the
   `.sql` files next to `dist/migrations/` (tsc doesn't compile them); the runner
@@ -135,18 +133,14 @@ Both `pipeline` and `api` mount two read-only volumes:
 - The `config` table has one row per namespace (`llm / schedule / discovery /
   constraints / preferences`); `value jsonb` is validated by the matching
   `@resume/contracts` Zod on write (`PUT /api/config/:ns` → `parseConfig`).
-- **Seeding:** the v1→v2 migration (`migrate-v1-to-v2.ts`, below) seeds every
-  namespace — `discovery` from the YAMLs (dropping dead `keywords`/`locations`/
-  `defaults.sites`), `llm`/`schedule` from compose/.env non-secrets, `constraints`
-  with the three F-1 rules, `preferences` with the lifted Summer-2027 anchor. If you
-  skip the migration (fresh DB), `getConfig(ns)` returns `configDefault(ns)` (schema
+- **Seeding:** on a fresh DB, `getConfig(ns)` returns `configDefault(ns)` (schema
   defaults) until you PUT real values from the UI.
 - **Runtime reads** are best-effort (`services/pipeline/src/config.ts`,
   `services/api/src/config.ts`, `services/discovery/src/discovery/config.py`): DB row
   → Zod parse → on any failure last-good/schema-default; **never crash**. Edits take
   effect next cycle/tick, no restart. Python defaults MUST track `contracts/config.ts`.
 
-## The scheduler (replaces supercronic)
+## The scheduler
 `services/discovery/src/discovery/scheduler.py` `loop()` is the discovery container's
 CMD — a long-running process that ticks every 60s. Each tick it re-reads
 `ScheduleConfig` (`config.get_config(conn, 'schedule')`) and, if `discovery.enabled`
@@ -179,44 +173,17 @@ Pipeline (from `services/pipeline/`, with `DATABASE_URL`/`ANTHROPIC_API_KEY`):
 `pnpm --filter @resume/pipeline eval:parse|eval:verify|eval:tailor` (tsx, live API —
 see [./pipeline.md](./pipeline.md); run before landing any prompt change).
 
-## v1 → v2 cutover runbook
-The brief's sequencing: build v2 in the worktree; **stop (not remove)** the old v1
-stack at construction start; migrate data once at cutover.
+## Deploy & rollback runbook
 
-1. **Stop v1** (don't remove): `docker compose stop` in the old stack. Keep its DB
-   volume intact (rollback depends on it).
-2. **Export the live v1 data** into an export dir the migration reads (it never
-   touches a live DB itself). Assemble: `resume_version.json` (latest
-   `resume_versions.data`), `jobs.json` (rows incl. overlay/parsed/score_breakdown/
-   audit), `answers.json`, `master.json`, `discovery.json` (the two YAMLs converted
-   to JSON), `env.json` (compose/.env non-secrets: models/threshold/batch/poll/cron/
-   tz/mode/sites).
-3. **Bring up the v2 DB + API** (`docker compose up -d db api`) — the API applies
-   migrations `001`–`005` at startup, creating the v2 schema incl. `config`.
-4. **Reshape the file seed:** `node scripts/migrate/run-resume-seed.ts` (repo-root
-   `data/resume.json` → v2 `ResumeDoc`, validated), then `pnpm validate` + a
-   `render-check` empty-DOM-diff against the v1 baseline (the byte-identical-DOM
-   invariant).
-5. **Dry-run the data migration against the EXACT export you'll apply:**
-   `node services/api/dist/scripts/migrate-v1-to-v2.js --export <dir>` (default
-   `--dry-run`, writes nothing). It reshapes the résumé, re-validates each overlay
-   (`Overlay` + `overlayProblems`; non-conformers nulled + logged for re-tailor),
-   re-validates `parsed`/`score_breakdown`/`audit` per job, KEEPs all job rows + ids
-   + dedupe keys, validates answers, and builds the five config rows (F-1 constraints
-   + the seed preference). Review the printed report's `quarantine` list — nothing is
-   silently dropped. Optionally `--out <file>` to inspect the payload.
-6. **Apply:** re-run with `--apply` (requires `DATABASE_URL` = the v2 DB). It inserts
-   the migrated résumé (note `'migration v1→v2'`), updates the migrated jobs, upserts
-   answers (`ON CONFLICT DO NOTHING`) and the config rows.
-7. **Bring up the rest:** `docker compose up -d pipeline discovery`. Verify the
-   dashboard at jobs.churong.cc (behind the NPM access list): review inbox, config
-   tabs (they should show the seeded values), `/dashboard` ledger.
-8. **Point NPM** at the new `jobs-api` if the container/network identity changed.
+1. **Bring up the DB + API** (`docker compose up -d db api`) — the API applies
+   migrations `001`–`005` at startup, creating the schema incl. `config`.
+2. **Bring up the rest:** `docker compose up -d pipeline discovery`.
+3. **Verify the dashboard** at jobs.churong.cc (behind the NPM access list): review
+   inbox, config tabs, `/dashboard` ledger.
+4. **Point NPM** at `jobs-api` if the container/network identity changed.
 
-**Rollback:** the migration is one-way against the v2 DB only; the v1 DB volume is
-untouched. To roll back: `docker compose stop` v2, restart the v1 stack against its
-preserved volume, repoint NPM. (Note: the `migrate-v1-to-v2.ts` reshaper passes
-already-v2-shaped input through, so re-running it is safe; but prefer a clean v2 DB.)
+**Rollback:** redeploy the previous image (`docker compose up -d` against the prior
+build), then verify the dashboard.
 
 ## Known gotchas (with fixes)
 - **External `nginx` network missing** → `up` fails with "network nginx not found".
@@ -234,21 +201,21 @@ already-v2-shaped input through, so re-running it is safe; but prefer a clean v2
 - **The pipeline does NOT migrate** — if you bring up `pipeline` before `api` on a
   fresh DB, it has no schema. Always bring up `api` (which migrates) first/together.
 
-## Lessons (these bit us in the real cutover — binding)
+## Lessons (binding)
 1. **Validate at the boundary.** A contract that isn't enforced on API *output* (or
-   on a migration *write*) lets bad data through. Two real failures: pg returns
-   `numeric`/`bigint` columns as JS **strings** (the events `id`/`cost_usd`), so a
-   client `.toFixed()` crashed — `GET /api/events` now coerces them to numbers and
-   `EventRow.array().parse()`s on the way out; and the résumé migration went
-   "false-green" because the write wasn't re-validated. **Keep the `.parse()` on
+   on a migration *write*) lets bad data through. Two failure modes to guard against:
+   pg returns `numeric`/`bigint` columns as JS **strings** (the events `id`/`cost_usd`),
+   so a client `.toFixed()` can crash — `GET /api/events` coerces them to numbers and
+   `EventRow.array().parse()`s on the way out; and a record write can go
+   "false-green" if it isn't re-validated. **Keep the `.parse()` on
    every API response (`DashboardSummary.parse`, `EventRow.array().parse`), on the
    pipeline's `ScoreBreakdown`, and on every migration record.**
-2. **Dry-run against the exact data you apply, atomically.** A migration dry-run
-   passed against an earlier export while the live row changed underneath. Export
+2. **Dry-run against the exact data you apply, atomically.** A migration dry-run can
+   pass against an earlier export while the live row changes underneath. Export
    once, dry-run that export, and `--apply` *that same* export — don't re-export
    between dry-run and apply. Quarantine + log non-conformers (never silently drop).
 3. **Docker image dep gotcha.** A `workspace:*` dep + `npm install … || true`
-   silently omits runtime deps (the v1-image bug: `pg`/`fastify` missing at runtime,
+   silently omits runtime deps (`pg`/`fastify` missing at runtime,
    masked by `|| true`). **Install runtime deps by NAME in the runtime stage**
    (`services/api/Dockerfile` does: `fastify @fastify/static pg zod fast-json-patch`),
    then copy the workspace `@resume/contracts` `dist/` in as a real dir afterwards so
@@ -258,4 +225,4 @@ already-v2-shaped input through, so re-running it is safe; but prefer a clean v2
 - System map + flows + topology: `./architecture.md`
 - Pipeline internals (discovery/scheduler/scoring/tailor/verify/evals): `./pipeline.md`
 - Dashboard / renderer / editor / print: `./frontend.md`
-- Contract shapes: `./data-contracts.md` → `../v2/CONTRACTS.md`
+- Contract shapes: `./data-contracts.md` → `../CONTRACTS.md`

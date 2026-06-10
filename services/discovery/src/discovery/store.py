@@ -2,7 +2,7 @@
 
 §10 typed write: each record is validated against the DiscoveredJob contract
 (jobrow.py, mirror of @resume/contracts) BEFORE the SQL — a record that fails
-validation is logged and skipped, never silently dict-sliced (the v1 drop bug).
+validation is logged and skipped, never silently dict-sliced.
 """
 
 import json

@@ -1,5 +1,5 @@
-// API runtime entrypoint. v2 ownership change: the API applies DB migrations at
-// startup (the pipeline no longer does), then serves the routes + static SPAs.
+// API runtime entrypoint. The API owns DB migrations: it applies them at
+// startup, then serves the routes + static SPAs.
 import { getPool } from './pool.js';
 import { runMigrations } from '../migrations/run.js';
 import { createApp } from './app.js';

@@ -49,7 +49,7 @@ def test_nullable_fields_accept_none():
 
 def test_extra_key_is_rejected_not_silently_dropped():
     with pytest.raises(ValidationError):
-        validate_record(good_record(extra_normalizer_field="lost in v1"))
+        validate_record(good_record(extra_normalizer_field="unexpected value"))
 
 
 def test_bad_status_rejected():

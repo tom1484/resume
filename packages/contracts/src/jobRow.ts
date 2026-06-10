@@ -1,11 +1,8 @@
 // §10 Discovery → jobs-row write contract.
 //
-// Verdict: REDESIGN (typed/shared) — v1's write is an untyped Python dict sliced
-// to 13 columns (store.py:39); any normalizer key not in COLUMNS is silently
-// dropped. v2 defines the row shape once here (mirrored as a Python TypedDict/
-// pydantic model kept in lockstep) and validates each record before insert.
-// This is exactly the 13 store.COLUMNS (store.py:8-22), now typed. Insert stays
-// ON CONFLICT DO NOTHING (store.py:27).
+// The row shape is defined once here (mirrored as a Python TypedDict/pydantic
+// model kept in lockstep) and each record is validated before insert — the 13
+// typed store.COLUMNS. Insert is ON CONFLICT DO NOTHING.
 import { z } from 'zod';
 import { CompanyFlag } from './db.js';
 

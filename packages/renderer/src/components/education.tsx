@@ -3,12 +3,11 @@ import { useTheme } from '@contexts/themeContext';
 import Container from '@components/layout/container';
 import type { EducationVM } from '@resume/contracts';
 
-// BUG FIX (DOM-neutral, DECISIONS drop/fix list): v1 set
-// className={theme.components.education.tableCell} on the <td>s, but that theme
-// key is UNDEFINED — React omits an `undefined` className, so the rendered DOM
-// never had a class there. v2 removes the dead reference entirely; the emitted
-// <td> is byte-identical (no class attribute either way). Do NOT introduce a
-// `tableCell` class — that would add a DOM attribute and break the render-check.
+// The <td>s carry no className. The theme has no
+// `theme.components.education.tableCell` key, so referencing it would render no
+// class (React omits an `undefined` className); the emitted <td> has no class
+// attribute. Do NOT introduce a `tableCell` class — that would add a DOM
+// attribute and break the render-check.
 
 export default function Education({ data }: { data: EducationVM[] }) {
   const { theme } = useTheme();

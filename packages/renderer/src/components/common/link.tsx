@@ -3,9 +3,9 @@ import { useTheme } from '../../contexts/themeContext';
 import clsx from 'clsx';
 
 // Generic Link component with consistent styling. NOTE: `className` is accepted
-// but intentionally IGNORED — v1's Link never applied a caller className (it set
-// its own theme classes), and personalInfo passes one. Honoring it would add a
-// DOM attribute and break the render-check; we keep v1's drop-it behavior.
+// but intentionally IGNORED — the Link applies its own theme classes and never a
+// caller className, and personalInfo passes one. Honoring it would add a DOM
+// attribute and break the render-check; we keep the drop-it behavior.
 export default function Link({
   children,
   href,

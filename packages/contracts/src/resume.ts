@@ -1,11 +1,9 @@
-// §2 Résumé document — fresh schema (drop JSON Resume conformance).
+// §2 Résumé document schema.
 //
-// Verdict: REDESIGN — own the schema; drop `x-` prefixes and the upstream
-// JSON-Resume schema; keep only fields a live consumer reads; fix publications
-// links. `pnpm validate` validates against this single Zod-derived schema.
-// Verified consumers: adapter.js (view-models), profile.js
-// (candidateTerms/profileText), editorModel.js (SECTIONS source/titleKey),
-// tailor.js patchableMap (highlight paths), print.js (meta.print).
+// Keep only fields a live consumer reads. `pnpm validate` validates against this
+// single Zod-derived schema. Consumers: the adapter (view-models), profile
+// (candidateTerms/profileText), the editor model (SECTIONS source/titleKey),
+// tailor patchableMap (highlight paths), and print (meta.print).
 import { z } from 'zod';
 import { SECTION_KEYS } from './sections.js';
 import { PrintConfig } from './print.js';
@@ -20,7 +18,7 @@ const time = z.string().min(4); // display range, e.g. "Jun 2025 - Aug 2025"
 export const Basics = z
   .object({
     name: z.string().min(1),
-    headline: z.string().optional(), // was basics.label — scoring-only, not rendered (adapter.js never emits)
+    headline: z.string().optional(), // scoring-only, not rendered
     email: z.string(),
     phone: z.string().optional(),
     location: z
@@ -41,7 +39,7 @@ export const Basics = z
       .default([]),
     qrcodes: z
       .array(z.object({ label: z.string(), src: z.string() }))
-      .default([]), // was x-qrcodes; read by adapter.js:40
+      .default([]), // read by the adapter
   })
   .strict();
 export type Basics = z.infer<typeof Basics>;
@@ -49,11 +47,11 @@ export type Basics = z.infer<typeof Basics>;
 export const Education = z
   .object({
     institution: z.string().min(1),
-    area: z.string().optional(), // scoring-only (profile.js fit text)
+    area: z.string().optional(), // scoring-only (profile fit text)
     studyType: z.string().optional(), // scoring-only
     time,
-    info: z.array(Tuple2), // was x-info (required); adapter.js:46 (content)
-    courses: z.array(Tuple2).optional(), // was x-courses (graded rows); adapter.js:47
+    info: z.array(Tuple2), // content rows (required)
+    courses: z.array(Tuple2).optional(), // graded rows (optional)
   })
   .strict();
 export type Education = z.infer<typeof Education>;
@@ -80,9 +78,9 @@ export const Project = z
     time,
     kind: z.enum(['competition', 'project']).optional(), // §1 split; absent ⇒ project
     location: z.string().optional(),
-    badge: z.string().optional(), // was x-highlight (e.g. "Patent")
+    badge: z.string().optional(), // e.g. "Patent"
     links: z.array(Link).optional(),
-    tags: z.array(z.string()).optional(), // was stdlib `keywords`
+    tags: z.array(z.string()).optional(),
     highlights: z.array(z.string()).default([]),
   })
   .strict();

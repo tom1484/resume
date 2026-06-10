@@ -1,10 +1,9 @@
-// Data layer for the renderer (v2). The mutable `activeData`/`activeDoc` module
-// singleton from v1 (data/index.js:22-23) is GONE — components no longer read
-// module globals at render time. Instead the render host computes the renderable
-// payload (résumé doc + view models) and passes it down through
-// `ResumeDataProvider` (contexts/resumeDataContext); components read it via the
-// `useResumeData`/`useSection` hooks. This file is now pure helpers + the
-// bundled seed fallback.
+// Data layer for the renderer. Components do not read module globals at render
+// time. Instead the render host computes the renderable payload (résumé doc +
+// view models) and passes it down through `ResumeDataProvider`
+// (contexts/resumeDataContext); components read it via the
+// `useResumeData`/`useSection` hooks. This file is pure helpers + the bundled
+// seed fallback.
 import type { ResumeDoc, ViewModels } from '@resume/contracts';
 import bundledResume from '../../../../data/resume.json' with { type: 'json' };
 import { buildViewModels } from './adapter.js';
@@ -14,8 +13,7 @@ import type { Overlay } from '@resume/contracts';
 /** The bundled résumé seed — fallback for standalone/PDF/CI builds with no API. */
 export const bundledSeed = bundledResume as unknown as ResumeDoc;
 
-// Per-section presentation config (the only real renderer prop kept from v1's
-// empty experienceConfigs/publicationsConfig system — DECISIONS drop list).
+// Per-section presentation config (the one real renderer prop: projects.showTags).
 export const SECTION_PROPS: Record<string, { showTags?: boolean }> = {
   projects: { showTags: false },
 };

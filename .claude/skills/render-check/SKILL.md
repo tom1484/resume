@@ -20,7 +20,7 @@ mkdir -p .render-baseline
 node scripts/capture.mjs apps/site/build .render-baseline/resume
 ```
 
-There is a single canonical résumé (profiles were removed). The static
+There is a single canonical résumé. The static
 build renders it from the bundled seed when no API is reachable. To check
 a tailored render, also capture an `application=<id>` fixture the same way.
 

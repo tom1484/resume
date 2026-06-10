@@ -3,15 +3,13 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "description": "v2 review/config/dashboard API (Fastify 5, TS): jobs/resume/answers/config/dashboard routes, single overlayProblems, DB migrations applied at startup, unified dashboard SPA + bare resume render host.",
+  "description": "Review/config/dashboard API (Fastify 5, TS): jobs/resume/answers/config/dashboard routes, single overlayProblems, DB migrations applied at startup, unified dashboard SPA + bare resume render host.",
   "main": "./dist/src/server.js",
   "scripts": {
     "build": "tsc",
     "typecheck": "tsc --noEmit",
     "start": "node dist/src/server.js",
     "migrate": "node dist/migrations/run.js",
-    "migrate-v1-to-v2": "node scripts/migrate-v1-to-v2.ts",
-    "typecheck:scripts": "tsc -p tsconfig.scripts.json --noEmit",
     "test": "vitest run"
   },
   "dependencies": {

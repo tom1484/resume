@@ -1,6 +1,5 @@
 // §9 dashboard read side: roll up the `events` cost ledger + the jobs status
-// funnel into a DashboardSummary. v1 wrote `events` from every stage but NOTHING
-// read it back (DECISIONS req 2); this is the read API.
+// funnel into a DashboardSummary. This is the read API over the `events` table.
 import {
   DashboardSummary,
   EventStage,

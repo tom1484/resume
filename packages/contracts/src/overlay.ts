@@ -1,17 +1,13 @@
 // §4 Application overlay.
 //
-// Verdict: KEEP shape, REDESIGN encoding — port the overlay shape; encode the
-// op-restriction and the reviewer-vs-LLM filter split IN THE TYPES, and validate
-// profile.filters keys against §1.
-// Two type-level gaps the brief calls out: (a) overlay.schema.json:71 allows all
-// six RFC-6902 ops although LLM-authored patches are replace-only (tailor.js:39);
-// (b) `filters` mixed LLM filters (tagsAnyOf/titleIn/limit) with reviewer filters
-// (exclude/order) — only the reviewer emits exclude/order (editorModel.js:75-80),
-// only the LLM emits tagsAnyOf/titleIn/limit (tailor.js:26-34). Encode both.
+// The op-restriction and the reviewer-vs-LLM filter split are encoded IN THE
+// TYPES, and profile.filters keys are validated against §1: (a) LLM-authored
+// patches are replace-only; (b) only the reviewer emits exclude/order, only the
+// LLM emits tagsAnyOf/titleIn/limit.
 import { z } from 'zod';
 import { SectionKey } from './sections.js';
 
-// JSON-Pointer subset used by patches/from (v1: pattern ^(/|$)).
+// JSON-Pointer subset used by patches/from (pattern ^(/|$)).
 const Pointer = z.string().regex(/^(\/|$)/);
 
 // Reviewer-only filter ops (editorModel.editorTreeToOverlay) — keyed by item title.
@@ -34,9 +30,9 @@ export const LlmFilter = z
 export type LlmFilter = z.infer<typeof LlmFilter>;
 
 // The persisted filter is the union (applyFilter consumes all five keys in the
-// order tagsAnyOf→titleIn→exclude→order→limit, overlay.js:18-43). The split is
-// enforced at the PRODUCER boundary (tailor emits only LlmFilter keys; the editor
-// emits only ReviewerFilter keys) and re-checked by overlayProblems (§8).
+// order tagsAnyOf→titleIn→exclude→order→limit). The split is enforced at the
+// PRODUCER boundary (tailor emits only LlmFilter keys; the editor emits only
+// ReviewerFilter keys) and re-checked by overlayProblems (§8).
 export const OverlayFilter = z
   .object({
     ...ReviewerFilter.shape,
@@ -59,10 +55,10 @@ export type LlmPatch = z.infer<typeof LlmPatch>;
 
 // Persisted patch (after toOverlay strips groundedIn): RFC-6902-shaped but the
 // pipeline only ever writes `replace`. Reviewer edits also produce replace-only
-// whole-array highlight patches (editorModel.js:86).
+// whole-array highlight patches.
 export const Patch = z
   .object({
-    op: z.enum(['add', 'remove', 'replace', 'move', 'copy', 'test']), // schema breadth (KEEP)
+    op: z.enum(['add', 'remove', 'replace', 'move', 'copy', 'test']), // schema breadth
     path: Pointer,
     from: Pointer.optional(),
     value: z.unknown().optional(),

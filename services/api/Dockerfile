@@ -1,13 +1,9 @@
 # Build context = repo root (see deploy/docker-compose.yml).
 #
-# v2 NOTE (Agent C / integrator): the static SPA layout changed. v1 built two
-# apps (apps/site renderer at /resume/, apps/review SPA at /). v2 serves ONE
-# unified dashboard SPA at / (apps/dashboard/build) PLUS the bare résumé render
-# path at /resume/ (apps/site/build). `apps/dashboard` is built later by the
-# dashboard agent — until it exists, the dashboard `pnpm --filter dashboard build`
-# step below will fail; the integrator wires it at merge once the app lands.
-# This Dockerfile is otherwise complete for the v2 API runtime (TS build +
-# migrations + co-located static assets).
+# Static SPA layout: the API serves ONE unified dashboard SPA at / (apps/dashboard/
+# build) PLUS the bare résumé render path at /resume/ (apps/site/build). This
+# Dockerfile builds the contracts spine, the API (TS build), and both SPAs, then
+# runs migrations + serves the co-located static assets.
 
 # Stage 1: build the contracts spine, the API (TS → dist), and the SPAs.
 FROM node:22-alpine AS build
@@ -35,8 +31,8 @@ RUN VITE_BASE=/resume/ pnpm --filter site build && pnpm --filter dashboard build
 FROM node:22-alpine
 WORKDIR /app
 # Runtime deps installed BY NAME. The api package.json uses `@resume/contracts:
-# workspace:*`, which a plain `npm install` cannot resolve (that was the v1-image
-# bug: it failed and `|| true` masked it, leaving `pg` etc. missing at runtime).
+# workspace:*`, which a plain `npm install` cannot resolve — install the prod deps
+# explicitly so none (e.g. `pg`) are silently omitted at runtime.
 # These are the api's direct prod deps + @resume/contracts's own runtime deps
 # (zod, fast-json-patch), pinned to the package.json ranges. Their transitive
 # deps (pino, etc.) come along.

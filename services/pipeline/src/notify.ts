@@ -40,8 +40,8 @@ export interface TailoredSummaryItem {
 }
 
 // Summary of a scoring cycle. `tailored` jobs are linked to their review page
-// (reviewBase + /review/<id> — the v2 dashboard react-router path, NOT the v1
-// `#/app/<id>` hash route); the résumé is ready to approve there.
+// (reviewBase + /review/<id> — the dashboard react-router path); the résumé is
+// ready to approve there.
 export function batchSummary({
   scored,
   threshold,

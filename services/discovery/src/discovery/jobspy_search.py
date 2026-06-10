@@ -9,7 +9,6 @@ Conservative by design (report §6: home-IP bans are the #1 risk):
 
 §10: sites, jobspy defaults (incl. location), title-include and exclude lists all
 come from the DB-backed DiscoveryConfig (passed in), not env / hard-coded values.
-Dead v1 config (searches[].keywords, locations, defaults.sites) is gone.
 """
 
 import random

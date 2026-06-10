@@ -1,12 +1,11 @@
 import React from 'react';
 import { useTheme } from '../../contexts/themeContext';
 
-// BUG FIX (DOM-neutral, DECISIONS drop/fix list): v1's `size: 'icon'` branch
-// pushed theme.components.skills.icon, which is UNDEFINED in the theme — it
-// would have rendered no class (and is unreached by the current seed, which
-// only uses size 'qr'). v2 removes the dead reference; the branch now pushes
-// nothing, identical to the prior `undefined` (React omits it). No new theme
-// key is introduced (that would change the DOM).
+// The `size: 'icon'` branch pushes no class. The theme has no
+// `theme.components.skills.icon` key, so referencing it would render no class
+// (React omits an `undefined` className); the branch is also unreached by the
+// current seed, which only uses size 'qr'. No new theme key is introduced (that
+// would change the DOM).
 
 interface ImageProps {
   src: string;
@@ -41,7 +40,7 @@ export default function Image({
     // Size variants
     switch (size) {
       case 'icon':
-        // dead/undefined in v1 (theme.components.skills.icon) — push nothing
+        // no theme.components.skills.icon key — push nothing
         break;
       case 'small':
         styles.push('w-12 h-12');

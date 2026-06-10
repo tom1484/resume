@@ -1,4 +1,4 @@
-// Typed, same-origin API client for the v2 dashboard. Every shape comes from
+// Typed, same-origin API client for the dashboard. Every shape comes from
 // @resume/contracts (the single source of truth) — never restated here. The API
 // is served from the same origin (the jobs-api container hosts this SPA at /),
 // behind nginx proxy manager auth, so plain relative `fetch` carries the session.

@@ -4,11 +4,10 @@ Mirrors the @resume/contracts Zod config schemas (DiscoveryConfig, ScheduleConfi
 in lockstep — Python can't import the TS Zod, so the defaults below MUST track
 packages/contracts/src/config.ts. Reads one row per namespace from the `config`
 table ({ns text PK, value jsonb}); on ANY failure (no DB, missing row, malformed
-value) returns the schema default merged over whatever the row provided — the
-refreshResume() resilience pattern, never crash a run.
+value) returns the schema default merged over whatever the row provided — a
+best-effort resilience pattern, never crash a run.
 
-Dead v1 config is intentionally NOT read: searches[].keywords, locations,
-defaults.sites (§10) — searches/companies/sites/excludes all come from here now.
+searches/companies/sites/excludes (§10) all come from the DB-backed config.
 """
 
 from __future__ import annotations
@@ -19,13 +18,13 @@ from typing import Any
 # --- Schema defaults (lockstep with contracts/config.ts) ---
 
 DISCOVERY_DEFAULT: dict[str, Any] = {
-    "sites": ["indeed"],  # was JOBSPY_SITES env
+    "sites": ["indeed"],
     "jobspyDefaults": {
         "resultsWanted": 25,
         "hoursOld": 72,
         "jobType": "internship",
         "country": "USA",
-        "location": "United States",  # was hard-coded jobspy_search.py:61
+        "location": "United States",
     },
     "titleInclude": ["intern", "internship", "co-op", "coop"],
     "exclude": {
@@ -47,9 +46,9 @@ DISCOVERY_DEFAULT: dict[str, Any] = {
 SCHEDULE_DEFAULT: dict[str, Any] = {
     "discovery": {
         "enabled": True,
-        "cron": "0 9 * * *",  # was crontab `0 9 * * *`
-        "tz": "Asia/Taipei",  # was TZ
-        "mode": "all",  # was crontab `--all`
+        "cron": "0 9 * * *",
+        "tz": "Asia/Taipei",
+        "mode": "all",
     },
 }
 

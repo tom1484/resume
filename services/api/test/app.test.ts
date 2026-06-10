@@ -1,4 +1,4 @@
-// Route-level tests for the v2 API using a mocked pg pool (no live Postgres).
+// Route-level tests for the API using a mocked pg pool (no live Postgres).
 // Exercises projections, validation paths (ResumeDoc / overlayProblems /
 // parseConfig), config CRUD, dashboard, events, ops-flag gating, and the SPA
 // fallback exemptions.
@@ -10,7 +10,7 @@ import type { FastifyInstance } from 'fastify';
 import { createApp } from '../src/app.js';
 import { MockPool, type QueryCall } from './mockPool.js';
 
-// A minimal valid v2 ResumeDoc (the patch target + PUT /api/resume body).
+// A minimal valid ResumeDoc (the patch target + PUT /api/resume body).
 const RESUME = {
   basics: { name: 'A', email: 'a@b.co', profiles: [], qrcodes: [] },
   education: [],
@@ -188,10 +188,10 @@ describe('resume routes', () => {
     expect(res.json().basics.name).toBe('A');
   });
 
-  it('PUT /api/resume validates against ResumeDoc (Zod), not 2-field check', async () => {
+  it('PUT /api/resume validates the body against ResumeDoc (Zod)', async () => {
     const app = appWith(pool);
-    // v1 two-field check would PASS this (has basics + work[]) but Zod rejects:
-    // basics.email missing, work[].time missing.
+    // This body has basics + work[] but Zod rejects it: basics.email missing,
+    // work[].time missing.
     const res = await app.inject({
       method: 'PUT',
       url: '/api/resume',

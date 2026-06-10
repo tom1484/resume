@@ -1,9 +1,7 @@
 // §6 Config / settings layer — DB-backed, Zod-validated, CRUD'd, UI-mapped.
 //
-// Verdict: REDESIGN (new in v2) — every non-secret config becomes a DB row,
-// Zod-validated, exposed via CRUD, mapped to a dashboard tab. Services read it at
-// runtime (extend v1's refreshResume() best-effort pull, profile.js:20, to all
-// config).
+// Every non-secret config is a DB row, Zod-validated, exposed via CRUD, mapped to
+// a dashboard tab. Services read it at runtime via a best-effort pull.
 //
 // §6.1 Secrets boundary (binding): secrets stay in env/.env, NEVER DB, never
 // UI-editable: ANTHROPIC_API_KEY, TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID,
@@ -25,8 +23,7 @@ export const JobType = z.enum([
 ]);
 export type JobType = z.infer<typeof JobType>;
 
-// --- LLM (per-stage model + tuning) — replaces MODEL_* / SCORE_THRESHOLD /
-//     BATCH_SIZE / POLL_INTERVAL_MS env (operations.md:79-86) ---
+// --- LLM (per-stage model + tuning) ---
 export const LlmConfig = z
   .object({
     models: z
@@ -42,7 +39,7 @@ export const LlmConfig = z
       // fully-defaulted output, matching the spec's intent. Applies to every
       // `.default({})`-on-all-defaulted-object below.
       .prefault({}),
-    scoreThreshold: z.number().min(0).max(1).default(0.65), // SCORE_THRESHOLD
+    scoreThreshold: z.number().min(0).max(1).default(0.65),
     weights: z
       .object({
         keyword: z.number(),
@@ -50,8 +47,8 @@ export const LlmConfig = z
         structural: z.number(),
       })
       .default({ keyword: 0.5, llmFit: 0.3, structural: 0.2 }),
-    batchSize: z.number().int().min(1).default(10), // BATCH_SIZE
-    pollIntervalMs: z.number().int().min(1000).default(60000), // POLL_INTERVAL_MS
+    batchSize: z.number().int().min(1).default(10),
+    pollIntervalMs: z.number().int().min(1000).default(60000),
     jdTruncation: z
       .object({
         parse: z.number().default(24000),
@@ -63,7 +60,7 @@ export const LlmConfig = z
   .strict();
 export type LlmConfig = z.infer<typeof LlmConfig>;
 
-// --- Scheduler (in-process, DB-driven; replaces supercronic crontab) ---
+// --- Scheduler (in-process, DB-driven) ---
 export const ScheduleConfig = z
   .object({
     discovery: z
@@ -71,9 +68,9 @@ export const ScheduleConfig = z
         enabled: z.boolean().default(true),
         // cron expression evaluated in `tz`; the in-process scheduler reads this
         // each tick so a UI edit takes effect next tick with NO restart.
-        cron: z.string().default('0 9 * * *'), // was crontab `0 9 * * *`
-        tz: z.string().default('Asia/Taipei'), // was TZ
-        mode: z.enum(['boards', 'jobspy', 'all']).default('all'), // was crontab `--all`
+        cron: z.string().default('0 9 * * *'),
+        tz: z.string().default('Asia/Taipei'),
+        mode: z.enum(['boards', 'jobspy', 'all']).default('all'),
       })
       .prefault({}),
     // poll loop cadence already in LlmConfig.pollIntervalMs; scheduler owns it too.
@@ -81,14 +78,13 @@ export const ScheduleConfig = z
   .strict();
 export type ScheduleConfig = z.infer<typeof ScheduleConfig>;
 
-// --- Discovery searches + companies (replaces searches.yml / companies.yml) ---
+// --- Discovery searches + companies ---
 export const DiscoverySearch = z
   .object({
     name: z.string(),
     term: z.string(),
     enabled: z.boolean().default(true),
-    // NOTE: v1 `keywords`/`locations`/`defaults.sites` are DROPPED (dead — §10);
-    // JobSpy site list comes from DiscoveryConfig.sites (was JOBSPY_SITES env).
+    // NOTE: the JobSpy site list comes from DiscoveryConfig.sites.
   })
   .strict();
 export type DiscoverySearch = z.infer<typeof DiscoverySearch>;
@@ -110,14 +106,14 @@ export type DiscoveryCompany = z.infer<typeof DiscoveryCompany>;
 
 export const DiscoveryConfig = z
   .object({
-    sites: z.array(z.enum(['indeed', 'linkedin'])).default(['indeed']), // was JOBSPY_SITES (env-only)
+    sites: z.array(z.enum(['indeed', 'linkedin'])).default(['indeed']),
     jobspyDefaults: z
       .object({
         resultsWanted: z.number().int().default(25),
         hoursOld: z.number().int().default(72),
         jobType: JobType.default('internship'),
         country: z.string().default('USA'),
-        location: z.string().default('United States'), // was hard-coded (jobspy_search.py:61)
+        location: z.string().default('United States'),
       })
       .prefault({}),
     titleInclude: z
@@ -183,8 +179,8 @@ export type ConfigValue<NS extends ConfigNamespace> = z.infer<
  * Validate a raw config value against its namespace schema. Throws on an unknown
  * namespace; otherwise returns the Zod safeParse result (the caller decides the
  * fallback). The actual DB read is the API agent's job — getConfig() layers a
- * best-effort DB fetch + schema-default fallback (the refreshResume() pattern,
- * profile.js:24: DB hiccup → last-good/defaults, never crash) on top of this.
+ * best-effort DB fetch + schema-default fallback (DB hiccup → last-good/defaults,
+ * never crash) on top of this.
  */
 export function parseConfig<NS extends ConfigNamespace>(
   ns: NS,

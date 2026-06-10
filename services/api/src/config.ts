@@ -1,7 +1,7 @@
 // Best-effort config reader (CONTRACTS.md §6.2): one `config` row per namespace,
 // value jsonb validated by the matching @resume/contracts Zod. Reads are
 // best-effort — a DB hiccup or a malformed/absent row falls back to the schema
-// default (the refreshResume() pattern, profile.js:24: never crash on config).
+// default (best-effort, like refreshResume(): never crash on config).
 //
 // The pipeline/scheduler agents read config the same way at runtime; this module
 // is the API's copy of that helper (it owns config CRUD).

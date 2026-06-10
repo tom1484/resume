@@ -1,14 +1,13 @@
 // §6 getConfig(ns) — the construction TODO from contracts/config.ts.
 //
 // Best-effort read of the `config` table ({ ns text PRIMARY KEY, value jsonb })
-// → parseConfig(ns, value) with schema-default fallback on ANY error. This is
-// the v1 refreshResume() resilience pattern (profile.js:24) generalized to every
-// config namespace: a DB hiccup (no DB, missing row, malformed jsonb) yields the
-// last-good value, or the schema default if we have never read it — never crash.
+// → parseConfig(ns, value) with schema-default fallback on ANY error: a DB hiccup
+// (no DB, missing row, malformed jsonb) yields the last-good value, or the schema
+// default if we have never read it — never crash.
 //
-// Read at the top of each pipeline cycle / scheduler tick / on demand. Used
-// wherever v1 read env (MODEL_*, SCORE_THRESHOLD, BATCH_SIZE, POLL_INTERVAL_MS,
-// weights, JD-truncation) — those now come from LlmConfig, etc.
+// Read at the top of each pipeline cycle / scheduler tick / on demand. Every
+// non-secret setting (models, threshold, batch, poll interval, weights,
+// JD-truncation) comes from here, via LlmConfig, etc.
 import {
   parseConfig,
   configDefault,

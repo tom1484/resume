@@ -1,4 +1,4 @@
--- v2 (CONTRACTS.md §6/§7.3): non-secret config moves to the DB, one row per
+-- CONTRACTS.md §6/§7.3: non-secret config lives in the DB, one row per
 -- namespace (llm | schedule | discovery | constraints | preferences). `value`
 -- jsonb is validated against the matching @resume/contracts Zod on write by the
 -- API (parseConfig). Secrets (ANTHROPIC_API_KEY, Telegram, Postgres creds, NPM

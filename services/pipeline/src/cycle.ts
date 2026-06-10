@@ -3,7 +3,7 @@
 // an event per stage, gate at the configured threshold -> tailor -> verify ->
 // in_review, send one Telegram summary per non-empty cycle.
 //
-// v2: all tuning (models, threshold, weights, batch, poll, truncation) comes from
+// All tuning (models, threshold, weights, batch, poll, truncation) comes from
 // LlmConfig; scoring uses the two-list Constraints/Preferences from config.
 import { ScoreBreakdown, type LlmConfig } from '@resume/contracts';
 import { query } from './db.js';

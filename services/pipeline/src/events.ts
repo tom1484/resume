@@ -1,7 +1,6 @@
-// Single typed logEvent — folds the v1 duplicated copies (cycle.js:16 +
-// tailorJob.js:14) into one. Uses the @resume/contracts logEventRow builder for
-// the row shape (cost computed only when model+usage present, llm.js:19) and
-// does the actual INSERT here.
+// Single typed logEvent. Uses the @resume/contracts logEventRow builder for
+// the row shape (cost computed only when model+usage present) and does the
+// actual INSERT here.
 import { logEventRow, type LogEventInput } from '@resume/contracts';
 import { query } from './db.js';
 

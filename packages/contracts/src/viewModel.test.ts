@@ -1,9 +1,9 @@
 import { describe, it, expect } from 'vitest';
 import { ViewModels } from './viewModel.js';
 
-// A minimal but valid view-model object exercising ALL 9 sections — this is the
-// v1 DOM-leak gap being closed: the no-extra-keys / no-undefined guard now covers
-// non-experience sections (personalInfo/education/publications/skills) too.
+// A minimal but valid view-model object exercising ALL 9 sections — the
+// no-extra-keys / no-undefined guard covers non-experience sections
+// (personalInfo/education/publications/skills) too.
 function validViewModels() {
   return {
     personalInfo: {

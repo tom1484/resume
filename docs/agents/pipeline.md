@@ -1,4 +1,4 @@
-# Discovery & tailoring pipeline (v2)
+# Discovery & tailoring pipeline
 
 ## Scope
 The two job-processing services: `services/discovery` (Python/uv — DB-driven
@@ -7,7 +7,7 @@ parse → score(two lists) → gate → tailor → verify → in_review + Telegr
 each stage's module, model, input→output, the **config-driven knobs**, the
 **two-list scoring**, the **anti-fabrication chain** (load-bearing), the events
 ledger, and the `eval/*` harnesses. Shapes: [./data-contracts.md](./data-contracts.md)
-→ `docs/v2/CONTRACTS.md`. Deploy/env: [./operations.md](./operations.md).
+→ `docs/CONTRACTS.md`. Deploy/env: [./operations.md](./operations.md).
 
 ## Read this when
 - Changing how jobs are discovered, normalized, deduped, or excluded.
@@ -18,11 +18,10 @@ ledger, and the `eval/*` harnesses. Shapes: [./data-contracts.md](./data-contrac
 - Changing the scheduler, or a config knob (models/threshold/weights/truncation).
 - Adding a pipeline stage or a new `events` ledger entry.
 
-## Config-driven, not env-driven (v2)
-Everything v1 read from env (`MODEL_*`, `SCORE_THRESHOLD`, `BATCH_SIZE`,
-`POLL_INTERVAL_MS`, weights, JD truncation, the schedule, searches/companies) now
-comes from the **DB `config` table**, read at runtime via best-effort
-`getConfig(ns)` with schema-default fallback. Only secrets stay in env
+## Config-driven, not env-driven
+Settings (models, threshold, batch size, poll interval, weights, JD truncation, the
+schedule, searches/companies) come from the **DB `config` table**, read at runtime
+via best-effort `getConfig(ns)` with schema-default fallback. Only secrets stay in env
 (`ANTHROPIC_API_KEY`, `TELEGRAM_*`, `DATABASE_URL`). A UI edit takes effect next
 cycle/tick, no restart.
 
@@ -38,7 +37,7 @@ cycle/tick, no restart.
 ## Entry points
 | File | Role |
 |---|---|
-| `services/discovery/src/discovery/scheduler.py` | `loop()` — per-minute tick; re-reads `ScheduleConfig`; fires `main.run(mode, conn)` when the cron matches. Container CMD. Replaces supercronic. |
+| `services/discovery/src/discovery/scheduler.py` | `loop()` — per-minute tick; re-reads `ScheduleConfig`; fires `main.run(mode, conn)` when the cron matches. Container CMD. |
 | `services/discovery/src/discovery/main.py` | `run(mode, conn, dry_run)` + CLI (`--boards/--jobspy/--all/--dry-run`). The scheduler calls `run()` in-process; the CLI is for manual one-shots. |
 | `services/discovery/src/discovery/cron.py` | `CronExpr` — minimal 5-field cron matcher (`* a-b a,b */n`; dom AND dow; documented limitation vs full Vixie). |
 | `services/pipeline/src/poller.ts` | Long-running worker: `cycle()` forever, sleeping `LlmConfig.pollIntervalMs`. **No migration** (API owns it). |
@@ -68,7 +67,7 @@ Public, auth-free board APIs (one fetcher each in `boards.FETCHERS`):
 
 Companies + slugs come from `DiscoveryConfig.companies` (the `discovery` config
 namespace; `{name, flags, board:{provider,slug}, enabled}`) — **NOT** the YAMLs (the
-two `services/discovery/config/*.yml` are migration seed only). `boards.probe_slug`
+two `services/discovery/config/*.yml` are seed only). `boards.probe_slug`
 returns a posting count if a slug resolves. `boards.strip_html` collapses HTML JD →
 plaintext. `run_boards` filters each board's postings to internship titles via
 `is_internship(title, cfg.titleInclude)`; `time.sleep(1)` between companies.
@@ -79,8 +78,7 @@ risk):
 - **Indeed only** by default (`DiscoveryConfig.sites = ['indeed']`); LinkedIn is
   opt-in by adding it to `sites` in the UI.
 - One country-wide call per enabled `DiscoveryConfig.searches[]` term, NOT
-  per-location fan-out. `location` comes from `jobspyDefaults.location` (was
-  hard-coded "United States" in v1).
+  per-location fan-out. `location` comes from `jobspyDefaults.location`.
 - `scrape_jobs(...)` args from `jobspyDefaults`: `resultsWanted` (25), `hoursOld`
   (72), `jobType` ("internship"), `country` ("USA"), `description_format=markdown`.
   One failed search is caught + skipped.
@@ -88,8 +86,6 @@ risk):
   dedupe by `dedupe_key`. `_clean()` maps pandas NaN → None.
 - JobSpy results whose `norm(company)` matches a `DiscoveryConfig.companies` entry
   inherit that company's `flags` (`run_jobspy` builds `flags_by_company`).
-- **Dropped v1 config** (verified dead, §10): `searches[].keywords`, `locations`,
-  `defaults.sites` — `DiscoveryConfig` doesn't carry them; the migration strips them.
 
 ### Normalization, dedupe, exclusion — `normalize.py`
 - `norm(s)` = lowercase, non-alphanumerics→space, trim. Used everywhere for matching.
@@ -109,7 +105,7 @@ risk):
 ### Persist — `store.py` (typed write, §10)
 `upsert()` validates each record via `jobrow.validate_record` (pydantic
 `DiscoveredJob`, `extra='forbid'`) BEFORE the SQL — a non-conforming record is
-**logged + skipped, never silently dict-sliced** (the v1 drop bug). INSERT is `ON
+**logged + skipped, never silently dict-sliced**. INSERT is `ON
 CONFLICT DO NOTHING` (dedupe-key/id collision → skipped; returns inserted count).
 `jobrow.COLUMNS` is the single ordering source (= the 13 contract fields).
 `log_event(conn, 'discover', …)` writes one run-level `events` row (no model/cost).
@@ -142,13 +138,13 @@ llmFit:.3, structural:.2}`).
 else length-scaled Levenshtein: fuzz budget 2 if min length ≥8, 1 if ≥5, else **0**
 (short acronyms like AWS get no fuzz). `levenshtein(a,b,max)` early-exits beyond max.
 
-### Two-list scoring (v2 — replaces v1's baked F-1 `structuralScore`)
+### Two-list scoring
 - **Constraints** (hard, deterministic, DB-backed `constraints` config). Each
   `Constraint` is a typed predicate over a parsed-JD field: `test` ∈
   `{isTrue} | {equals,value} | {notIn,values}`; `effect` ∈ `{hard} | {penalty,
   amount}`. `evaluateConstraints` starts at 1; a fired `hard` short-circuits to 0;
-  `penalty` subtracts its amount; clamp ≥0. Disabled constraints skipped. Preserves
-  v1 semantics. The three seed F-1 rules (planted by the migration):
+  `penalty` subtracts its amount; clamp ≥0. Disabled constraints skipped. The three
+  seed F-1 rules:
   citizenship/clearance → hard 0; seniority ∉ [intern,entry,unspecified] → −0.6;
   sponsorship=='no' → −0.4.
 - **Preferences** (soft, priority 1–10, DB-backed `preferences` config). Free-text
@@ -161,8 +157,8 @@ else length-scaled Levenshtein: fuzz budget 2 if min length ≥8, 1 if ≥5, els
 `processJob` writes a **`ScoreBreakdown.parse`-validated** `score_breakdown`:
 `{keyword, missingTerms(top12), llmFit, rationale, redFlags, structural,
 constraintsFired[], preferencesApplied[], weights}` — `constraintsFired`/
-`preferencesApplied` are the explicit attribution of what moved the score (replacing
-v1's untyped blob). Sets `status='scored'`. Logs `parse_jd` + `score` events.
+`preferencesApplied` are the explicit attribution of what moved the score. Sets
+`status='scored'`. Logs `parse_jd` + `score` events.
 
 ## Gate — `scoreThreshold` (`cycle.ts`)
 After scoring the batch, `top = scored.filter(j => j.score >= cfg.scoreThreshold)`
@@ -260,18 +256,16 @@ constants/guards live ONCE in `@resume/contracts/antifab.ts` — never copied.
 - Seed/fallback file: `RESUME_SEED ?? data/resume.json` (repo root; resolved by
   walking up to find `data/resume.json`).
 - `master.json` (the grounding bullet bank) stays **file-based**, loaded from
-  `DATA_DIR ?? packages/renderer/src/data`. Reads v2 résumé fields (`work.tags`/
-  `projects.tags`, `headline`) — NOT v1 `x-tags`/`keywords`/`basics.label`.
+  `DATA_DIR ?? packages/renderer/src/data`. Reads résumé fields (`work.tags`/
+  `projects.tags`, `headline`).
 - `candidateTerms()` = all skill/project-tag/work-tag/master-bullet-tag terms
   (drives `keywordScore`). `profileText(preferences)` = candidate header + education
   + skills + the preference block + the full accomplishment bank (drives `llmFit`).
-  The v1 hard-coded F-1/CPT/"Summer 2027" anchor is GONE — it lives in the
-  `preferences` config now (the migration seeds one).
+  The F-1/CPT/"Summer 2027" anchor lives in the `preferences` config.
 
 ## Events / cost ledger (`events` table + `events.ts`)
 Every stage logs one `events` row via the single `logEvent` (`pipeline/src/events.ts`,
-which calls the contracts `logEventRow` builder — the v1 duplicated copies are
-folded into one). Columns: `job_id, stage, model, input_tokens, output_tokens,
+which calls the contracts `logEventRow` builder). Columns: `job_id, stage, model, input_tokens, output_tokens,
 cost_usd, duration_ms, ok, detail`. Stages: `discover` (Python, no model),
 `parse_jd, score, tailor, verify_claims, notify`. `cost_usd` (via contracts
 `costUsd(model, usage)`) only when model+usage present. **Prices ($/MTok):** haiku
@@ -312,7 +306,7 @@ unsupported). Code + its test land in the same change.
 - **JD truncation differs per stage** (config `jdTruncation`): parse 24000, fit 6000,
   tailor 16000. Long JDs lose tail content for scoring/fit.
 - **Two-list scoring is DB-backed** — edit Constraints/Preferences in the UI, not in
-  code. The F-1 rules are seed config, no longer hard-coded.
+  code. The F-1 rules are seed config.
 - **The pipeline does NOT run migrations** (the API does). `db.ts`/`poller.ts` assume
   the schema (incl. `config`) exists.
 - **Never run logged-in platform automation from the server** (CLAUDE.md). JobSpy is

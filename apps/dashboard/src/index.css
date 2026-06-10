@@ -37,7 +37,7 @@
   }
 }
 
-/* ---- Print isolation (DECISIONS req 3) -----------------------------------
+/* ---- Print isolation -----------------------------------------------------
  * The dashboard chrome (sidebar/topbar) is the app shell. When a print-isolated
  * route mounts (e.g. /resume), it sets <html data-print-target="resume">. In a
  * browser print (Cmd+P), everything marked .print-hide is hidden and the

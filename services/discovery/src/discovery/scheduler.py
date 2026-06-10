@@ -1,4 +1,4 @@
-"""In-process, DB-driven scheduler (DECISIONS req 6) — replaces supercronic.
+"""In-process, DB-driven scheduler.
 
 A long-running process that ticks once a minute. EACH tick it re-reads
 ScheduleConfig from the `config` table (best-effort, schema-default fallback), so

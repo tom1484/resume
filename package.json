@@ -12,8 +12,7 @@
     "lint": "eslint .",
     "test": "pnpm run contracts:build && vitest run",
     "pdf": "node scripts/print-pdf.mjs",
-    "export-seed": "node scripts/export-seed.mjs",
-    "migrate-seed": "node scripts/migrate/run-resume-seed.ts"
+    "export-seed": "node scripts/export-seed.mjs"
   },
   "browserslist": {
     "production": [

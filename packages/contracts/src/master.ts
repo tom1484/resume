@@ -1,13 +1,10 @@
 // §11 Master bank schema (grounding corpus).
 //
-// Verdict: KEEP, DROP `metrics` (brief): never read — the tripwire re-extracts
-// numbers from `text` (verify.js:24), not from `metrics`. Stays file-based
-// (grounding corpus, profile.js:13), not DB-backed; editing the résumé via the
+// No `metrics` field — the numeric tripwire re-extracts numbers from `text`.
+// Stays file-based (grounding corpus), not DB-backed; editing the résumé via the
 // web does NOT change the bank.
 // Master bank `id` is IMMUTABLE once referenced — renaming orphans groundedIn
-// refs silently (DECISIONS must-preserve). groundedIn refs are bare `<id>`
-// (matches the working code, tailor.js:84/verify.js:54-56; the `master:` prefix
-// in master.schema.json:4 / overlay.schema.json:92 is doc-only drift — §11 flag).
+// refs silently. groundedIn refs are bare `<id>`.
 import { z } from 'zod';
 
 export const MasterBullet = z

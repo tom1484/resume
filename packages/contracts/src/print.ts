@@ -1,9 +1,7 @@
-// §2.3 meta.print — validated (was unconstrained in v1).
+// §2.3 meta.print — validated via Zod.
 //
-// In v1 `meta` is an open object (extensions.schema.json:133); `print` is only
-// clamped at read time in print.js:16-27. v2 validates it via Zod.
-// getPrint/pageCss/pdfOptions (print.js) port KEEP verbatim downstream. Consumers:
-// renderer usePageStyle (@page) + the bare print path + the Playwright PDF job.
+// getPrint/pageCss/pdfOptions consume it downstream. Consumers: renderer
+// usePageStyle (@page) + the bare print path + the Playwright PDF job.
 import { z } from 'zod';
 
 export const PAPER_SIZES = ['A4', 'Letter', 'Legal', 'A3', 'A5'] as const;

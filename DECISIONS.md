@@ -1,7 +1,7 @@
 # DECISIONS
 
-Dated decision log (newest first). The v2 rebuild record lives in
-`docs/v2/DECISIONS.md`; this is the per-session handoff log `/orient` reads.
+Dated decision log (newest first). This is the per-session handoff log
+`/orient` reads.
 
 ## 2026-06-10 — Dashboard UX: validation + preview modal + paper-accurate render
 

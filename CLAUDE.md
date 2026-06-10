@@ -1,19 +1,13 @@
 # CLAUDE.md
 
 Personal résumé site (React + Tailwind) extended into a self-hosted **job
-application pipeline**. **This is v2** — a clean TypeScript/pnpm-monorepo
-reimplementation that replaced v1 and is **LIVE** behind NPM auth at
-jobs.churong.cc. Rebuild record: `docs/v2/DECISIONS.md`; authoritative
-contract spec: `docs/v2/CONTRACTS.md`.
+application pipeline**. A TypeScript/pnpm-monorepo, **LIVE** behind NPM auth at
+jobs.churong.cc. Authoritative contract spec: `docs/CONTRACTS.md`.
 **Deep agent reference: `docs/agents/` (start at `docs/agents/README.md`) —
 exhaustive per-subsystem maps; read it before non-trivial changes.**
-**Current phase: v2 cutover done (contracts SSoT + unified dashboard SPA +
-config layer + two-list scoring). Phase 4 (local apply agent) is next.**
+**Current capabilities: contracts SSoT + unified dashboard SPA + config layer +
+two-list scoring. The local apply agent is the next phase.**
 Update this line as phases complete.
-
-> History note: any doc/comment describing `apps/review`, `x-`-prefixed résumé
-> fields, env-var model selection (`MODEL_*`), supercronic crontab, or Ajv-as-SSoT
-> is **v1 and wrong**. Trust the code on disk + `docs/v2/*`.
 
 Packages (pnpm workspace): `packages/contracts` (`@resume/contracts` — Zod
 single source of truth), `packages/renderer` (`@resume/renderer` — TS résumé
@@ -43,8 +37,8 @@ Migrations live in `services/api/migrations`.
   edits bypass (trusted). Never weaken without re-running `eval:verify`.
 - **The canonical résumé is DB-backed** (`resume_versions`, latest row = current).
   `data/resume.json` (repo root) is the seed + `pnpm export-seed` target + bundled
-  offline fallback — NOT the live source. Field names are **un-prefixed v2**
-  (`time, info, tags, links, venue, authors, track, kind, badge`) — no `x-`.
+  offline fallback — NOT the live source. Field names are **un-prefixed**
+  (`time, info, tags, links, venue, authors, track, kind, badge`).
 - **Config layer:** every non-secret setting is a DB `config` row (namespaces
   `llm / schedule / discovery / constraints / preferences`), UI-editable, validated
   on write by the matching Zod; services read it at runtime via best-effort
@@ -56,8 +50,8 @@ Migrations live in `services/api/migrations`.
   (`DashboardSummary.parse`, `EventRow.array().parse`); the pipeline `.parse()`s
   `ScoreBreakdown` before persisting; the migration validates every reshaped
   record. A contract that isn't enforced on output/write lets bad data through.
-- **Renderer DOM stays byte-identical.** Internals changed (data flows via an
-  immutable `ResumeDataProvider`, not a mutable singleton), but the rendered
+- **Renderer DOM stays byte-identical.** Data flows via an immutable
+  `ResumeDataProvider`, and the rendered
   résumé DOM must not change — before/after any renderer touch use the
   `render-check` skill (empty DOM diff; PDF bytes always differ on timestamps).
 - The adapter (`packages/renderer/src/data/adapter.ts`) emits exactly the §3
@@ -71,7 +65,7 @@ Migrations live in `services/api/migrations`.
 ## Safety constraints (override convenience, always)
 
 - Never run logged-in job-platform automation from the server. The apply agent
-  (Phase 4) runs on Tom's local machine only. JobSpy is public/unauthenticated;
+  runs on Tom's local machine only. JobSpy is public/unauthenticated;
   jittered pacing is intentional.
 - Submission is always human-confirmed. ≤50 applications/day, jittered pacing.
   2FA/CAPTCHA always pauses for a human.
@@ -98,4 +92,4 @@ Docker compose on Tom's server (project `job-pipeline`). `jobs-api` is the ONLY
 web-facing service — joins NPM's external `nginx` network; **no exposed host
 ports**. The `pipeline` + `api` images build from the **repo root** (they need
 `@resume/contracts`). The API applies DB migrations at startup. Details + the
-cutover/rollback runbook + the v1→v2 migration: `docs/agents/operations.md`.
+deploy/rollback runbook: `docs/agents/operations.md`.

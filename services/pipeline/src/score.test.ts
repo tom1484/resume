@@ -1,6 +1,6 @@
 // Deterministic scoring math (no LLM, no DB): keyword coverage + the two-list
-// Constraints evaluation that replaces v1's hard-coded structuralScore. Preserves
-// v1 semantics (citizenship -> hard 0; complementary penalties; clamp >=0).
+// Constraints evaluation (citizenship -> hard 0; complementary penalties;
+// clamp >=0).
 import { describe, expect, it } from 'vitest';
 import type { Constraint, JdSchema, LlmConfig } from '@resume/contracts';
 import {

@@ -3,12 +3,9 @@
 // version so tailoring/scoring reflect web edits without a redeploy. The bullet
 // bank (master.json) stays file-based (the grounding corpus, §11).
 //
-// v2 changes:
-//   - reads the v2 résumé shape (work.tags / projects.tags, not x-tags / keywords;
-//     headline, not basics.label).
-//   - DROPS the hard-coded F-1/CPT/"Summer 2027" string from profileText — that
-//     anchor moves to the DB-backed Preferences list (§5.2). profileText now
-//     takes an optional preference block to inject.
+// Reads the résumé shape (work.tags / projects.tags, headline). profileText takes
+// an optional preference block to inject; eligibility anchors live in the
+// DB-backed Preferences list (§5.2), not hard-coded here.
 import { existsSync, readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -95,7 +92,7 @@ ${lines.join('\n')}`;
 
 // Stable long-form profile text for fit judgment (built per call from the
 // current résumé; identical within a batch → still prompt-cacheable). The
-// optional preference block is appended (§5.2 replaces the v1 F-1/CPT anchor).
+// optional preference block is appended (§5.2).
 export function profileText(preferences: Preference[] = []): string {
   const resume = getResume();
   const basics = resume.basics;

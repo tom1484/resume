@@ -2,8 +2,7 @@
 against the DiscoveredJob contract, upsert into Postgres, log a discover event.
 
 §10: config (sites, searches, companies, excludes, title-include) comes from the
-DB-backed DiscoveryConfig (config table), NOT the YAMLs — those are migration seed
-only, owned by the API agent. We just read config.
+DB-backed DiscoveryConfig (config table). We just read config.
 
 Usage (one-shot; the scheduler invokes run() in-process):
   python -m discovery.main --boards          # board APIs only

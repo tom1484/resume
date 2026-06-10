@@ -1,10 +1,10 @@
 # STATE
 
 Pointer doc for the next agent. Deep reference: `docs/agents/` (start at README);
-contract spec: `docs/v2/CONTRACTS.md` (§13 = the latest UI additions).
+contract spec: `docs/CONTRACTS.md` (§13 = the latest UI additions).
 
 ## Done & verified (2026-06-10)
-Dashboard UX layer shipped on top of the live v2 stack — **deployed to `jobs-api` and
+Dashboard UX layer shipped on top of the live stack — **deployed to `jobs-api` and
 verified live** (jobs.churong.cc, behind NPM auth):
 - **Config validation / constrained inputs** — LLM model dropdowns (`KNOWN_MODELS` +
   custom-entry), searchable timezone combobox, live cron validation, `JobType` +
@@ -28,7 +28,7 @@ Nothing half-built. (pagedjs multi-page is verified working; if it ever fails it
 degrades to the dependency-free continuous engine.)
 
 ## Next
-1. **Phase 4 — local apply agent** (still the next major phase; runs on Tom's machine
+1. **Local apply agent** (still the next major piece of work; runs on Tom's machine
    only, never the server). Status placeholders `applying/applied/responded` exist.
 2. Optional polish: true multi-page page-break guides; broaden field validation if more
    free-text config fields appear.

@@ -1,10 +1,10 @@
-# Data contracts (v2) — index
+# Data contracts — index
 
 ## Scope
-v2 has ONE authoritative shape spec: **`docs/v2/CONTRACTS.md`**. It is the §1–§12
+There is ONE authoritative shape spec: **`docs/CONTRACTS.md`**. It is the §1–§12
 Zod reference, kept accurate against the code. This file is a **short index** — what
 lives where, plus the binding invariants — so you know what to open. **Do not
-restate shapes here; read `docs/v2/CONTRACTS.md` and the code.**
+restate shapes here; read `docs/CONTRACTS.md` and the code.**
 
 ## Read this when
 You touch any shape: a résumé field, the overlay, a view-model key, a pipeline LLM
@@ -23,7 +23,7 @@ service, also update its hand-kept mirror (`config.py` / `jobrow.py`) in lockste
 | File | CONTRACTS.md § | Exports (the shapes) |
 |---|---|---|
 | `sections.ts` | §1 | `SECTION_REGISTRY` (THE 9-key list), `SECTION_KEYS`, `SectionKey` (the one enum), `EDITABLE_SECTION_KEYS`, `sectionMeta` |
-| `resume.ts` | §2 | `ResumeDoc` (+ `Basics/Education/Work/Project/Volunteer/Publication/SkillGroup/ResumeMeta`) — **un-prefixed v2 fields** |
+| `resume.ts` | §2 | `ResumeDoc` (+ `Basics/Education/Work/Project/Volunteer/Publication/SkillGroup/ResumeMeta`) — **un-prefixed fields** |
 | `print.ts` | §2.3 | `PrintConfig`, `PAPER_SIZES`, `PAPER_DIMENSIONS` (mm per size — drives the on-screen paper-accurate preview) |
 | `preview.ts` | §8a | `PreviewMessage` (dashboard↔bare-host postMessage union), `PREVIEW_MESSAGE_SOURCE`, `PreviewLayout` |
 | `viewModel.ts` | §3 | `ViewModels` + per-section VMs; the no-extra-keys / no-`undefined` guard (`guarded`) over ALL sections |
@@ -44,7 +44,7 @@ JSON Schemas are emitted to `packages/contracts/dist/schemas/{resume,overlay,
 master}.json` by `gen:schemas` (`src/scripts/gen-schemas.ts`), consumed by
 `scripts/validate.mjs` (`pnpm validate`) via `@resume/contracts/schemas/<name>.json`.
 
-## Key invariants (binding — full detail in `docs/v2/CONTRACTS.md`)
+## Key invariants (binding — full detail in `docs/CONTRACTS.md`)
 
 - **One section registry** (§1): `SECTION_REGISTRY` derives the overlay enum, the
   `TailorSchema` sections enum, the editor tree, the renderer `sectionsConfig`, and
@@ -52,25 +52,22 @@ master}.json` by `gen:schemas` (`src/scripts/gen-schemas.ts`), consumed by
   its `pick` predicates — never restated in adapter/editor/tailor. The 9 keys are
   the frozen renderer surface (adding/removing one is a `render-check`-gated DOM
   change).
-- **Un-prefixed v2 résumé fields** (§2): `time, info, courses, footnote, links,
+- **Un-prefixed résumé fields** (§2): `time, info, courses, footnote, links,
   tags, track, kind, badge, location, authors, venue, status, qrcodes, headline` —
-  NO `x-` (that was v1's JSON-Resume seed convention). `ResumeDoc` is the single
-  Zod-derived schema `pnpm validate` checks (the v1 dual upstream+extension schema
-  is gone). Publications `links` are now emitted by the adapter (v1 bug fixed).
+  NO `x-`. `ResumeDoc` is the single Zod-derived schema `pnpm validate` checks.
+  Publications `links` are emitted by the adapter.
 - **View-model guard over ALL sections** (§3): `ViewModels` is `.strict()` (no extra
   keys) + a custom `rejectUndefinedValues` refinement (no literal `undefined`
   values) — because components spread `{...item}` onto DOM nodes. `adapter.test.ts`
-  asserts `ViewModels.parse(buildViewModels(seed))` doesn't throw (v1 only guarded
-  experience sections).
+  asserts `ViewModels.parse(buildViewModels(seed))` doesn't throw.
 - **One `overlayProblems`** (§8, `api.ts`): Zod `safeParse` + `fast-json-patch`
   validate against the SAME current-résumé source + the ONE personalInfo-required
   rule. Imported by both the API (`PUT /api/jobs/:id/overlay`) and the pipeline
-  (`tailor.ts`). v1's two diverged copies are gone.
+  (`tailor.ts`).
 - **Overlay encodes the op restriction + filter split in the types** (§4):
   `LlmPatch` is `replace`-only; reviewer filters (`exclude`/`order`) vs LLM filters
   (`tagsAnyOf`/`titleIn`/`limit`) are split at the producer boundary. `groundedIn`
-  refs are bare `<id>` (the `master:` prefix was doc-only v1 drift). Overlay applies
-  to a deep clone — never mutates the résumé.
+  refs are bare `<id>`. Overlay applies to a deep clone — never mutates the résumé.
 - **Validate at the boundary** (§7/§9): the API `.parse()`s its own output
   (`DashboardSummary.parse`, `EventRow.array().parse` — the latter also coerces pg's
   numeric/bigint→string columns to real numbers so the `z.number()` contract holds);
@@ -90,4 +87,4 @@ master}.json` by `gen:schemas` (`src/scripts/gen-schemas.ts`), consumed by
 
 Sibling docs: `../../CLAUDE.md` (always-on invariants), `./architecture.md`,
 `./pipeline.md`, `./frontend.md`, `./operations.md`. Authoritative spec:
-`../v2/CONTRACTS.md`.
+`../CONTRACTS.md`.

@@ -1,11 +1,8 @@
 // §3 View-model contract — the frozen renderer surface.
 //
-// Verdict: KEEP shape, REDESIGN guard — emitted keys unchanged (byte-identical
-// DOM); the no-extra-keys / no-`undefined` guard is extended from
-// experience-only to ALL sections (v1 adapter.test.js:29,39 only guarded
-// working/academics/projects/competitions/extracurriculars + working/projects).
-// Components spread {...item} onto DOM elements (experiences.jsx:131,
-// publications.jsx:46,90), so any stray key leaks into the DOM as an attribute.
+// The no-extra-keys / no-`undefined` guard covers ALL sections. Components spread
+// {...item} onto DOM elements, so any stray key leaks into the DOM as an
+// attribute.
 import { z } from 'zod';
 
 const Tuple2 = z.tuple([z.string(), z.string()]);
@@ -15,7 +12,7 @@ const Tuple2 = z.tuple([z.string(), z.string()]);
 // omission alone catches an explicit `undefined`, but in Zod v4 an optional key
 // set to `undefined` PASSES `.strict()` (it is treated as absent). Since the
 // renderer spreads `{...item}` onto DOM nodes, a literal `undefined`-valued key
-// is exactly the DOM leak the brief targets. So we add an explicit check that
+// is exactly the DOM leak we guard against. So we add an explicit check that
 // rejects any own key whose value is literally `undefined`, and wrap every
 // section VM with it — this realizes the binding no-`undefined` invariant.
 function rejectUndefinedValues(
@@ -39,7 +36,7 @@ const guarded = <T extends z.ZodObject>(schema: T) =>
     rejectUndefinedValues(obj as Record<string, unknown>, ctx)
   );
 
-// EXACT keys the experience components spread (experiences.jsx destructures
+// EXACT keys the experience components spread (the components destructure
 // title/role/time/location/footnote/highlight/link/content/tags). Optional keys
 // are OMITTED, never undefined.
 export const ExperienceVM = guarded(
@@ -99,7 +96,7 @@ export const PublicationVM = guarded(
         .strict(),
       link: z
         .array(z.object({ text: z.string(), url: z.string() }))
-        .optional(), // FIX (§2): now emitted
+        .optional(), // §2: emitted by the adapter
     })
     .strict()
 );

@@ -1,5 +1,5 @@
 // @resume/contracts — the single-source-of-truth Zod package. Barrel re-export.
-// Every other v2 subsystem imports from here; never restate a shape.
+// Every other subsystem imports from here; never restate a shape.
 export * from './sections.js';
 export * from './print.js';
 export * from './preview.js';

@@ -1,8 +1,8 @@
 // Guards the adapter's view-model contract. Components spread items onto DOM
 // elements, so any extra key would leak into the DOM as an attribute — the
-// allowed-key assertions below are load-bearing, not style. v2 (§3): the
-// no-extra-keys / no-undefined guard is extended to ALL sections via
-// ViewModels.parse (the strict() + no-undefined Zod), not just experience ones.
+// allowed-key assertions below are load-bearing, not style. The §3
+// no-extra-keys / no-undefined guard covers ALL sections via ViewModels.parse
+// (the strict() + no-undefined Zod), not just experience ones.
 import { describe, expect, it } from 'vitest';
 import { ViewModels, sectionMeta } from '@resume/contracts';
 import type { ResumeDoc, Work, Project } from '@resume/contracts';
@@ -18,10 +18,9 @@ const pickFor = (key: string): ((e: Work | Project) => boolean) =>
   (() => true);
 
 describe('adapter view models', () => {
-  // THE all-section guard (deliverable #4): the migrated seed's view models must
-  // pass ViewModels.parse — strict() catches extra keys, the no-undefined guard
-  // catches undefined-valued keys, across EVERY section (v1 only guarded
-  // experience sections).
+  // THE all-section guard: the seed's view models must pass ViewModels.parse —
+  // strict() catches extra keys, the no-undefined guard catches undefined-valued
+  // keys, across EVERY section.
   it('ViewModels.parse(buildViewModels(seed)) does not throw (all sections)', () => {
     expect(() => ViewModels.parse(vm)).not.toThrow();
   });

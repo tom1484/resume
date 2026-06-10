@@ -1,7 +1,6 @@
-// DB migration runner (ported from v1 services/pipeline/src/migrate.js).
-// OWNERSHIP MOVE (v2): the API applies migrations at startup; the pipeline no
-// longer runs them. Applies migrations/*.sql in filename order, exactly once
-// each, tracked in schema_migrations. Idempotent — safe to run on every boot.
+// DB migration runner. The API owns migrations: it applies them at startup.
+// Applies migrations/*.sql in filename order, exactly once each, tracked in
+// schema_migrations. Idempotent — safe to run on every boot.
 //
 // At runtime the compiled output lives at dist/migrations/run.js, but the *.sql
 // files are NOT compiled by tsc — they stay in services/api/migrations/. So the

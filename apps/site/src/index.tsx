@@ -12,8 +12,7 @@ import PreviewRoot from './PreviewRoot';
 
 // Routes (single canonical résumé — no profiles):
 //   ?application=<id> → fetch overlay + base résumé, render the TAILORED résumé
-//                       read-only (the dashboard review preview / bare print path
-//                       — replaces the v1 iframe).
+//                       read-only (the dashboard review preview / bare print path).
 //   otherwise         → fetch the canonical résumé from /api/resume and render
 //                       it. Falls back to the bundled seed when no API is
 //                       reachable (standalone build, PDF, CI).

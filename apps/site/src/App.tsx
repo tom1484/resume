@@ -12,7 +12,7 @@ import type { RenderPayload } from '@data';
 import Title from '@components/title';
 import ErrorBoundary from '@components/common/errorBoundary';
 
-// The v2 BARE résumé render host (DECISIONS req 3): a chrome-less render of the
+// The BARE résumé render host: a chrome-less render of the
 // canonical résumé (or an applied overlay) — the print/PDF target and the
 // dashboard's review preview. No editor UI lives here; the résumé/overlay
 // editors moved to the dashboard agent (which imports editorModel/ResumeTree

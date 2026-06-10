@@ -1,12 +1,11 @@
 // Stage: score — w.keyword·keyword + w.llmFit·llmFit + w.structural·structural
 // (PLAN.md Phase 2: embeddings deferred; the bullet bank fits whole in a prompt).
 //
-// v2 changes:
-//   - weights come from LlmConfig (§6), not a baked WEIGHTS const.
-//   - structuralScore is REPLACED by evaluateConstraints (§5.2): the hard-coded
-//     F-1 rules become DB-backed Constraints evaluated deterministically against
-//     the parsed JD. Preserves v1 semantics: a fired `hard` ⇒ 0; `penalty`
-//     subtracts and clamps at >=0.
+// Details:
+//   - weights come from LlmConfig (§6).
+//   - structural fit is evaluateConstraints (§5.2): DB-backed Constraints
+//     evaluated deterministically against the parsed JD — a fired `hard` ⇒ 0;
+//     `penalty` subtracts and clamps at >=0.
 //   - llmFit injects the DB-backed Preferences block into its system prompt.
 import {
   FitSchema,
@@ -89,7 +88,7 @@ export function keywordScore(
   return { value: matched / total, missing };
 }
 
-// --- §5.2 Constraints (hard, deterministic) — replaces structuralScore ---
+// --- §5.2 Constraints (hard, deterministic) ---
 
 export interface ConstraintFired {
   id: string;
@@ -123,9 +122,9 @@ function constraintFires(parsed: JdSchema, c: Constraint): boolean {
   }
 }
 
-// Deterministic structural fit from the Constraints list. Preserves v1 semantics
-// (score.js:63-78): start at 1; any fired `hard` short-circuits to 0; `penalty`
-// constraints subtract their amount; clamp at >=0. Disabled constraints skipped.
+// Deterministic structural fit from the Constraints list: start at 1; any fired
+// `hard` short-circuits to 0; `penalty` constraints subtract their amount;
+// clamp at >=0. Disabled constraints skipped.
 export function evaluateConstraints(
   parsed: JdSchema,
   constraints: Constraint[]

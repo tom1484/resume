@@ -1,12 +1,12 @@
-# Architecture & data flow (v2)
+# Architecture & data flow
 
 ## Scope
-System map for the whole v2 repo: the **contracts package** (the SSoT spine), the
+System map for the whole repo: the **contracts package** (the SSoT spine), the
 **dashboard SPA** + the **bare résumé host**, the three backend services
 (discovery / pipeline / api), the Postgres DB, the **config layer** — plus the two
 end-to-end flows (scheduled discover→score→tailor→verify→review, and human
 review/config/résumé-edit through the API). This is the "map"; field-level shapes
-live in [./data-contracts.md](./data-contracts.md) → `docs/v2/CONTRACTS.md`,
+live in [./data-contracts.md](./data-contracts.md) → `docs/CONTRACTS.md`,
 per-stage internals in [./pipeline.md](./pipeline.md), UI/renderer in
 [./frontend.md](./frontend.md).
 
@@ -83,7 +83,7 @@ Each hop names the exact module/function. Stage internals → [./pipeline.md](./
 5. **Score (two lists)** — in `processJob()`, reading `getConfig('constraints')` +
    `getConfig('preferences')`:
    - `evaluateConstraints(parsed, constraints)` (deterministic; hard ⇒ 0, penalties
-     subtract; replaces v1's baked F-1 rules),
+     subtract),
    - `keywordScore(parsed, candidateTerms())` (ATS fuzzy match; 0.5 floor on empty),
    - `llmFit(job, parsed, cfg, preferences)` (one call, model `cfg.models.fit`;
      `profileText(preferences)` injects the priority-labeled preference block).
@@ -202,7 +202,7 @@ shared with nginx proxy manager).
 
 ## Cross-references
 - Contract shapes (résumé/overlay/view-model/pipeline/config/db/events) →
-  [./data-contracts.md](./data-contracts.md) → `docs/v2/CONTRACTS.md`
+  [./data-contracts.md](./data-contracts.md) → `docs/CONTRACTS.md`
 - Per-stage prompts, models, two-list scoring, anti-fabrication, evals →
   [./pipeline.md](./pipeline.md)
 - Dashboard tabs, renderer, editor bridge, bare host, print/PDF →
@@ -220,7 +220,7 @@ shared with nginx proxy manager).
   (`DashboardSummary.parse` in `dashboard.ts`, `EventRow.array().parse` in
   `app.ts`); the pipeline `.parse()`s `ScoreBreakdown` before persisting; the
   migration validates each reshaped record. Don't drop these.
-- **The API owns migrations now** (v1's pipeline did). `server.ts` runs them at
+- **The API owns migrations.** `server.ts` runs them at
   startup; `poller.ts`/`run-once.ts`/`tailor-one.ts` assume the schema exists.
 - **DB is canonical; `data/resume.json` is seed/export/fallback only.** Editing the
   file does NOT change the live résumé — `PUT /api/resume` does. The pipeline reads

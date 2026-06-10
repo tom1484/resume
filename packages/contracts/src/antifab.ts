@@ -2,23 +2,23 @@
 //
 // Load-bearing; never weaken without re-running eval/run-verify-eval.js.
 //
-// Anti-fabrication 3-layer chain (DECISIONS must-preserve):
+// Anti-fabrication 3-layer chain:
 //   1. generation constraint  — master-bank-only, replace-only patches, required
-//      groundedIn (tailor.js:66-97; ≤4 patches).
+//      groundedIn (≤4 patches).
 //   2. numeric tripwire       — extract numbers from a patch value; any number
 //      not present in the cited master-bank source text auto-fails; YEARS
-//      2019–2030 are EXCLUDED from the tripwire (verify.js:19-32, the :29 skip);
-//      unknown-id / empty-grounding also auto-fail (verify.js:61-65).
+//      2019–2030 are EXCLUDED from the tripwire; unknown-id / empty-grounding
+//      also auto-fail.
 //   3. drop policy            — audit.unsupported === [] BY CONSTRUCTION at
-//      in_review; patchIndex renumbered after drop (tailorJob.js:36-48).
-// Reviewer edits BYPASS the chain (trusted; editorModel.js:94 writes
+//      in_review; patchIndex renumbered after drop.
+// Reviewer edits BYPASS the chain (trusted; they write
 // audit:{claims:[],unsupported:[]}).
 
-/** Max LLM-authored patches per tailoring pass (tailor.js generation constraint). */
+/** Max LLM-authored patches per tailoring pass (generation constraint). */
 export const MAX_TAILOR_PATCHES = 4;
 
 /**
- * Years excluded from the numeric tripwire (verify.js:29). A bare 4-digit year
+ * Years excluded from the numeric tripwire. A bare 4-digit year
  * in this inclusive range is NOT treated as a fabricated metric.
  */
 export const TRIPWIRE_YEAR_MIN = 2019;
@@ -33,7 +33,7 @@ export function isExcludedYear(n: number): boolean {
 
 /**
  * Extract candidate numeric tokens from text for the tripwire, dropping years in
- * the 2019–2030 exclusion window (verify.js:24-30). Matches integers, decimals,
+ * the 2019–2030 exclusion window. Matches integers, decimals,
  * and percentages; the trailing `%`/`x`/commas are stripped before parsing.
  */
 export function extractTripwireNumbers(text: string): number[] {
@@ -51,13 +51,13 @@ export function extractTripwireNumbers(text: string): number[] {
 /**
  * Layer-2 deterministic pre-check for a single LLM patch BEFORE the LLM skeptic
  * runs: a patch whose groundedIn is empty, or references an unknown master-bank
- * id, auto-fails as unsupported (verify.js:61-65). Returns true when the patch
+ * id, auto-fails as unsupported. Returns true when the patch
  * is structurally grounded (every ref resolves to a known id and at least one
  * ref is present); false ⇒ auto-fail unsupported.
  *
  * `knownIds` is the set of master-bank bullet ids (bare `<id>`, §11 ref format).
  * The numeric-tripwire comparison against the cited source text and the LLM
- * skeptic (uncertain → false, verify.js:44-50) are the verify-stage agent's job.
+ * skeptic (uncertain → false) are the verify-stage agent's job.
  */
 export function isStructurallyGrounded(
   groundedIn: readonly string[] | undefined | null,
@@ -67,5 +67,5 @@ export function isStructurallyGrounded(
   return groundedIn.every((id) => knownIds.has(id));
 }
 
-/** keywordScore floor on empty-JD term sets (score.js:58, DECISIONS). */
+/** keywordScore floor on empty-JD term sets. */
 export const KEYWORD_SCORE_FLOOR = 0.5;

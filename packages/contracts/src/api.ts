@@ -1,20 +1,17 @@
 // §8 API surface — single overlayProblems (THE one impl).
 //
-// Verdict: REDESIGN — v1 had two diverged copies: server.js:28-39 (Ajv +
-// jsonpatch.validate against currentResume().data + personalInfo-required) and
-// tailor.js:153-166 (Ajv + jsonpatch.validate against getResume() +
-// personalInfo-required). Both must read THE SAME current-résumé source. v2: one
-// overlayProblems(overlay, resumeDoc) here, imported by both the API and the
-// pipeline; the caller passes the current résumé (API: latest resume_versions;
-// pipeline: refreshResume() result — the same DB row).
+// One overlayProblems(overlay, resumeDoc) here, imported by both the API and the
+// pipeline; both must read THE SAME current-résumé source. The caller passes the
+// current résumé (API: latest resume_versions; pipeline: refreshResume() result —
+// the same DB row).
 import jsonpatch from 'fast-json-patch';
 import { Overlay } from './overlay.js';
 
 /**
  * Returns a list of human-readable problems with an overlay against the current
- * résumé document. Empty array ⇒ valid. Three checks (the union of the two v1
- * copies): (1) Zod safeParse of the overlay; (2) fast-json-patch.validate of the
- * patch ops against the résumé; (3) the ONE personalInfo-required rule.
+ * résumé document. Empty array ⇒ valid. Three checks: (1) Zod safeParse of the
+ * overlay; (2) fast-json-patch.validate of the patch ops against the résumé;
+ * (3) the ONE personalInfo-required rule.
  */
 export function overlayProblems(
   overlay: unknown,

@@ -24,7 +24,7 @@ const bulletById = new Map(master.bullets.map((b) => [b.id, b]));
 const knownIds = new Set(master.bullets.map((b) => b.id));
 
 /**
- * Numeric tripwire (verify.js:23-32 port). Numbers in `patchValue` not present in
+ * Numeric tripwire. Numbers in `patchValue` not present in
  * any cited bullet's text are suspect; years 2019–2030 never trip (handled by
  * extractTripwireNumbers). Returns the list of suspect numbers (empty = clean).
  */
@@ -61,7 +61,7 @@ export async function verifyClaims(
   });
 
   // Layer 1: deterministic auto-fails need no LLM. isStructurallyGrounded covers
-  // unknown-id / empty-grounding (verify.js:61-65); the tripwire covers metrics.
+  // unknown-id / empty-grounding; the tripwire covers metrics.
   const autoFail = new Map<number, string>();
   for (const c of checks) {
     if (c.unknownIds.length)

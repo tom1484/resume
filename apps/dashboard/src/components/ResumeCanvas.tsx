@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/button';
 // Why an iframe and not in-app rendering: the renderer canvas is pixel-stable and
 // is the Playwright PDF target (apps/site). Iframing the SAME bare host keeps the
 // preview byte-identical to the PDF and isolates the renderer's Tailwind preflight
-// from shadcn/ui's (DECISIONS req 3 + 4). The bare host's own usePageStyle/@page
+// from shadcn/ui's. The bare host's own usePageStyle/@page
 // drives paper size/margins, so printing the frame yields ONLY the résumé.
 export function ResumeCanvas({
   applicationId,

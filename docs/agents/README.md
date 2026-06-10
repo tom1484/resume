@@ -1,16 +1,12 @@
-# Agent docs — start here (v2)
+# Agent docs — start here
 
 Dense reference for an AI agent picking up this repo. Read this file first
 (2 min), then jump to the topic doc for your task. For always-on invariants see
 the repo-root `CLAUDE.md`. These docs are the **deep, exhaustive** layer.
 
-> **This is v2.** A clean TypeScript/pnpm reimplementation that **replaced v1 and
-> is LIVE**. Trust the **code on disk** + `docs/v2/CONTRACTS.md` (authoritative
-> Zod spec) + `docs/v2/DECISIONS.md` (rebuild record). Anything that mentions
-> `apps/review`, `x-`-prefixed résumé fields, `MODEL_*` env vars, a supercronic
-> crontab, or Ajv-as-source-of-truth is **v1 and stale** — ignore it. Every
-> path/route/symbol below is meant to resolve in the v2 code; if one doesn't, fix
-> the doc.
+> Trust the **code on disk** + `docs/CONTRACTS.md` (authoritative Zod spec).
+> Every path/route/symbol below is meant to resolve in the code; if one doesn't,
+> fix the doc.
 
 ## What this is (60-second model)
 
@@ -23,41 +19,40 @@ discovery (scheduled) → jobs table → pipeline (poll): parse_jd → score(two
   → gate → tailor → verify(anti-fabrication) → status=in_review → Telegram
         → you review/edit/approve + tune config + edit the résumé in the
           dashboard SPA at https://jobs.churong.cc
-        → [Phase 4, not built] local apply agent submits approved apps
+        → [not built yet] local apply agent submits approved apps
 ```
 
-What changed from v1 (so you don't trust the old mental model):
+Key architecture:
 
 - **Contracts SSoT.** `packages/contracts` defines every shape once in Zod;
-  JSON Schema (for Ajv) is **emitted** from Zod, not hand-written. v1's 6 copies
-  of the section-key list, two diverged `overlayProblems`, and untyped
-  `score_breakdown` are gone.
+  JSON Schema (for Ajv) is **emitted** from Zod, not hand-written. One copy of
+  the section-key list, one `overlayProblems`, typed `score_breakdown`.
 - **One SPA + a bare host.** `apps/dashboard` (shadcn/ui + react-router) is the
   single admin UI at `/` with tabs `/dashboard /review /resume /scrawling /llm
   /preferences /constraints /answers`. `apps/site` is the chrome-less **bare
   résumé render host** at `/resume/` (print/PDF target + the review preview,
-  iframed). v1's `apps/review` is GONE.
-- **Un-prefixed v2 résumé fields** (`time, info, tags, links, venue, authors,
-  track, kind, badge`) — no `x-`, no JSON-Resume conformance.
+  iframed).
+- **Un-prefixed résumé fields** (`time, info, tags, links, venue, authors,
+  track, kind, badge`).
 - **DB-backed config layer.** Every non-secret setting is a `config` table row,
   UI-editable, Zod-validated; services read it at runtime (`getConfig(ns)`).
-  Secrets stay in env. v1's `MODEL_*`/`SCORE_THRESHOLD`/crontab knobs are gone.
+  Secrets stay in env.
 - **Two-list scoring.** Deterministic **Constraints** (vs parsed-JD fields; the
-  F-1 rules are seeded config now) + **Preferences** (priority 1–10, injected into
-  the LLM fit prompt). v1's hard-coded F-1 `structuralScore` is gone.
-- **In-process DB-driven scheduler** in `services/discovery` (`scheduler.py`) —
-  supercronic is gone.
-- **Anti-fabrication preserved verbatim** (the one thing that did NOT change).
+  F-1 rules are seeded config) + **Preferences** (priority 1–10, injected into
+  the LLM fit prompt).
+- **In-process DB-driven scheduler** in `services/discovery` (`scheduler.py`).
+- **Anti-fabrication** — load-bearing and verbatim across generation, verify,
+  and drop policy.
 
 ## Doc map
 
 | Doc | Read it when |
 |---|---|
 | [architecture.md](./architecture.md) | You need the system map / how the contracts pkg + SPA + bare host + 3 services + DB connect / the two end-to-end flows / container topology |
-| [data-contracts.md](./data-contracts.md) | You touch any shape — short index; points to `docs/v2/CONTRACTS.md` (authoritative) |
+| [data-contracts.md](./data-contracts.md) | You touch any shape — short index; points to `docs/CONTRACTS.md` (authoritative) |
 | [pipeline.md](./pipeline.md) | You change discovery, the scheduler, scoring (two lists), tailoring, verification, config knobs, or evals |
 | [frontend.md](./frontend.md) | You change the dashboard SPA, the renderer, the editor, the bare host, print/PDF, or Vite/build |
-| [operations.md](./operations.md) | You deploy, run the migration, seed config, touch env/secrets, or read the cutover/rollback runbook + Lessons |
+| [operations.md](./operations.md) | You deploy, add a DB migration, seed config, touch env/secrets, or read the deploy/rollback runbook + Lessons |
 
 ## Task router — "I need to…"
 
@@ -72,7 +67,7 @@ What changed from v1 (so you don't trust the old mental model):
 | Change the schedule | the `schedule` config (UI tab); pipeline.md → scheduler |
 | Add/alter a DB column or table | data-contracts.md → DB; add `services/api/migrations/00N_*.sql` (API applies them) |
 | Add an API route / dashboard tab / config UI | architecture.md + frontend.md; the route in `services/api/src/app.ts` |
-| Deploy / migrate v1→v2 / env / runbook | operations.md |
+| Deploy / env / runbook | operations.md |
 | Refactor the renderer safely | use the `render-check` skill (DOM diff must be empty) |
 
 ## Repo coordinates
@@ -90,10 +85,9 @@ What changed from v1 (so you don't trust the old mental model):
 - **Live**: `https://jobs.churong.cc` behind nginx-proxy-manager access list →
   `jobs-api:8080`. Containers: `jobs-db / jobs-discovery / jobs-pipeline /
   jobs-api` (compose project `job-pipeline`). No host ports; web only via NPM.
-- **Plans/state**: `docs/v2/DECISIONS.md` (the rebuild brief/record),
-  `docs/v2/CONTRACTS.md` (authoritative Zod contract spec). The v1 planning docs
-  (`PROPOSALS.md`/`PLAN.md`/`PREPARE.md`) were removed at the v2 cutover. Phase 4
-  (local apply agent) is not built.
+- **Plans/state**: `docs/CONTRACTS.md` (authoritative Zod contract spec);
+  per-session decisions/handoff in the repo-root `DECISIONS.md`. The local apply
+  agent is not built yet.
 
 ## Glossary
 

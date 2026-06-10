@@ -1,12 +1,11 @@
-# Frontends, renderer & the editor model (v2)
+# Frontends, renderer & the editor model
 
 ## Scope
 The **one dashboard SPA** (`apps/dashboard` — shadcn/ui + react-router admin UI),
 the **bare résumé render host** (`apps/site` — chrome-less, the print/PDF target +
 review preview), and the shared `@resume/renderer` source package (components +
-`data/` layer + the `editor/ResumeTree`). v1's two-SPA model (`apps/site` renderer
-at `/resume/` + `apps/review` at `/`, with an iframe) is replaced by: ONE SPA at `/`
-+ a bare host at `/resume/` that the SPA iframes for previews. `apps/review` is GONE.
+`data/` layer + the `editor/ResumeTree`). The layout is ONE SPA at `/` + a bare
+host at `/resume/` that the SPA iframes for previews.
 
 ## Read this when
 - Adding/changing a résumé section, item field, or how it renders.
@@ -27,7 +26,7 @@ Served by `services/api` (`app.ts`, container `jobs-api`), same-origin. See
 | `/resume/` (trailing slash) | bare host build (`apps/site/build` → `/app/site`) | `app.ts` `@fastify/static` prefix `/resume/` (`VITE_BASE=/resume/`) |
 | `/api/*`, `/applications/*`, `/resume/` | exempt from SPA fallback (404 JSON) | `setNotFoundHandler` |
 
-> `/resume` (no slash) vs `/resume/` (slash) — RESOLVED (commit `40c5c4d`): the
+> `/resume` (no slash) vs `/resume/` (slash): the
 > fallback exempts ONLY `/resume/` (trailing slash) and there is no `GET /resume`
 > redirect, so a **hard** nav/refresh/deep-link to the dashboard's own `/resume`
 > route falls through to the SPA (renders `ResumePage`), while `/resume/` and
@@ -43,6 +42,10 @@ Served by `services/api` (`app.ts`, container `jobs-api`), same-origin. See
 Stack: React 18, **react-router v6** (`createBrowserRouter`), **shadcn/ui** (Radix +
 Tailwind: `components/ui/*` + `lucide-react` icons), Vite 6. `@` → `src` (the shadcn
 convention); the renderer is NOT aliased here (it's deep-imported, see below).
+
+The admin chrome uses shadcn/ui (Radix + Tailwind), chosen over Ant Design because
+Ant's global CSS reset and design tokens would fight Tailwind and risk the
+pixel-stable renderer.
 
 ### Entry + routing
 - `src/main.tsx` → `<RouterProvider router={router}>`.
@@ -157,11 +160,11 @@ to the dashboard).
   (`preview.ts`, node-tested). `buildPayload` is preview-tolerant: a missing overlay
   falls back to the base résumé instead of throwing (so review preview works pre-save).
 
-### Render path (`src/App.tsx`) — data via the provider (NOT a singleton)
-v1's mutable `activeData`/`activeDoc` module singleton is **gone**. The host builds a
+### Render path (`src/App.tsx`) — data via the provider
+The host builds a
 `RenderPayload` (`{ doc, data }`) once and passes it to `<App payload>`, which
 provides it via `ResumeDataProvider` (`contexts/resumeDataContext.tsx`); components
-read it through `useSection(key)` (one section's items, mirroring v1 `getData`) and
+read it through `useSection(key)` (one section's items) and
 `useResumeDoc()` (the doc, for print config + section order).
 1. `ResumeView` → `orderedSections(useResumeDoc())`: sorts `sectionsConfig`
    (`config/sections.ts`) by `doc.meta.sectionOrder` (unknown keys → rank 99).
@@ -177,13 +180,13 @@ read it through `useSection(key)` (one section's items, mirroring v1 `getData`) 
 `config/sections.ts` `sectionsConfig` is built from the §1 `SECTION_REGISTRY` (keys +
 order are NOT restated) — only the renderer-presentation facts the registry doesn't
 carry: the component name, the displayed `<Title>` text (intentionally NOT the
-registry `label` — header text is byte-stable from v1: "Academic Experience"/"Work
+registry `label` — header text is fixed: "Academic Experience"/"Work
 Experience"/"Competition Experience"/"Projects"/"Extracurricular"), and the one real
 prop (`projects.showTags` via `SECTION_PROPS`).
 
 ### adapter.ts (`buildViewModels`) — KEY CONTRACT
 Maps `ResumeDoc` (§2) → `ViewModels` (§3). Optional keys are **omitted** (via `opt()`),
-never set to `undefined`. Reads the **v2 un-prefixed fields** (`time, info, courses,
+never set to `undefined`. Reads the **un-prefixed fields** (`time, info, courses,
 tags, links, badge, footnote, location, authors, venue, status, headline`). The
 work/projects split is NOT restated here — it consumes the §1 registry `pick`
 predicates (`pickFor(key)`). The §2/§3 publications-`link` fix is here (the adapter now
