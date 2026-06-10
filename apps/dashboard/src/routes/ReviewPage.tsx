@@ -316,29 +316,34 @@ function OverlayEditor({
   }, [liveOverlay, job.id, onSaved]);
 
   return (
-    <div className="space-y-4">
-      <p className="text-xs text-muted-foreground">
-        Toggle sections/items/bullets and reorder by dragging. Reviewer edits are
-        trusted and bypass the fabrication verify. Saving writes a new overlay
-        (section selection + reviewer filters + highlight patches).
-      </p>
-      <div className="rounded-md border p-3">
-        <ResumeTree tree={tree} onChange={setTree} mode="overlay" />
-      </div>
-      <div>
-        <div className="mb-1 text-sm font-medium">Cover letter</div>
-        <Textarea
-          value={cover}
-          onChange={(e) => setCover(e.target.value)}
-          rows={8}
-        />
-      </div>
-      <div className="flex items-center gap-2">
-        <SaveBar status={status} onSave={save} label="Save overlay" />
-        <Button variant="outline" onClick={() => setPreview(true)}>
-          <Eye className="size-4" /> Preview
+    <Card>
+      <CardHeader className="flex flex-row items-center justify-between space-y-0">
+        <CardTitle>Overlay editor</CardTitle>
+        <Button variant="outline" size="sm" onClick={() => setPreview(true)}>
+          <Eye className="size-4" /> Preview résumé
         </Button>
-      </div>
+      </CardHeader>
+      <CardContent>
+        <div className="space-y-4">
+          <p className="text-xs text-muted-foreground">
+            Toggle sections/items/bullets and reorder by dragging. Reviewer edits
+            are trusted and bypass the fabrication verify. Saving writes a new
+            overlay (section selection + reviewer filters + highlight patches).
+          </p>
+          <div className="rounded-md border p-3">
+            <ResumeTree tree={tree} onChange={setTree} mode="overlay" />
+          </div>
+          <div>
+            <div className="mb-1 text-sm font-medium">Cover letter</div>
+            <Textarea
+              value={cover}
+              onChange={(e) => setCover(e.target.value)}
+              rows={8}
+            />
+          </div>
+          <SaveBar status={status} onSave={save} label="Save overlay" />
+        </div>
+      </CardContent>
       {preview && (
         <PreviewModal
           open={preview}
@@ -348,7 +353,7 @@ function OverlayEditor({
           reloadKey={previewKey}
         />
       )}
-    </div>
+    </Card>
   );
 }
 
@@ -487,33 +492,6 @@ function Detail({ id, onBack }: { id: string; onBack: () => void }) {
               </CardContent>
             </Card>
 
-            <Card>
-              <CardHeader>
-                <CardTitle>Overlay editor</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <AsyncBoundary
-                  loading={resume.loading}
-                  error={resume.error}
-                  data={resume.data}
-                  onRetry={resume.reload}
-                >
-                  {(doc: ResumeDoc) => (
-                    <OverlayEditor
-                      key={j.id}
-                      job={j}
-                      resume={doc}
-                      previewKey={rev}
-                      onSaved={() => {
-                        setRev((r) => r + 1);
-                        job.reload();
-                      }}
-                    />
-                  )}
-                </AsyncBoundary>
-              </CardContent>
-            </Card>
-
             <Tabs defaultValue="patches">
               <TabsList>
                 <TabsTrigger value="patches">Patch diff</TabsTrigger>
@@ -550,6 +528,26 @@ function Detail({ id, onBack }: { id: string; onBack: () => void }) {
                 </Card>
               </TabsContent>
             </Tabs>
+
+            <AsyncBoundary
+              loading={resume.loading}
+              error={resume.error}
+              data={resume.data}
+              onRetry={resume.reload}
+            >
+              {(doc: ResumeDoc) => (
+                <OverlayEditor
+                  key={j.id}
+                  job={j}
+                  resume={doc}
+                  previewKey={rev}
+                  onSaved={() => {
+                    setRev((r) => r + 1);
+                    job.reload();
+                  }}
+                />
+              )}
+            </AsyncBoundary>
           </div>
         )}
       </AsyncBoundary>
