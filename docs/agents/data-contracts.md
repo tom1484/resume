@@ -24,16 +24,17 @@ service, also update its hand-kept mirror (`config.py` / `jobrow.py`) in lockste
 |---|---|---|
 | `sections.ts` | §1 | `SECTION_REGISTRY` (THE 9-key list), `SECTION_KEYS`, `SectionKey` (the one enum), `EDITABLE_SECTION_KEYS`, `sectionMeta` |
 | `resume.ts` | §2 | `ResumeDoc` (+ `Basics/Education/Work/Project/Volunteer/Publication/SkillGroup/ResumeMeta`) — **un-prefixed v2 fields** |
-| `print.ts` | §2.3 | `PrintConfig`, `PAPER_SIZES` |
+| `print.ts` | §2.3 | `PrintConfig`, `PAPER_SIZES`, `PAPER_DIMENSIONS` (mm per size — drives the on-screen paper-accurate preview) |
+| `preview.ts` | §8a | `PreviewMessage` (dashboard↔bare-host postMessage union), `PREVIEW_MESSAGE_SOURCE`, `PreviewLayout` |
 | `viewModel.ts` | §3 | `ViewModels` + per-section VMs; the no-extra-keys / no-`undefined` guard (`guarded`) over ALL sections |
 | `overlay.ts` | §4 | `Overlay`, `OverlayFilter` (`ReviewerFilter`∪`LlmFilter`), `LlmPatch`, `Patch`, `Audit`, `AuditClaim` |
 | `master.ts` | §11 | `MasterBank`, `MasterBullet` (id immutable; `metrics` dropped) |
 | `pipeline.ts` | §5.1/5.3 | `JdSchema`, `FitSchema`, `TailorSchema`, `VerdictSchema`, `ScoreBreakdown` |
 | `scoring.ts` | §5.2 | `Constraint` (+`ConstraintField`), `Preference` — the two-list types |
-| `config.ts` | §6 | `LlmConfig`, `ScheduleConfig`, `DiscoveryConfig` (+`DiscoverySearch`/`DiscoveryCompany`), `ConstraintsConfig`, `PreferencesConfig`; `CONFIG_NAMESPACES`, `parseConfig`, `configDefault` |
+| `config.ts` | §6 | `LlmConfig`, `ScheduleConfig`, `DiscoveryConfig` (+`DiscoverySearch`/`DiscoveryCompany`), `ConstraintsConfig`, `PreferencesConfig`, `JobType` (enum; `jobspyDefaults.jobType`); `CONFIG_NAMESPACES`, `parseConfig`, `configDefault` |
 | `db.ts` | §7 | `JobStatus`, `CompanyFlag`, `JobListItem`, `JobDetail`, `Answer` (PII-minimized projections) |
 | `api.ts` | §8 | the ONE `overlayProblems(overlay, resumeDoc)` |
-| `events.ts` | §9 | `EventStage`, `EventRow`, `DashboardSummary`, `PRICES`, `costUsd`, `logEventRow` |
+| `events.ts` | §9 | `EventStage`, `EventRow`, `DashboardSummary`, `PRICES`, `KNOWN_MODELS` (= `PRICES` keys; the model-dropdown SSoT), `costUsd`, `logEventRow` |
 | `jobRow.ts` | §10 | `DiscoveredJob` (discovery→jobs write contract) |
 | `antifab.ts` | §11 | `MAX_TAILOR_PATCHES`, `extractTripwireNumbers`, `isStructurallyGrounded`, `KEYWORD_SCORE_FLOOR`, `isExcludedYear` |
 | `schemas.ts` | §0 | `JSON_SCHEMA_TARGETS` (resume/overlay/master), `toJsonSchema`, `allJsonSchemas` — Zod-4 native `z.toJSONSchema({io:'input'})` |

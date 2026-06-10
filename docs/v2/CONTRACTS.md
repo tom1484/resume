@@ -1157,6 +1157,49 @@ live DB + file `master.json`, transform to the §2/§4/§11 shapes, seed the new
 
 ---
 
+## 13. v2.1 UI additions — preview protocol + validated inputs (KEEP, additive)
+
+Dashboard UX layer added after the v2 cutover (full-width editors + a toggleable
+paper-accurate preview modal that renders UNSAVED edits, and constrained/validated
+config inputs). **All additive — no existing shape changed.** Frontend wiring:
+`docs/agents/frontend.md`.
+
+### 13.1 Preview postMessage protocol (`preview.ts`)
+Typed channel between the dashboard (parent) and the bare-host iframe (child) that
+renders the editor's current, possibly UNSAVED, doc/overlay (no auto-save). Both ends
+enforce same-origin + the `source` tag. It carries `ResumeDoc`/`Overlay`, so it lives in
+contracts (never restated).
+```ts
+export const PREVIEW_MESSAGE_SOURCE = 'resume-preview' as const;
+export type PreviewLayout = 'multipage' | 'continuous';
+export type PreviewMessage =
+  | { source: typeof PREVIEW_MESSAGE_SOURCE; type: 'ready' }                      // child→parent
+  | { source: typeof PREVIEW_MESSAGE_SOURCE; type: 'resume'; doc: ResumeDoc }     // parent→child
+  | { source: typeof PREVIEW_MESSAGE_SOURCE; type: 'overlay'; overlay: Overlay }  // parent→child
+  | { source: typeof PREVIEW_MESSAGE_SOURCE; type: 'mode'; layout: PreviewLayout };
+```
+Producers/consumers: `PreviewModal` posts `resume`/`overlay`/`mode`; the bare host
+(`PreviewRoot` + the pure, node-tested `reduceMessage`) posts `ready` and applies via
+`resumePayload`/`applicationPayload`. OFF by default — only active under `?preview=…`
+(byte-identical default render preserved; render-check-gated).
+
+### 13.2 `PAPER_DIMENSIONS` (`print.ts`) + `mmToPx` (`renderer/data/print.ts`)
+Physical mm per `PAPER_SIZES` key — A4 210×297, Letter 215.9×279.4, Legal 215.9×355.6,
+A3 297×420, A5 148×210 (portrait); `mmToPx(mm) = mm * 96 / 25.4`. Drive the on-screen
+paper-accurate preview (`PaperFrame`); the real PDF still derives its dimensions from the
+size NAME via the `@page` rule / Playwright `format`, so this is preview-only.
+
+### 13.3 `KNOWN_MODELS` (`events.ts`) + `JobType` (`config.ts`)
+`KNOWN_MODELS = Object.keys(PRICES)` — the selectable-model SSoT for the LlmPage model
+dropdowns. **Deliberately NOT a Zod enum:** `LlmConfig.models.*` stays `z.string()` with
+a `__custom__` UI escape hatch, so a brand-new model ID is selectable before a contracts
+rebuild. `JobType = z.enum(['fulltime','parttime','internship','contract'])` tightens
+`DiscoveryConfig.jobspyDefaults.jobType` (was `z.string()`) so the UI offers a dropdown
+and a bad value is rejected at the write boundary; the Python discovery mirror passes the
+value straight through and the default (`'internship'`) is unchanged — no Python change.
+
+---
+
 ## Appendix — verdict roll-up
 
 | § | Contract | Verdict |
@@ -1173,3 +1216,4 @@ live DB + file `master.json`, transform to the §2/§4/§11 shapes, seed the new
 | 10 | Discovery → jobs write | REDESIGN (typed/shared; kill dict-slice drops) |
 | 11 | Anti-fabrication | KEEP (verbatim, binding) |
 | 12 | Data migration | new deliverable |
+| 13 | v2.1 UI additions | KEEP (additive: preview postMessage protocol, paper dims, model/jobType dropdown sources) |

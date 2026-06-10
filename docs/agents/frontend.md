@@ -52,8 +52,8 @@ convention); the renderer is NOT aliased here (it's deep-imported, see below).
 | Route | Component | Role |
 |---|---|---|
 | `/dashboard` (index → here) | `routes/DashboardPage` | events/cost ledger: cost-by-stage/model, totals-by-day, status funnel, failures, recent events |
-| `/review`, `/review/:id` | `routes/ReviewPage` | inbox (status tabs) + detail (approve/reject/label, score breakdown, overlay editor, tailored preview, patch diff, cover letter, JD) |
-| `/resume` | `routes/ResumePage` | canonical résumé editor (Structured/JSON/Print tabs) + live preview |
+| `/review`, `/review/:id` | `routes/ReviewPage` | inbox (status tabs) + detail (approve/reject/label, score breakdown, **full-width** overlay editor, patch diff, cover letter, JD) + a **Preview** button → `PreviewModal` (the tailored overlay, live/unsaved) |
+| `/resume` | `routes/ResumePage` | canonical résumé editor (Structured/JSON/Print tabs), **full-width** + a **Preview** button → `PreviewModal` (the live/unsaved doc) |
 | `/scrawling` | `routes/ScrawlingPage` | `schedule` + `discovery` config (cron/tz/mode, JobSpy sites/defaults, exclude lists, searches, companies) |
 | `/llm` | `routes/LlmPage` | `llm` config (per-stage models, threshold, weights, batch, poll, truncation) |
 | `/preferences` | `routes/PreferencesPage` | `preferences` config (soft, priority 1–10) |
@@ -80,15 +80,58 @@ The Résumé editor (`ResumePage`) validates with `ResumeDoc.safeParse` before
 `putResume`. `LlmPage.test.tsx`/`DashboardPage.test.tsx` cover representative pages
 (jsdom; the dashboard runs under its own `vitest.config.ts`).
 
+**Constrained inputs + live (presentational) validation.** Free-text fields with a
+finite valid set are dropdowns now, and field-level errors render live (they
+*complement* the on-save `parseConfig`+`SaveBar` gate, never replace it). New shadcn
+primitives in `components/ui/`: `select`, `popover`, `command`, `combobox` (searchable —
+the timezone picker), `dialog` (the preview modal), `field-error` (`FieldError`/
+`FieldWarning`). Helpers in `src/lib/`: `validators.ts` (`validateCron` — mirrors the
+Python `discovery/cron.py` 5-field grammar; `isValidTimeZone`; `weightsSumWarning`) and
+`lists.ts` (`timeZones()` via `Intl.supportedValuesOf`, `JOBSPY_COUNTRIES`). Dropdown
+value sources are contract-derived (never hard-coded): models from `KNOWN_MODELS`
+(events.ts, = `PRICES` keys) with a `__custom__` escape hatch; `jobType` from `JobType`
+(config.ts); the Constraints `equals` value from `JdSchema.shape.<field>.options`
+(seniority/sponsorship); paperSize from `PAPER_SIZES`.
+
 ### The résumé canvas is an IFRAME of the bare host (`components/ResumeCanvas.tsx`)
 The dashboard does NOT render the résumé in-app. `ResumeCanvas` iframes the bare host
-(`/resume/` for the canonical résumé, `/resume/?application=<jobId>` for a tailored
-preview), `rev`-bumped to cache-bust after a save. Why: the renderer canvas is
-pixel-stable and is the Playwright PDF target — iframing the SAME host keeps the
-preview byte-identical to the PDF and isolates the renderer's Tailwind preflight from
-shadcn/ui's. The in-frame "Print résumé" button drives the iframe's own print context
-(only the résumé prints). `index.css` adds a `@media print` `.print-isolating` /
-`.print-canvas` fallback for `Cmd+P` on the page.
+(`/resume/` canonical, `/resume/?application=<jobId>` tailored), `rev`-bumped to
+cache-bust after a save. Why: the renderer canvas is pixel-stable and is the Playwright
+PDF target — iframing the SAME host keeps the preview byte-identical to the PDF and
+isolates the renderer's Tailwind preflight from shadcn/ui's. The in-frame "Print
+résumé" button drives the iframe's own print context (only the résumé prints).
+`index.css` adds a `@media print` `.print-isolating` / `.print-canvas` fallback for
+`Cmd+P` on the page. `ResumeCanvas` fills its container (`flex-1`, no fixed height) so
+inside the preview modal the **bare host's paper-frame is the single scroll region** —
+the button row stays fixed (a hard-coded iframe height previously caused a second
+scrollbar).
+
+### The preview is a toggleable modal that renders UNSAVED edits (`components/PreviewModal.tsx`)
+ResumePage/ReviewPage editors are **full-width**; the preview is a blocking centered
+shadcn `Dialog` opened by a "Preview" button. It renders the editor's **current,
+possibly unsaved** doc/overlay — **no auto-save**. Mechanism: a typed **postMessage
+bridge** (`PreviewMessage` in `@resume/contracts`, `preview.ts`, same-origin +
+`source:'resume-preview'` tag). The bare host posts `{type:'ready'}` on mount; the modal
+replies with the in-memory payload — `{type:'resume',doc}` (ResumePage, `doc` from
+`treeToResume`) or `{type:'overlay',overlay}` (ReviewPage, `overlay` from
+`editorTreeToOverlay`, so the tailored preview works **before the first save**) — plus
+`{type:'mode',layout}`; it re-posts (debounced) on edits while open. The bare host
+applies it via `resumePayload`/`applicationPayload` (renderer/data) — all view-model
+logic stays in the bare host; the dashboard posts raw `doc`/`overlay` only.
+
+### Paper-accurate preview (`apps/site/src/PaperFrame.tsx`)
+In the modal the bare host renders inside a **paper frame** sized to the configured
+paper (`PAPER_DIMENSIONS` mm → px via `mmToPx`, 96dpi), with margins as padding and the
+configured `scale` applied (`transform: scale`, content laid out at `1/scale` of the
+content box — matching Playwright `page.pdf({scale})`). Two engines behind the modal's
+**Continuous switch**: **multi-page** (default) paginates via `pagedjs` (dynamically
+imported, so it never enters the default bundle or the PDF path) into real
+`.pagedjs_page` A4 sheets honoring the renderer's `break-inside` rules; **continuous** is
+a dependency-free single tall sheet (also the fallback if pagedjs fails). Reads
+`getPrint(payload.doc)`, so paper/margins/scale reflect live Print-tab edits. **Print
+from the modal** hides the pagedjs page-boxes and reveals the source résumé in normal
+flow (`@media print` in `PaperFrame`), so the browser paginates via the `@page` rule —
+no trailing blank pages.
 
 ---
 
@@ -98,13 +141,21 @@ Chrome-less render of the canonical résumé (or an applied overlay). The print/
 target and the dashboard's review preview. No editor UI lives here (the editors moved
 to the dashboard).
 
-### Entry (`src/index.tsx`) — routes by `?application`
+### Entry (`src/index.tsx`) — routes by `?application`, wrapped by `?preview`
 - `?application=<id>` → `fetchJson('/applications/<id>/overlay.json')` + `fetchJson(
   '/api/resume')` (base; falls back to `bundledSeed` on failure) → `applicationPayload(
   overlay, base)` → render read-only. (This is what `ResumeCanvas` iframes.)
 - otherwise → `resumePayload(await fetchJson('/api/resume'))`; on failure
   `resumePayload(bundledSeed)` (standalone build / PDF / CI).
 - Bootstrap failure renders a red error box.
+- **`?preview` (live-preview wrapper, OFF by default):** the built payload is handed to
+  `<PreviewRoot initial preview>`. `preview=null` → renders **exactly** `<App
+  payload={initial}/>` (byte-identical default path — render-check safe). `preview='1'`
+  → live fluid render; `preview='paper'` → live render wrapped in `<PaperFrame>`. In
+  preview mode `PreviewRoot` posts `{type:'ready'}` to `window.parent` and swaps the
+  payload on same-origin `PreviewMessage`s via the pure `reduceMessage` reducer
+  (`preview.ts`, node-tested). `buildPayload` is preview-tolerant: a missing overlay
+  falls back to the base résumé instead of throwing (so review preview works pre-save).
 
 ### Render path (`src/App.tsx`) — data via the provider (NOT a singleton)
 v1's mutable `activeData`/`activeDoc` module singleton is **gone**. The host builds a
@@ -222,8 +273,13 @@ no barrel; `apps/site/vite.config.mjs` aliases `@css/@components/@config/@contex
   empty DOM diff). PDF bytes always differ (timestamps); DOM diff is authoritative.
 - **The dashboard validates config/résumé client-side with the same contracts Zod**
   the server enforces — keep them aligned via `@resume/contracts`, never a local copy.
-- **The preview is an iframe of the bare host** — it reflects the last SAVED doc (the
-  host fetches `/api/resume`/the overlay); bump `rev` to refresh after a save.
+- **The preview is an iframe of the bare host, shown in a modal** — it renders the
+  CURRENT, possibly UNSAVED, doc/overlay pushed over the `PreviewMessage` postMessage
+  bridge (no auto-save); the `?application`/`rev` fetch path is the first-paint/fallback.
+- **Preview/paper-frame is additive + OFF by default** — a bare `/resume/` visit (and
+  `pnpm pdf`) renders `<App>` unchanged. Only `?preview=…` mounts `PreviewRoot`'s
+  listener / `PaperFrame`. `pagedjs` is dynamically imported (never in the default
+  bundle). Keep it this way so the byte-identical-DOM invariant + the PDF hold.
 - `data/resume.json` is seed + git-export target + bundled fallback; refresh from the
   live DB with `pnpm export-seed`.
 
@@ -238,8 +294,11 @@ no barrel; `apps/site/vite.config.mjs` aliases `@css/@components/@config/@contex
 | Overlay filter semantics | `data/overlay.ts` `applyFilter` + the `Overlay` Zod (`contracts/overlay.ts`) |
 | Print/PDF | `data/print.ts` + `contracts/print.ts`; UI in `ResumePage` Print tab; PDF in `scripts/print-pdf.mjs` |
 | A config UI | `apps/dashboard/src/routes/<NS>Page.tsx` + `hooks/useConfig.ts`; shape in `contracts/config.ts` |
+| A config field's input/validation (dropdown, combobox, live error) | the `<NS>Page.tsx` field + `components/ui/{select,combobox,field-error}` + `src/lib/{validators,lists}.ts`; value source in `contracts/*` (e.g. `KNOWN_MODELS`, `JobType`, `JdSchema.shape.*.options`) |
+| The preview modal / live unsaved preview | `apps/dashboard/src/components/PreviewModal.tsx` (sender + handshake) + `ResumeCanvas.tsx` (live/paper props) + `apps/site/src/{PreviewRoot,preview}.tsx`; protocol `contracts/preview.ts` |
+| Paper-accurate preview (size/margins/scale, multipage/continuous) | `apps/site/src/PaperFrame.tsx` + `PAPER_DIMENSIONS`/`mmToPx` (`contracts/print.ts`, `renderer/data/print.ts`) |
 | Dashboard routes/tabs | `apps/dashboard/src/router.tsx` + `components/Shell.tsx` |
 | API client call | `apps/dashboard/src/api.ts` |
-| Bare-host iframe / print isolation | `apps/dashboard/src/components/ResumeCanvas.tsx` + `src/index.css` |
+| Bare-host iframe / print isolation / preview modal host | `apps/dashboard/src/components/ResumeCanvas.tsx` + `PreviewModal.tsx` + `src/index.css` |
 | Serve paths / SPA fallback | `services/api/src/app.ts` (static + `setNotFoundHandler`) |
 | Vite aliases / base path | `apps/site/vite.config.mjs` (`VITE_BASE`) / `apps/dashboard/vite.config.ts` |
